@@ -1,0 +1,44 @@
+FROM debian:stable-slim 
+
+#xqt vs xfce
+#https://www.google.com/search?channel=fs&client=ubuntu-sn&q=lxqt+vs+xfce
+
+RUN set -euxo \
+    && DEBIAN_FRONTEND=noninteractive \
+    && apt update \
+    && apt-get install  --no-install-recommends --no-install-suggests --yes procps \
+    lxde-core \
+    lxterminal \
+    x11vnc \
+    vim \
+    xvfb \
+    x11-utils \
+    && apt-get autoremove --yes --auto-remove  \
+    && apt-get clean -y \
+    && apt-get autoclean -y \ 
+    && rm -rf /var/lib/apt/lists/*
+
+RUN touch /root/.Xresources
+RUN touch /root/.Xauthority
+WORKDIR /root
+RUN mkdir .vnc
+COPY scripts/xstartup /root/.vnc/
+RUN echo "export USER=root" >> /root/.bashrc
+ENV USER root
+
+RUN mkdir -p /scripts/
+COPY scripts/bootstrap.sh /scripts/
+RUN chmod +x /scripts/bootstrap.sh
+
+RUN  chmod +x /scripts/bootstrap.sh
+ENTRYPOINT ["/scripts/bootstrap.sh"] 
+
+# remove empty space
+# :g/^ /norm dw
+# sort
+# cat /tmp/t.txt |sort
+
+# cd src
+# docker buildx build --progress=plain --no-cache -t debian_lxde -f Dockerfile_lxde "."
+
+# docker run -ti debian_lxde bash    
