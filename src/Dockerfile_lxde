@@ -3,16 +3,20 @@ FROM debian:stable-slim
 #xqt vs xfce
 #https://www.google.com/search?channel=fs&client=ubuntu-sn&q=lxqt+vs+xfce
 
+# man 8 apt-get
 RUN set -euxo \
     && DEBIAN_FRONTEND=noninteractive \
     && apt update \
-    && apt-get install  --no-install-recommends --no-install-suggests --yes procps \
+    && apt-get install  --no-install-recommends --no-install-suggests --yes --quiet --quiet procps \
     lxde-core \
     lxterminal \
     x11vnc \
     vim \
     xvfb \
     x11-utils \
+    dbus \                   
+    dbus-user-session \
+    dbus-x11 \
     && apt-get autoremove --yes --auto-remove  \
     && apt-get clean -y \
     && apt-get autoclean -y \ 
