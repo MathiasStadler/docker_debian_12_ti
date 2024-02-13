@@ -31,11 +31,35 @@ RUN echo "export USER=root" >> /root/.bashrc
 ENV USER root
 
 RUN mkdir -p /scripts/
-COPY scripts/bootstrap.sh /scripts/
-RUN chmod +x /scripts/bootstrap.sh
+COPY scripts/bootstrap.sh dbus/docker-dbus-entrypoint.sh /scripts/
 
-RUN  chmod +x /scripts/bootstrap.sh
-ENTRYPOINT ["/scripts/bootstrap.sh"] 
+RUN chmod +x /scripts/bootstrap.sh
+RUN chmod +x /scripts/docker-dbus-entrypoint.sh
+
+# new user
+ENV PUID='1000' \
+    PGID='1000' \
+    USER='user' 
+
+RUN groupadd --gid "$PGID" "$USER" && \
+    useradd --home-dir /home/$USER --shell /bin/bash --uid "$PUID" --gid "$PGID" "$USER" && \
+    mkdir /home/$USER && \
+    chown -R $USER:$USER /home/$USER && \
+    usermod -aG sudo "$USER" && \
+    usermod -aG adm "$USER" && \
+    cp /etc/skel/.bashrc /home/user/
+
+# add $USER to sudoers
+RUN mkdir -p /etc/sudoers.d && \
+    echo "user ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/"${USER}"  && \
+    chmod 0440 /etc/sudoers.d/"$USER" && \
+    cp /etc/skel/.bashrc /home/${USER}
+
+
+ENTRYPOINT ["/scripts/docker-dbus-entrypoint.sh"]
+
+
+
 
 # remove empty space
 # :g/^ /norm dw
