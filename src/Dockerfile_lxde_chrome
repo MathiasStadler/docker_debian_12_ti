@@ -37,7 +37,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 # set language first
 RUN set -euxo \
     && apt update \
-    && apt-get install --no-install-recommends --no-install-suggests --yes --quiet --quiet apt-utils \
+    && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --no-install-suggests --yes --quiet --quiet apt-utils \
     locales \
     apt-transport-https \
     apt-utils \
