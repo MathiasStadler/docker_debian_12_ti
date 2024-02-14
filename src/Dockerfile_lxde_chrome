@@ -124,7 +124,7 @@ RUN echo "export USER=root" >> /root/.bashrc
 ENV USER root
 
 RUN mkdir -p /scripts/
-COPY scripts/bootstrap.sh dbus/docker-dbus-entrypoint.sh /scripts/
+COPY scripts/bootstrap.sh dbus/docker-dbus-entrypoint.sh scripts/start-chrome.sh /scripts/
 
 RUN chmod +x /scripts/bootstrap.sh
 RUN chmod +x /scripts/docker-dbus-entrypoint.sh
@@ -158,6 +158,7 @@ RUN groupadd --gid "$PGID" "$USER" && \
     chown -R $USER:$USER /home/$USER && \
     usermod -aG sudo "$USER" && \
     usermod -aG adm "$USER" && \
+    usermod -aG audio "$USER" && \
     cp /etc/skel/.bashrc /home/user/
 
 # add $USER to sudoers
