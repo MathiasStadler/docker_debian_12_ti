@@ -178,6 +178,6 @@ ENTRYPOINT ["/scripts/docker-dbus-entrypoint.sh"]
 # cat /tmp/t.txt |sort
 
 # cd src
-# docker buildx build --progress=plain --no-cache -t debian_lxde -f Dockerfile_lxde "."
+# docker buildx build --progress=plain --no-cache -t debian_lxde_chrome -f Dockerfile_lxde_chrome "."
 
 # docker run -ti debian_lxde bash    
