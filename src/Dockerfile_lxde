@@ -61,6 +61,9 @@ RUN set -euxo \
     xorgxrdp \
     xrdp \
     xvfb \
+    at-spi2-core \
+    menu \
+    x11-xserver-utils \
     && apt-get autoremove --yes --auto-remove  \
     && apt-get clean --yes \
     && apt-get autoclean --yes \ 
