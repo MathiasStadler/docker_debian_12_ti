@@ -138,10 +138,8 @@ ENV CHROMEDRIVER_DIR /chromedriver
 
 # maybe double
 # Set up the Chrome PPA
-# RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-#    && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list \
-
-RUN set -euxo \
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list \
     && apt-get update --yes \
     && apt-get install --no-install-recommends --no-install-suggests --yes --quiet --quiet google-chrome-stable \
     && CHROME_VERSION=$(google-chrome --product-version | cut --delimiter='.' --fields='1-3')  \
@@ -177,8 +175,14 @@ RUN set -euxo \
     && cp /etc/skel/.bashrc /home/${USER}
 
 # setup docker_startup
-COPY script/docker_startup.sh /  \
-    && script/docker_startup.d/ 
+RUN mkdir /docker_startup.d
+ADD scripts/docker_startup.d/ /docker_startup.d 
+ADD scripts/docker_startup.sh /
+
+
+RUN set -euxo \
+    && chmod 0755 /docker_startup.sh \
+    && chmod --recursive 0755 /docker_startup.d
 
 ENTRYPOINT ["/scripts/docker-dbus-entrypoint.sh"]
 
