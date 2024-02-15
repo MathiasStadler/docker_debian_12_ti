@@ -1,0 +1,2 @@
+run script => /docker_startup.d/00_template.sh
+run script => /docker_startup.d/01_init.sh
