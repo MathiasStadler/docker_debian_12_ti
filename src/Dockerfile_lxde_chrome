@@ -184,8 +184,8 @@ RUN set -euxo \
     && chmod 0755 /docker_startup.sh \
     && chmod --recursive 0755 /docker_startup.d
 
-ENTRYPOINT ["/scripts/docker-dbus-entrypoint.sh"]
-
+# ENTRYPOINT ["/scripts/docker-dbus-entrypoint.sh"]
+ENTRYPOINT ["/docker_startup.sh"]
 
 
 
