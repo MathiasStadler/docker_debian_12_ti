@@ -3,10 +3,7 @@ FROM debian:stable-slim
 # https://github.com/arktronic/docker-ubuntu-graphical/blob/master/Dockerfile 
 
 ENV TERM xterm
-# ENV LANG="en_US.UTF-8" \
-#     LANGUAGE="en_US:en" \
-#     LC_ALL="en_US.UTF-8" \
-#     LC_CTYPE="en_US.UTF-8"
+
 # FROM HERE
 # https://www.cyberciti.biz/faq/perl-warning-setting-locale-failed-in-debian-ubuntu/
 ENV LANG=en_US.UTF-8 \
@@ -33,6 +30,7 @@ ENV LANG=en_US.UTF-8 \
 
 # avoid user interaction
 ARG DEBIAN_FRONTEND=noninteractive
+
 # Automatically answer 'Yes' when using apt-get install
 RUN echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/90assumeyes
 
@@ -49,7 +47,7 @@ RUN set -euxo \
     apt-utils \
     && locale-gen en_US.UTF-8 \
     && DEBIAN_FRONTEND=noninteractive \
-    && apt-get install  --no-install-recommends --no-install-suggests --yes --quiet --quiet procps \
+    && apt-get install --no-install-recommends --no-install-suggests --yes --quiet --quiet procps \
     ca-certificates \
     dbus \                   
     dbus-user-session \
@@ -115,14 +113,15 @@ RUN set -euxo \
     dos2unix \
     locales \
     xdg-utils \
-    && locale-gen en_US.UTF-8 \
-    && apt-get autoremove --yes --auto-remove  \
-    && apt-get clean --yes \
-    && apt-get autoclean --yes \ 
-    && rm --recursive --force /var/lib/apt/lists/* \
-    && update-locale LANG=en_US.UTF-8 LC_CTYPE=en_US.UTF-8 \
     && rm /etc/xrdp/rsakeys.ini /etc/xrdp/cert.pem /etc/xrdp/key.pem \
-    && mv /usr/bin/lxpolkit /usr/bin/lxpolkit.disabled  
+    && mv /usr/bin/lxpolkit /usr/bin/lxpolkit.disabled  \
+    && locale-gen en_US.UTF-8 \
+    && update-locale LANG=en_US.UTF-8 LC_CTYPE=en_US.UTF-8 \
+    && apt-get autoremove --yes --auto-remove  \
+    && apt-get autoclean --yes \ 
+    && apt-get clean --yes \
+    && rm --recursive --force /var/lib/apt/lists/* \
+    && rm --recursive --force /var/lib/{apt,dpkg,cache,log}
 
 
 RUN touch /root/.Xresources
@@ -161,10 +160,14 @@ RUN set -euxo \
     && echo "ALT => curl "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/$DRIVER_VERSION/linux64/chromedriver-linux64.zip" --output $CHROMEDRIVER_DIR/chromedriver.zip " \
     && curl "https://storage.googleapis.com/chrome-for-testing-public/$DRIVER_VERSION/linux64/chromedriver-linux64.zip" --output $CHROMEDRIVER_DIR/chromedriver.zip \
     && unzip $CHROMEDRIVER_DIR/chromedriver.zip -d $CHROMEDRIVER_DIR  \
+    && rm $CHROMEDRIVER_DIR/chromedriver.zip \
+    && locale-gen en_US.UTF-8 \
+    && update-locale LANG=en_US.UTF-8 LC_CTYPE=en_US.UTF-8 \
     && apt-get autoremove --yes --auto-remove  \
-    && apt-get clean --yes \
     && apt-get autoclean --yes \ 
-    && rm --recursive --force /var/lib/apt/lists/*
+    && apt-get clean --yes \
+    && rm --recursive --force /var/lib/apt/lists/* \
+    && rm --recursive --force /var/lib/{apt,dpkg,cache,log}
 
 
 # Put Chromedriver into the PATH
