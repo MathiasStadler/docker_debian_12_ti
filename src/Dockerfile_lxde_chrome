@@ -33,6 +33,12 @@ ENV LANG=en_US.UTF-8 \
 
 # avoid user interaction
 ARG DEBIAN_FRONTEND=noninteractive
+# Automatically answer 'Yes' when using apt-get install
+RUN echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/90assumeyes
+
+
+# CONFIGURE SHELL
+SHELL ["/usr/bin/bash", "-c"]
 
 # set language first
 RUN set -euxo \
@@ -107,10 +113,13 @@ RUN set -euxo \
     menu \
     x11-xserver-utils \
     dos2unix \
+    locales \
+    xdg-utils \
+    && locale-gen en_US.UTF-8 \
     && apt-get autoremove --yes --auto-remove  \
     && apt-get clean --yes \
     && apt-get autoclean --yes \ 
-    && rm -rf /var/lib/apt/lists/* \
+    && rm --recursive --force /var/lib/apt/lists/* \
     && update-locale LANG=en_US.UTF-8 LC_CTYPE=en_US.UTF-8 \
     && rm /etc/xrdp/rsakeys.ini /etc/xrdp/cert.pem /etc/xrdp/key.pem \
     && mv /usr/bin/lxpolkit /usr/bin/lxpolkit.disabled  
@@ -138,18 +147,25 @@ ENV CHROMEDRIVER_DIR /chromedriver
 
 # maybe double
 # Set up the Chrome PPA
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-    && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list \
+RUN set -euxo \ 
+    && wget --quiet --output-document=- https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list 
+RUN set -euxo \
     && apt-get update --yes \
     && apt-get install --no-install-recommends --no-install-suggests --yes --quiet --quiet google-chrome-stable \
     && CHROME_VERSION=$(google-chrome --product-version | cut --delimiter='.' --fields='1-3')  \
     && DRIVER_VERSION=$(curl -s "https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_$CHROME_VERSION") \
-    && wget -q --continue -P $CHROMEDRIVER_DIR "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/$DRIVER_VERSION/linux64/chromedriver-linux64.zip" \
-    && unzip $CHROMEDRIVER_DIR/chromedriver* -d $CHROMEDRIVER_DIR \
+    && echo "CHROMEDRIVER_DIR => ${CHROMEDRIVER_DIR}" \
+    && echo "DRIVER_VERSION => ${DRIVER_VERSION}" \
+    && mkdir -p $CHROMEDRIVER_DIR \
+    && echo "ALT => curl "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/$DRIVER_VERSION/linux64/chromedriver-linux64.zip" --output $CHROMEDRIVER_DIR/chromedriver.zip " \
+    && curl "https://storage.googleapis.com/chrome-for-testing-public/$DRIVER_VERSION/linux64/chromedriver-linux64.zip" --output $CHROMEDRIVER_DIR/chromedriver.zip \
+    && unzip $CHROMEDRIVER_DIR/chromedriver.zip -d $CHROMEDRIVER_DIR  \
     && apt-get autoremove --yes --auto-remove  \
     && apt-get clean --yes \
     && apt-get autoclean --yes \ 
-    && rm -rf /var/lib/apt/lists/*
+    && rm --recursive --force /var/lib/apt/lists/*
+
 
 # Put Chromedriver into the PATH
 ENV PATH $CHROMEDRIVER_DIR:$PATH
