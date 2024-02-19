@@ -47,34 +47,22 @@ RUN set -euxo \
     apt-utils \
     && locale-gen en_US.UTF-8 \
     && DEBIAN_FRONTEND=noninteractive \
-    && apt-get install --no-install-recommends --no-install-suggests --yes --quiet --quiet procps \
+    && apt-get install --no-install-recommends --no-install-suggests --yes --quiet --quiet  alsa-utils \
+    apulse \
+    at-spi2-core \
     ca-certificates \
+    curl \
     dbus \                   
     dbus-user-session \
     dbus-x11 \
     dialog \
-    locales-all \
-    lxde-core \
-    lxde-icon-theme \
-    lxsession-default-apps \
-    lxterminal \
-    lxterminal \
-    vim \
-    x11-utils \
-    x11vnc \
-    xorgxrdp \
-    xrdp \
-    xvfb \
-    curl \
-    wget \
-    libssl-dev \
-    sudo \
-    vim \
-    fonts-liberation \
-    upower \
+    dos2unix \
     eterm \
+    fonts-liberation \
     gnupg \
+    libasound2 \
     libasound2 \          
+    libasound2-plugins \
     libatk1.0-0 \           
     libatk-bridge2.0-0 \
     libatspi2.0-0 \
@@ -89,30 +77,42 @@ RUN set -euxo \
     libnss3 \            
     libpango1.0-0 \ 
     libpulse0 \   
+    libssl-dev \
+    libssl-dev\
     libu2f-udev \
     libv4l-0 \         
     libvulkan1 \   
     libwayland-client0 \
     libxcomposite1 \
     libxdamage-dev \
-    unzip \
+    locales \
+    locales-all \
+    lxde-core \
+    lxde-icon-theme \
+    lxsession-default-apps \
+    lxterminal \
+    lxterminal \
+    menu \
+    perl \
+    pkg-config\
+    procps \
     pulseaudio \
     pulseaudio-utils \
     pulsemixer \
-    pkg-config\
-    libssl-dev\
+    sudo \
+    unzip \
+    upower \
+    vim \
+    vim \
+    wget \
     x11-utils \
-    libasound2 \
-    libasound2-plugins \
-    alsa-utils \
-    apulse \
-    perl \
-    at-spi2-core \
-    menu \
+    x11-utils \
+    x11vnc \
     x11-xserver-utils \
-    dos2unix \
-    locales \
     xdg-utils \
+    xorgxrdp \
+    xrdp \
+    xvfb \
     && rm /etc/xrdp/rsakeys.ini /etc/xrdp/cert.pem /etc/xrdp/key.pem \
     && mv /usr/bin/lxpolkit /usr/bin/lxpolkit.disabled  \
     && locale-gen en_US.UTF-8 \
@@ -120,19 +120,24 @@ RUN set -euxo \
     && apt-get autoremove --yes --auto-remove  \
     && apt-get autoclean --yes \ 
     && apt-get clean --yes \
-    && rm --recursive --force /var/lib/apt/lists/* \
-    && rm --recursive --force /var/lib/{apt,dpkg,cache,log}
+    && rm --recursive --force /var/lib/apt/lists/* 
+# && rm --recursive --force /var/lib/{apt,dpkg,cache,log}
 
 
-RUN touch /root/.Xresources
-RUN touch /root/.Xauthority
+RUN set -euxo \ 
+    && touch /root/.Xresources \
+    && touch /root/.Xauthority \
+    && mkdir .vnc \
+    && mkdir -p /scripts/
+
 WORKDIR /root
-RUN mkdir .vnc
+# old RUN mkdir .vnc
 COPY scripts/xstartup /root/.vnc/
 RUN echo "export USER=root" >> /root/.bashrc
 ENV USER root
 
-RUN mkdir -p /scripts/
+# old move to RUN group above 
+# RUN mkdir -p /scripts/
 COPY scripts/bootstrap.sh dbus/docker-dbus-entrypoint.sh scripts/start-chrome.sh /scripts/
 
 RUN chmod +x /scripts/bootstrap.sh \
@@ -149,6 +154,7 @@ ENV CHROMEDRIVER_DIR /chromedriver
 RUN set -euxo \ 
     && wget --quiet --output-document=- https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
     && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list 
+
 RUN set -euxo \
     && apt-get update --yes \
     && apt-get install --no-install-recommends --no-install-suggests --yes --quiet --quiet google-chrome-stable \
@@ -166,8 +172,8 @@ RUN set -euxo \
     && apt-get autoremove --yes --auto-remove  \
     && apt-get autoclean --yes \ 
     && apt-get clean --yes \
-    && rm --recursive --force /var/lib/apt/lists/* \
-    && rm --recursive --force /var/lib/{apt,dpkg,cache,log}
+    && rm --recursive --force /var/lib/apt/lists/* 
+# && rm --recursive --force /var/lib/{apt,dpkg,cache,log}
 
 
 # Put Chromedriver into the PATH
