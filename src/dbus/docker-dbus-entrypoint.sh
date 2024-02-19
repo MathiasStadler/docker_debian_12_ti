@@ -1,15 +1,15 @@
-#!/bin/bash
-set -e
+#!/usr/bin/bash
+set -euxo
 container=docker
 export container
 
 if [ $# -eq 0 ]; then
-	echo >&2 'ERROR: No command specified. You probably want to run `journalctl -f`, or maybe `bash`?'
+	echo >&2 "ERROR: No command specified. You probably want to run journalctl -f, or maybe bash ?"
 	exit 1
 fi
 
 if [ ! -t 0 ]; then
-	echo >&2 'ERROR: TTY needs to be enabled (`docker run -t ...`).'
+	echo >&2 "ERROR: TTY needs to be enabled (docker run -t ...)."
 	exit 1
 fi
 

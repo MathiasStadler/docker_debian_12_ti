@@ -1,4 +1,4 @@
-
+#!/usr/bin/bash
 # /w sound
 docker run -it \
 --security-opt apparmor=unconfined \
