@@ -25,7 +25,6 @@ ENV LANG=en_US.UTF-8 \
 #lxqt vs xfce
 #https://www.google.com/search?channel=fs&client=ubuntu-sn&q=lxqt+vs+xfce
 
-
 # man 8 apt-get
 
 # avoid user interaction
@@ -38,16 +37,26 @@ RUN echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/90assumeyes
 # CONFIGURE SHELL
 SHELL ["/usr/bin/bash", "-c"]
 
+
+
+# && locale-gen en_US.UTF-8 \
+# && update-locale LANG=en_US.UTF-8 LC_CTYPE=en_US.UTF-8 \
+# && dpkg-reconfigure locales \
+
+
 # set language first
 RUN set -euxo \
-    && apt update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --no-install-suggests --yes --quiet --quiet apt-utils \
+    && apt-get update --yes \
+    && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --no-install-suggests --yes --quiet --quiet  apt-utils \
     locales \
     apt-transport-https \
-    apt-utils \
-    && locale-gen en_US.UTF-8 \
-    && DEBIAN_FRONTEND=noninteractive \
-    && apt-get install --no-install-recommends --no-install-suggests --yes --quiet --quiet  alsa-utils \
+    apt-utils 
+# && locale-gen en_US.UTF-8 \
+# && update-locale LANG=en_US.UTF-8 LC_CTYPE=en_US.UTF-8 
+# && dpkg-reconfigure locales
+
+RUN set -euxo \
+    && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --no-install-suggests --yes --quiet --quiet  alsa-utils \
     apulse \
     at-spi2-core \
     ca-certificates \
@@ -114,33 +123,36 @@ RUN set -euxo \
     xrdp \
     xvfb \
     && rm /etc/xrdp/rsakeys.ini /etc/xrdp/cert.pem /etc/xrdp/key.pem \
-    && mv /usr/bin/lxpolkit /usr/bin/lxpolkit.disabled  \
-    && locale-gen en_US.UTF-8 \
-    && update-locale LANG=en_US.UTF-8 LC_CTYPE=en_US.UTF-8 \
-    && apt-get autoremove --yes --auto-remove  \
-    && apt-get autoclean --yes \ 
+    && mv /usr/bin/lxpolkit /usr/bin/lxpolkit.disabled \
+    && apt-get --yes autoclean \ 
+    && apt-get --yes --auto-remove autoremove \
     && apt-get clean --yes \
     && rm --recursive --force /var/lib/apt/lists/* 
 # && rm --recursive --force /var/lib/{apt,dpkg,cache,log}
 
+COPY scripts/xstartup /root/.vnc/
 
 RUN set -euxo \ 
     && touch /root/.Xresources \
     && touch /root/.Xauthority \
     && mkdir .vnc \
-    && mkdir -p /scripts/
+    && mkdir -p /scripts/ \
+    && echo "export USER=root" >> /root/.bashrc
 
 WORKDIR /root
 # old RUN mkdir .vnc
-COPY scripts/xstartup /root/.vnc/
-RUN echo "export USER=root" >> /root/.bashrc
-ENV USER root
+# COPY scripts/xstartup /root/.vnc/
+# RUN echo "export USER=root" >> /root/.bashrc
+
+
+#  ENV USER root
 
 # old move to RUN group above 
 # RUN mkdir -p /scripts/
 COPY scripts/bootstrap.sh dbus/docker-dbus-entrypoint.sh scripts/start-chrome.sh /scripts/
 
-RUN chmod +x /scripts/bootstrap.sh \
+RUN set -euxo \ 
+    && chmod +x /scripts/bootstrap.sh \
     &&  chmod +x /scripts/docker-dbus-entrypoint.sh
 
 # install chrome amd chromedriver
@@ -151,9 +163,14 @@ ENV CHROMEDRIVER_DIR /chromedriver
 
 # maybe double
 # Set up the Chrome PPA
+# RUN set -euxo \ 
+#    && wget --quiet --output-document=- https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+#    && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list 
+
 RUN set -euxo \ 
-    && wget --quiet --output-document=- https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && wget --quiet --output-document=- https://dl-ssl.google.com/linux/linux_signing_key.pub |gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/firefox.gpg \
     && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list 
+
 
 RUN set -euxo \
     && apt-get update --yes \
@@ -169,12 +186,11 @@ RUN set -euxo \
     && rm $CHROMEDRIVER_DIR/chromedriver.zip \
     && locale-gen en_US.UTF-8 \
     && update-locale LANG=en_US.UTF-8 LC_CTYPE=en_US.UTF-8 \
-    && apt-get autoremove --yes --auto-remove  \
-    && apt-get autoclean --yes \ 
+    && apt-get --yes autoclean  \ 
+    && apt-get --yes --auto-remove autoremove   \
     && apt-get clean --yes \
     && rm --recursive --force /var/lib/apt/lists/* 
 # && rm --recursive --force /var/lib/{apt,dpkg,cache,log}
-
 
 # Put Chromedriver into the PATH
 ENV PATH $CHROMEDRIVER_DIR:$PATH
@@ -209,7 +225,8 @@ RUN set -euxo \
     && chmod 0755 /docker_startup.sh \
     && chmod --recursive 0755 /docker_startup.d
 
-ENTRYPOINT ["/scripts/docker-dbus-entrypoint.sh"]
+# ENTRYPOINT ["/scripts/docker-dbus-entrypoint.sh && /home/user/workspace/bootstrap.sh "]
+ENTRYPOINT ["/usr/bin/bash", "-c", "set -euxo && /scripts/docker-dbus-entrypoint.sh && /home/user/workspace/bootstrap.sh "]
 # ENTRYPOINT ["/docker_startup.sh"]
 
 

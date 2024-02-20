@@ -1,3 +1,5 @@
+#!/usr/bin/bash
+export PULSE_SERVER=unix:/pulse/native
 export DISPLAY=:1
 export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
 xhost +
