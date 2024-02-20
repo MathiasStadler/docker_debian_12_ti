@@ -55,7 +55,7 @@ docker run -it \
 --volume "${XDG_RUNTIME_DIR}/pulse/native:${XDG_RUNTIME_DIR}/pulse/native" \
 --volume ~/.config/pulse/cookie:/root/.config/pulse/cookie \
 --group-add "$(getent group audio | cut -d: -f3)" \
-debian_lxde_chrome bash  
+debian_lxde_chrome /usr/bin/bash  
 
 
 # start script

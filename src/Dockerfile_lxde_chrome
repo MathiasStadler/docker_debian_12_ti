@@ -59,6 +59,7 @@ RUN set -euxo \
     && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --no-install-suggests --yes --quiet --quiet  alsa-utils \
     apulse \
     at-spi2-core \
+    bash \
     ca-certificates \
     curl \
     dbus \                   
@@ -226,9 +227,9 @@ RUN set -euxo \
     && chmod --recursive 0755 /docker_startup.d
 
 # ENTRYPOINT ["/scripts/docker-dbus-entrypoint.sh && /home/user/workspace/bootstrap.sh "]
-ENTRYPOINT ["/usr/bin/bash", "-c", "set -euxo && /scripts/docker-dbus-entrypoint.sh && /home/user/workspace/bootstrap.sh "]
+# ENTRYPOINT ["/usr/bin/bash", "-c", "set -euxo && /scripts/docker-dbus-entrypoint.sh && /home/user/workspace/bootstrap.sh "]
 # ENTRYPOINT ["/docker_startup.sh"]
-
+ENTRYPOINT ["/scripts/docker-dbus-entrypoint.sh"]
 
 
 # remove empty space
