@@ -65,3 +65,5 @@ debian_lxde_chrome /usr/bin/bash
 # ps axww
 # ps aaxwwue
 # ps -efw
+
+# apt install notification-daemon
