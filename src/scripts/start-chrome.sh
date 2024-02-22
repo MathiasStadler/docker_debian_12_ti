@@ -1,5 +1,6 @@
 #!/usr/bin/bash -euxo
-export PULSE_SERVER=unix:/pulse/native
+# export PULSE_SERVER=unix:/pulse/native
+export PULSE_SERVER=unix:/run/user/1000/pulse/native
 export DISPLAY=:1
 export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
 export XDG_RUNTIME_DIR=/run/user/1000
