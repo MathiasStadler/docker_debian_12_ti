@@ -265,6 +265,30 @@ RUN set -euxo \
     && echo "source /etc/environment " >> /home/user/.profile \
     && echo "export HOME=\"/home/user\"" >> /home/user/.profile
 
+
+USER "$USER"
+
+RUN set -euxo \  
+    && id -u \
+    && id -g  \
+    && echo $HOME  \
+    && cd $HOME \
+    && rustup default stable
+ 
+
+
+    RUN set -euxo \ 
+    && ls -la /home/user    
+
+
+USER "root"
+
+RUN set -euxo \  
+    && id -u \
+    && id -g \ 
+    && echo $HOME
+
+
 # setup docker_startup
 RUN mkdir /docker_startup.d
 ADD scripts/docker_startup.d/ /docker_startup.d 

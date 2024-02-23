@@ -83,6 +83,8 @@ docker run -it \
 --network ip6net \
 debian_lxde_chrome_rust /usr/bin/bash
 
+
+# docker rm  $(docker ps -a -q)
 # start script
 # sudo sh +x ./src/start_container_lxde_chrome_rust_entrypoint_bash.sh
 # sudo sh +x ./start_container_lxde_chrome_rust_entrypoint_bash.sh
