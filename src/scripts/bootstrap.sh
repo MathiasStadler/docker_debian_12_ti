@@ -61,8 +61,8 @@ run_vnc_server() {
 }
 
 install_xeyes(){
-    apt update
-    apt install --yes x11-apps
+    # apt update
+    # apt install --yes x11-apps
     export DISPLAY=:1
     xeyes &
 }
