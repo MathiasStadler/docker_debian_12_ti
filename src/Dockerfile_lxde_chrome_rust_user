@@ -33,12 +33,16 @@ ARG DEBIAN_FRONTEND=noninteractive
 # Automatically answer 'Yes' when using apt-get install
 RUN echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/90assumeyes
 
+
 # CONFIGURE SHELL
 SHELL ["/usr/bin/bash", "-c"]
+
+
 
 # && locale-gen en_US.UTF-8 \
 # && update-locale LANG=en_US.UTF-8 LC_CTYPE=en_US.UTF-8 \
 # && dpkg-reconfigure locales \
+
 
 # set language first
 RUN set -euxo \
@@ -57,6 +61,7 @@ RUN set -euxo \
 RUN dpkg-reconfigure locales
 
 #https://stackoverflow.com/questions/55077450/linode-lish-bash-warning-setlocale-lc-all-cannot-change-locale-en-us-utf-8
+
 
 RUN set -euxo \
     && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --no-install-suggests --yes --quiet --quiet  \
@@ -145,7 +150,15 @@ RUN set -euxo \
     && echo "export USER=root" >> /root/.bashrc
 
 WORKDIR /root
- 
+# old RUN mkdir .vnc
+# COPY scripts/xstartup /root/.vnc/
+# RUN echo "export USER=root" >> /root/.bashrc
+
+
+#  ENV USER root
+
+# old move to RUN group above 
+# RUN mkdir -p /scripts/
 COPY scripts/bootstrap.sh dbus/docker-dbus-entrypoint.sh scripts/start-chrome.sh /scripts/
 
 RUN set -euxo \ 
@@ -156,6 +169,7 @@ RUN set -euxo \
 # FROM HERE
 # https://gist.github.com/varyonic/dea40abcf3dd891d204ef235c6e8dd79?permalink_comment_id=3976763
 ENV CHROMEDRIVER_DIR /chromedriver
+
 
 # maybe double
 # Set up the Chrome PPA
@@ -192,36 +206,6 @@ RUN set -euxo \
 ENV PATH $CHROMEDRIVER_DIR:$PATH
 
 
-# curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --version
-
-# install rust
-ENV RUSTUP_HOME=/usr/local/rustup \
-    CARGO_HOME=/usr/local/cargo \
-    PATH=/usr/local/cargo/bin:$PATH \
-    RUST_VERSION=1.76.0
-
-RUN set -eux; \
-    dpkgArch="$(dpkg --print-architecture)"; \
-    case "${dpkgArch##*-}" in \
-    amd64) rustArch='x86_64-unknown-linux-gnu'; rustupSha256='0b2f6c8f85a3d02fde2efc0ced4657869d73fccfce59defb4e8d29233116e6db' ;; \
-    armhf) rustArch='armv7-unknown-linux-gnueabihf'; rustupSha256='f21c44b01678c645d8fbba1e55e4180a01ac5af2d38bcbd14aa665e0d96ed69a' ;; \
-    arm64) rustArch='aarch64-unknown-linux-gnu'; rustupSha256='673e336c81c65e6b16dcdede33f4cc9ed0f08bde1dbe7a935f113605292dc800' ;; \
-    i386) rustArch='i686-unknown-linux-gnu'; rustupSha256='e7b0f47557c1afcd86939b118cbcf7fb95a5d1d917bdd355157b63ca00fc4333' ;; \
-    *) echo >&2 "unsupported architecture: ${dpkgArch}"; exit 1 ;; \
-    esac; \
-    url="https://static.rust-lang.org/rustup/archive/1.26.0/${rustArch}/rustup-init"; \
-    wget "$url"; \
-    echo "${rustupSha256} *rustup-init" | sha256sum -c -; \
-    chmod +x rustup-init; \
-    ./rustup-init -y --no-modify-path --profile minimal --default-toolchain $RUST_VERSION --default-host ${rustArch}; \
-    rm rustup-init; \
-    chmod -R a+w $RUSTUP_HOME $CARGO_HOME; \
-    rustup --version; \
-    cargo --version; \
-    rustc --version; \
-    rm -rf ls \
-    rustup update stable && rustup default stable
-
 # /usr/local/cargo/bin
 ENV PATH="$PATH:/usr/local/cargo/bin" 
 
@@ -257,11 +241,48 @@ RUN set -euxo \
     && id -u \
     && id -g  \
     && echo $HOME  \
-    && cd $HOME \
-    && rustup default stable
+    && cd $HOME 
 
-    RUN set -euxo \ 
-    && ls -la /home/user    
+RUN set -euxo \ 
+    && ls -la /home/user 
+
+# curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --version
+
+# install rust
+ENV RUSTUP_HOME=/usr/local/rustup \
+    CARGO_HOME=/usr/local/cargo \
+    PATH=/usr/local/cargo/bin:$PATH \
+    RUST_VERSION=1.76.0
+
+RUN set -eux; \
+    dpkgArch="$(dpkg --print-architecture)"; \
+    case "${dpkgArch##*-}" in \
+    amd64) rustArch='x86_64-unknown-linux-gnu'; rustupSha256='0b2f6c8f85a3d02fde2efc0ced4657869d73fccfce59defb4e8d29233116e6db' ;; \
+    armhf) rustArch='armv7-unknown-linux-gnueabihf'; rustupSha256='f21c44b01678c645d8fbba1e55e4180a01ac5af2d38bcbd14aa665e0d96ed69a' ;; \
+    arm64) rustArch='aarch64-unknown-linux-gnu'; rustupSha256='673e336c81c65e6b16dcdede33f4cc9ed0f08bde1dbe7a935f113605292dc800' ;; \
+    i386) rustArch='i686-unknown-linux-gnu'; rustupSha256='e7b0f47557c1afcd86939b118cbcf7fb95a5d1d917bdd355157b63ca00fc4333' ;; \
+    *) echo >&2 "unsupported architecture: ${dpkgArch}"; exit 1 ;; \
+    esac; 
+
+ENV RUSTUP_INIT_URL="https://static.rust-lang.org/rustup/archive/1.26.0/${rustArch}/rustup-init"
+
+RUN set -euxo \
+    rustupiniturl="https://static.rust-lang.org/rustup/archive/1.26.0/${rustArch}/rustup-init"; \
+    && curl "$rustupiniturl" --output /home/$USER/rustup-init 
+    
+    RUN set -euxo \
+    && echo "${rustupSha256} *rustup-init" | sha256sum -c -; \
+    && chmod +x /home/$USER/rustup-init; \
+    && /home/$USER/rustup-init -y --no-modify-path --profile minimal --default-toolchain $RUST_VERSION --default-host ${rustArch}; \
+    && rm /home/$USER/rustup-init; \
+    && chmod -R a+w $RUSTUP_HOME $CARGO_HOME; \
+    && rustup --version; \
+    && cargo --version; \
+    && rustc --version; \
+    && ls \
+    && rm -rf ls \
+    && rustup update stable && rustup default stable
+
 
 USER "root"
 
@@ -269,6 +290,7 @@ RUN set -euxo \
     && id -u \
     && id -g \ 
     && echo $HOME
+
 
 # setup docker_startup
 RUN mkdir /docker_startup.d
@@ -295,11 +317,11 @@ ENTRYPOINT ["/scripts/docker-dbus-entrypoint.sh"]
 # cat /tmp/t.txt |sort
 
 # cd src
-# docker buildx build --progress=plain --no-cache -t debian_lxde_chrome_rust -f Dockerfile_lxde_chrome_rust "."
+# docker buildx build --progress=plain --no-cache -t debian_lxde_chrome_rust_user -f Dockerfile_lxde_chrome_rust_user "."
 
 # w/o --no-cache
 # cd src
-# docker buildx build --progress=plain --tag debian_lxde_chrome_rust --file Dockerfile_lxde_chrome_rust "."
+# docker buildx build --progress=plain -t debian_lxde_chrome_rust_user -f Dockerfile_lxde_chrome_rust_user "."
 
 # docker run -ti debian_lxde_chrome bash    
 # use start script => cd ,/src && sh +x  start_container_lxde_chrome.sh
