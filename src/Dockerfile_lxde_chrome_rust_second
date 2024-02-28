@@ -128,6 +128,8 @@ RUN set -euxo \
     inetutils-ping \
     net-tools \
     psmisc \
+    iproute2 \
+    obconf \
     && rm /etc/xrdp/rsakeys.ini /etc/xrdp/cert.pem /etc/xrdp/key.pem \
     && mv /usr/bin/lxpolkit /usr/bin/lxpolkit.disabled \
     && apt-get --yes autoclean \ 
@@ -262,3 +264,9 @@ ENTRYPOINT ["/scripts/docker-dbus-entrypoint.sh"]
 
 # docker run -ti debian_lxde_chrome bash    
 # use start script => cd ,/src && sh +x  start_container_lxde_chrome.sh
+
+# create ip6 network
+# docker network create --ipv6 --subnet 2001:0DB8::/112 ip6net
+
+# list docker network
+# docker network ls
