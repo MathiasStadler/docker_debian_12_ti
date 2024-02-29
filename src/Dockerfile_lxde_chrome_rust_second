@@ -130,6 +130,7 @@ RUN set -euxo \
     psmisc \
     iproute2 \
     obconf \
+    x11-apps \
     && rm /etc/xrdp/rsakeys.ini /etc/xrdp/cert.pem /etc/xrdp/key.pem \
     && mv /usr/bin/lxpolkit /usr/bin/lxpolkit.disabled \
     && apt-get --yes autoclean \ 
@@ -265,7 +266,7 @@ ENTRYPOINT ["/scripts/docker-dbus-entrypoint.sh"]
 # docker buildx build --progress=plain -t debian_lxde_chrome_rust_second -f Dockerfile_lxde_chrome_rust_second "."
 
 # docker run -ti debian_lxde_chrome bash    
-# use start script => cd ,/src && sh +x  start_container_lxde_chrome.sh
+# use start script => cd ./src && sh +x  start_container_lxde_chrome_rust_second.sh
 
 # create ip6 network
 # docker network create --ipv6 --subnet 2001:0DB8::/112 ip6net
