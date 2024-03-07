@@ -237,19 +237,23 @@ RUN set -euxo \
     && chmod 0440 /etc/sudoers.d/"$USER" \
     && cp /etc/skel/.bashrc /home/${USER}
 
+# old
 # setup docker_startup
-RUN mkdir /docker_startup.d
-ADD scripts/docker_startup.d/ /docker_startup.d 
-ADD scripts/docker_startup.sh /
+# RUN mkdir /docker_startup.d
+# ADD scripts/docker_startup.d/ /docker_startup.d 
+# ADD scripts/docker_startup.sh /
 
+# old
+# RUN set -euxo \
+#     && chmod 0755 /docker_startup.sh \
+#     && chmod --recursive 0755 /docker_startup.d
 
-RUN set -euxo \
-    && chmod 0755 /docker_startup.sh \
-    && chmod --recursive 0755 /docker_startup.d
-
+# old
 # ENTRYPOINT ["/scripts/docker-dbus-entrypoint.sh && /home/user/workspace/bootstrap.sh "]
 # ENTRYPOINT ["/usr/bin/bash", "-c", "set -euxo && /scripts/docker-dbus-entrypoint.sh && /home/user/workspace/bootstrap.sh "]
 # ENTRYPOINT ["/docker_startup.sh"]
+
+
 ENTRYPOINT ["/scripts/docker-dbus-entrypoint.sh"]
 
 
