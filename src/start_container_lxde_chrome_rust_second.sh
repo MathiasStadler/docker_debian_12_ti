@@ -51,10 +51,10 @@ docker run -it \
 --volume /sys/fs/cgroup:/sys/fs/cgroup \
 --volume /dev/shm:/dev/shm \
 --volume ./workspace:/home/user/workspace:rw \
---env PULSE_SERVER=unix:${XDG_RUNTIME_DIR}/pulse/native \
---volume ${XDG_RUNTIME_DIR}/pulse/native:${XDG_RUNTIME_DIR}/pulse/native \
+--env PULSE_SERVER=unix:"${XDG_RUNTIME_DIR}"/pulse/native \
+--volume "${XDG_RUNTIME_DIR}"/pulse/native:"${XDG_RUNTIME_DIR}"/pulse/native \
 --volume ~/.config/pulse/cookie:/root/.config/pulse/cookie \
---group-add $(getent group audio | cut -d: -f3) \
+--group-add "$(getent group audio | cut -d: -f3)" \
 debian_lxde_chrome_rust_second bash
 
 # start script
