@@ -254,6 +254,10 @@ RUN set -euxo \
 # ENTRYPOINT ["/docker_startup.sh"]
 
 
+# copy desktop and terminal settings
+COPY desktop_settings/desktop-items-0.conf  /root/.config/pcmanfm/LXDE/desktop-items-0.conf
+COPY desktop_settings/lxterminal.conf  /root/.config/lxterminal/lxterminal.conf
+
 ENTRYPOINT ["/scripts/docker-dbus-entrypoint.sh"]
 
 
