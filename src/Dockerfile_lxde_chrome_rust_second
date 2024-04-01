@@ -71,7 +71,6 @@ RUN set -euxo \
     fonts-liberation \
     gnupg \
     libasound2 \
-    libasound2 \          
     libasound2-plugins \
     libatk1.0-0 \           
     libatk-bridge2.0-0 \
@@ -88,7 +87,6 @@ RUN set -euxo \
     libpango1.0-0 \ 
     libpulse0 \   
     libssl-dev \
-    libssl-dev\
     libu2f-udev \
     libv4l-0 \         
     libvulkan1 \   
@@ -101,7 +99,6 @@ RUN set -euxo \
     lxde-icon-theme \
     lxsession-default-apps \
     lxterminal \
-    lxterminal \
     menu \
     perl \
     pkg-config\
@@ -113,9 +110,7 @@ RUN set -euxo \
     unzip \
     upower \
     vim \
-    vim \
     wget \
-    x11-utils \
     x11-utils \
     x11vnc \
     x11-xserver-utils \
@@ -160,7 +155,7 @@ WORKDIR /root
 
 # old move to RUN group above 
 # RUN mkdir -p /scripts/
-COPY scripts/bootstrap.sh dbus/docker-dbus-entrypoint.sh scripts/start-chrome.sh /scripts/
+COPY scripts/bootstrap.sh dbus/docker-dbus-entrypoint.sh scripts/start-chrome.sh scripts/start_chromedriver.sh /scripts/
 
 RUN set -euxo \ 
     && chmod +x /scripts/bootstrap.sh \
