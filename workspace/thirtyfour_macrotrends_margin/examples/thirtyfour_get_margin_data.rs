@@ -23,24 +23,31 @@ use thirtyfour::{
 const ACTION_CLICK: &str = "action_click";
 const ACTION_FORM_FILL_FIELD: &str = "action_form_fill_field";
 const ACTION_SCREENSHOT_WEB_ELEMENT: &str = "screenshot_web_element";
+const ACTION_FORM_FILL_FIELD_WITH_SELECT: &str ="action_form_fill_field_with_select";
+const ACTION_FORM_CLICK_SELECTION_FIELD: &str ="action_form_click_selection_field";
 
 // &["6",ACTION_,"",""],
 const WEB_XPATH: &[&[&str]] = &[
     //No.,Action,FieldName,xpath
-    &[
-        "1",
-        ACTION_CLICK,
-        "accept",
-        "/html/body/div[1]/div/div/div/div[2]/div/button[3]",
-    ],
-    &["2",ACTION_FORM_FILL_FIELD,"TREX","/html/body/table[1]/tbody/tr[1]/td/table/tbody/tr/td[1]/table/tbody/tr[2]/td/div/label/div/input"],
-    &["3",ACTION_SCREENSHOT_WEB_ELEMENT,"chart_stock.png","/html/body/div[4]/div[3]/div[3]/div[1]/div/div[1]/div/div[2]/div/div[2]/canvas[2]"],
-    &["4",ACTION_SCREENSHOT_WEB_ELEMENT,"table_chart_data.png","/html/body/div[4]/div[3]/div[4]/table/tbody/tr/td/div/table[1]/tbody/tr/td/div[2]/table"],
-    &["5",ACTION_SCREENSHOT_WEB_ELEMENT,"table_income_statement.png","/html/body/div[4]/div[3]/div[4]/table/tbody/tr/td/div/table[2]/tbody/tr[11]/td/div/table[2]"],
-    &["6",ACTION_CLICK,"balance sheet","/html/body/div[4]/div[3]/div[4]/table/tbody/tr/td/div/table[2]/tbody/tr[11]/td/div/table[1]/tbody/tr/td[1]/span/a[2]"],
-    &["7",ACTION_SCREENSHOT_WEB_ELEMENT,"table_balance_sheet.png","/html/body/div[4]/div[3]/div[4]/table/tbody/tr/td/div/table[2]/tbody/tr[11]/td/div/table[2]"],
-    &["8",ACTION_CLICK,"cash_flow","/html/body/div[4]/div[3]/div[4]/table/tbody/tr/td/div/table[2]/tbody/tr[11]/td/div/table[1]/tbody/tr/td[1]/span/a[3]"],
-    &["9",ACTION_SCREENSHOT_WEB_ELEMENT,"table_cash_flow.png","/html/body/div[4]/div[3]/div[4]/table/tbody/tr/td/div/table[2]/tbody/tr[11]/td/div/table[2]"],
+    // &[
+    //     "1",
+    //     ACTION_CLICK,
+    //     "accept",
+    //     "/html/body/div[1]/div/div/div/div[2]/div/button[3]",
+    // ],
+    &["1",ACTION_FORM_FILL_FIELD_WITH_SELECT,"TREX","/html/body/div[1]/div[2]/div[2]/div[2]/div/form/div[1]/div[1]/span[1]/input"],
+    &["2",ACTION_CLICK,"revenue","/html/body/div[1]/div[2]/div[2]/div[2]/div/form/div[1]/div[2]/ul/li[1]/a/span"],
+    &["3",ACTION_CLICK,"revenue","/html/body/div[8]/div[1]/div[1]/div/button"],
+    
+
+
+    // &["3",ACTION_SCREENSHOT_WEB_ELEMENT,"chart_stock.png","/html/body/div[4]/div[3]/div[3]/div[1]/div/div[1]/div/div[2]/div/div[2]/canvas[2]"],
+    // &["4",ACTION_SCREENSHOT_WEB_ELEMENT,"table_chart_data.png","/html/body/div[4]/div[3]/div[4]/table/tbody/tr/td/div/table[1]/tbody/tr/td/div[2]/table"],
+    // &["5",ACTION_SCREENSHOT_WEB_ELEMENT,"table_income_statement.png","/html/body/div[4]/div[3]/div[4]/table/tbody/tr/td/div/table[2]/tbody/tr[11]/td/div/table[2]"],
+    // &["6",ACTION_CLICK,"balance sheet","/html/body/div[4]/div[3]/div[4]/table/tbody/tr/td/div/table[2]/tbody/tr[11]/td/div/table[1]/tbody/tr/td[1]/span/a[2]"],
+    // &["7",ACTION_SCREENSHOT_WEB_ELEMENT,"table_balance_sheet.png","/html/body/div[4]/div[3]/div[4]/table/tbody/tr/td/div/table[2]/tbody/tr[11]/td/div/table[2]"],
+    // &["8",ACTION_CLICK,"cash_flow","/html/body/div[4]/div[3]/div[4]/table/tbody/tr/td/div/table[2]/tbody/tr[11]/td/div/table[1]/tbody/tr/td[1]/span/a[3]"],
+    // &["9",ACTION_SCREENSHOT_WEB_ELEMENT,"table_cash_flow.png","/html/body/div[4]/div[3]/div[4]/table/tbody/tr/td/div/table[2]/tbody/tr[11]/td/div/table[2]"],
 
 
     // => /html/body/div[4]/div[3]/div[4]/table/tbody/tr/td/div/table[2]/tbody/tr[11]/td/div/table[1]/tbody/tr/td[1]/span/a[3]
@@ -85,7 +92,7 @@ async fn run() -> color_eyre::Result<(), Box<dyn Error>> {
 
     path_to(_driver.clone()).await?;
     #[allow(unreachable_code)]
-    screenshot_browser(_driver.clone()).await?;
+    //screenshot_browser(_driver.clone()).await?;
     // process::exit(0);
 
     // NOT NEED please clean
@@ -103,6 +110,7 @@ async fn close_browser(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Err
     Ok(())
 }
 
+#[allow(dead_code)]
 async fn screenshot_browser(driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
     // FROM HERE  screenshot of browser windows
     // https://stackoverflow.com/questions/60999624/trying-to-take-and-save-a-screenshot-of-a-specific-element-selenium-python-ch
@@ -153,7 +161,7 @@ async fn wait_seconds_of_browser(
 async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
     // wait browser already load
     // ElementWaitable
-    wait_seconds_of_browser(_driver.clone(), 20).await?;
+    wait_seconds_of_browser(_driver.clone(), 10).await?;
 
     for field in 0..WEB_XPATH.len() {
         println!("No.   => {}", WEB_XPATH[field][0]);
@@ -172,12 +180,28 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                 WEB_XPATH[field][1]
             );
             let elem_form: WebElement = _driver.find(By::XPath(WEB_XPATH[field][3])).await?;
-            // elem_form.send_keys("TREX").await?;
+            println!("DEBUG => send_keys {}",WEB_XPATH[field][2]);
             elem_form.send_keys(WEB_XPATH[field][2]).await?;
+            println!("DEBUG => press enter");
             elem_form.send_keys(Key::Enter).await?;
-            // tokio::time::sleep(std::time::Duration::from_secs(5)).await;
             wait_seconds_of_browser(_driver.clone(), 5).await?;
-            // /html/body/table[1]/tbody/tr[1]/td/table/tbody/tr/td[1]/table/tbody/tr[2]/td/div/label/div/input
+        } else if ACTION_FORM_FILL_FIELD_WITH_SELECT == WEB_XPATH[field][1] {
+            println!(
+                "Action =>  ACTION_FORM_FILL_FIELD_WITH_SELECT ({})",
+                WEB_XPATH[field][1]
+            );
+            let elem_form: WebElement = _driver.find(By::XPath(WEB_XPATH[field][3])).await?;
+            println!("DEBUG => send_keys {}",WEB_XPATH[field][2]);
+            elem_form.send_keys(WEB_XPATH[field][2]).await?;
+            println!("DEBUG => select field");
+            // elem_form.send_keys(Key::Enter).await?;
+            println!("DEBUG => press enter");
+            ///html/body/div[1]/div[2]/div[2]/div[2]/div/form/div[1]/div[2]/ul/li[1]/a/span
+            // elem_form.send_keys(Key::Enter).await?;
+            wait_seconds_of_browser(_driver.clone(), 5).await?;
+        } else if ACTION_FORM_CLICK_SELECTION_FIELD == WEB_XPATH[field][1] {
+            // maybe double action click
+
         } else if ACTION_SCREENSHOT_WEB_ELEMENT == WEB_XPATH[field][1] {
             println!(
                 "Action =>  ACTION_FORM_FILL_FIELD ({})",
