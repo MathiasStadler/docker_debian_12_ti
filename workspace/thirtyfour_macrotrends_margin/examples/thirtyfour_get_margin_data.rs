@@ -100,8 +100,7 @@ async fn run() -> color_eyre::Result<(), Box<dyn Error>> {
     #[allow(unreachable_code)]
     //screenshot_browser(_driver.clone()).await?;
     // process::exit(0);
-  
-    save_result_table(_driver.clone()).await?;
+    save_table_to_file(_driver.clone()).await?;
     // FOR LATER
     // close_browser(_driver.clone()).await?;
 
@@ -245,17 +244,34 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
 // .has_headers(false)
 // https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=37d3c7c7eca04fbb17b83b90ef101a83
 
-//save_result_table
-#[allow(dead_code)]
-async fn save_result_table(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
-    
-    const OUTPUT_FILE_NAME:&str = "output.csv";
+// 2.nd table
+// /html/body/div[3]/div[3]/div[1]/div[8]/div[2]/table
 
-    const RESULT_TABLE:&[&[&str]] = &[
+async fn save_table_to_file(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
+
+// 1st table left side
+const OUTPUT_FILE_NAME:&str = "output_second.csv";
+
+const TABLE_XPATH:&[&[&str]] = &[
      //No.,FieldName,xpath
      &["t1","colum_name","/html/body/div[3]/div[3]/div[1]/div[8]/div[1]/table/thead/tr"],
      &["t2","No.:",      "/html/body/div[3]/div[3]/div[1]/div[8]/div[1]/table/tbody/tr"],
     ];
+    
+    let _ = save_table_to_file_worker(_driver,OUTPUT_FILE_NAME,TABLE_XPATH).await;
+
+
+//2nd table right side
+//save_table_to_file_worker(_driver: WebDriver,output_file_name:&str,table_xpath:&[&[&str]])
+
+Ok(())
+}
+
+//save_TABLE_XPATH
+#[allow(dead_code)]
+async fn save_table_to_file_worker(_driver: WebDriver,output_file_name:&str,table_xpath:&[&[&str]]) -> color_eyre::Result<(), Box<dyn Error>> {
+    
+    
 
     let mut field = 0;
 
@@ -267,11 +283,11 @@ async fn save_result_table(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn
     .from_writer(vec![]);
 
     // debug
-    println!("No.   => {}", RESULT_TABLE[field][0]);
-    println!("Field => {}", RESULT_TABLE[field][1]);
-    println!("XPath => {}", RESULT_TABLE[field][2]);
+    println!("No.   => {}", table_xpath[field][0]);
+    println!("Field => {}", table_xpath[field][1]);
+    println!("XPath => {}", table_xpath[field][2]);
 
-    let thead_rows_vec: Vec<WebElement> = _driver.find_all(By::XPath(RESULT_TABLE[0][2])).await?;
+    let thead_rows_vec: Vec<WebElement> = _driver.find_all(By::XPath(table_xpath[0][2])).await?;
 
     println!("DEBUG: thead_rows_vec len => {:?}", thead_rows_vec.len());
 
@@ -299,12 +315,12 @@ async fn save_result_table(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn
         field = 1;
 
         // debug
-        println!("No.   => {}", RESULT_TABLE[field][0]);
-        println!("Field => {}", RESULT_TABLE[field][1]);
-        println!("XPath => {}", RESULT_TABLE[field][2]);
+        println!("No.   => {}", table_xpath[field][0]);
+        println!("Field => {}", table_xpath[field][1]);
+        println!("XPath => {}", table_xpath[field][2]);
 
         let tbody_row_vec: Vec<WebElement> =
-            _driver.find_all(By::XPath(RESULT_TABLE[field][2])).await?;
+            _driver.find_all(By::XPath(table_xpath[field][2])).await?;
 
         row = 0;
         for tbody_row in tbody_row_vec {
@@ -329,7 +345,7 @@ async fn save_result_table(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn
         } //finish for loop => tbody_row
     } //finish for loop => thead_row
 
-    let mut file = File::create(OUTPUT_FILE_NAME)?;
+    let mut file = File::create(output_file_name)?;
     file.write_all(&wtr.into_inner()?)?;
 
     Ok(())
