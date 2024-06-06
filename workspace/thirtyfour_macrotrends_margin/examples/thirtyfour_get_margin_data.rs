@@ -1,12 +1,12 @@
 // use serde::Serialize;
 use std::error::Error;
 use std::fs::File;
-use std::io::prelude::*;
+// use std::io::prelude::*;
 use std::process;
 use std::thread;
 use std::time::Duration;
 
-use csv::Writer;
+// use csv::Writer;
 use thirtyfour::{
     // prelude::{ElementWaitable, WebDriverError},
     prelude::WebDriverError,
@@ -17,6 +17,12 @@ use thirtyfour::{
     WebElement,
 };
 
+// csv
+// use serde::{Deserialize, Serialize};
+// use std::io;
+use std::io::Write;
+use csv::WriterBuilder;
+// use std::error::Error;
 
 // wait
 
@@ -196,8 +202,8 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
             println!("DEBUG => select field");
             // elem_form.send_keys(Key::Enter).await?;
             println!("DEBUG => press enter");
-            ///html/body/div[1]/div[2]/div[2]/div[2]/div/form/div[1]/div[2]/ul/li[1]/a/span
-            // elem_form.send_keys(Key::Enter).await?;
+            
+            
             wait_seconds_of_browser(_driver.clone(), 5).await?;
         } else if ACTION_FORM_CLICK_SELECTION_FIELD == WEB_XPATH[field][1] {
             // maybe double action click
@@ -253,7 +259,12 @@ async fn save_result_table(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn
 
     let mut field = 0;
 
-    let mut wtr = Writer::from_writer(vec![]);
+    // let mut wtr = Writer::from_writer(vec![]);
+
+    let mut wtr = WriterBuilder::new()
+    .flexible(true)
+    .has_headers(false)
+    .from_writer(vec![]);
 
     // debug
     println!("No.   => {}", RESULT_TABLE[field][0]);
