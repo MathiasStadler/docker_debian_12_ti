@@ -29,18 +29,18 @@ const ACTION_FORM_CLICK_SELECTION_FIELD: &str ="action_form_click_selection_fiel
 // &["6",ACTION_,"",""],
 const WEB_XPATH: &[&[&str]] = &[
     //No.,Action,FieldName,xpath
+    
+    &["1",ACTION_FORM_FILL_FIELD_WITH_SELECT,"TREX","/html/body/div[1]/div[2]/div[2]/div[2]/div/form/div[1]/div[1]/span[1]/input"],
+    &["2",ACTION_CLICK,"revenue","/html/body/div[1]/div[2]/div[2]/div[2]/div/form/div[1]/div[2]/ul/li[1]/a/span"],
+    &["3",ACTION_CLICK,"revenue","/html/body/div[8]/div[1]/div[1]/div/button"],
+    
+
     // &[
     //     "1",
     //     ACTION_CLICK,
     //     "accept",
     //     "/html/body/div[1]/div/div/div/div[2]/div/button[3]",
     // ],
-    &["1",ACTION_FORM_FILL_FIELD_WITH_SELECT,"TREX","/html/body/div[1]/div[2]/div[2]/div[2]/div/form/div[1]/div[1]/span[1]/input"],
-    &["2",ACTION_CLICK,"revenue","/html/body/div[1]/div[2]/div[2]/div[2]/div/form/div[1]/div[2]/ul/li[1]/a/span"],
-    &["3",ACTION_CLICK,"revenue","/html/body/div[8]/div[1]/div[1]/div/button"],
-    
-
-
     // &["3",ACTION_SCREENSHOT_WEB_ELEMENT,"chart_stock.png","/html/body/div[4]/div[3]/div[3]/div[1]/div/div[1]/div/div[2]/div/div[2]/canvas[2]"],
     // &["4",ACTION_SCREENSHOT_WEB_ELEMENT,"table_chart_data.png","/html/body/div[4]/div[3]/div[4]/table/tbody/tr/td/div/table[1]/tbody/tr/td/div[2]/table"],
     // &["5",ACTION_SCREENSHOT_WEB_ELEMENT,"table_income_statement.png","/html/body/div[4]/div[3]/div[4]/table/tbody/tr/td/div/table[2]/tbody/tr[11]/td/div/table[2]"],
@@ -94,9 +94,9 @@ async fn run() -> color_eyre::Result<(), Box<dyn Error>> {
     #[allow(unreachable_code)]
     //screenshot_browser(_driver.clone()).await?;
     // process::exit(0);
-
-    // NOT NEED please clean
-    // save_result_table(_driver.clone()).await?;
+  
+    save_result_table(_driver.clone()).await?;
+    // FOR LATER
     // close_browser(_driver.clone()).await?;
 
     Ok(())
@@ -234,14 +234,22 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
     Ok(())
 }
 
+// https://stackoverflow.com/questions/73103205/how-to-load-a-irregular-csv-file-using-rust
+// .flexible(true)
+// .has_headers(false)
+// https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=37d3c7c7eca04fbb17b83b90ef101a83
+
 //save_result_table
 #[allow(dead_code)]
 async fn save_result_table(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
+    
+    const OUTPUT_FILE_NAME:&str = "output.csv";
+
     const RESULT_TABLE:&[&[&str]] = &[
-     //No.,FieldName,xpath        
-     &["t1","colum_name","/html/body/div[4]/table/tbody/tr[4]/td/div/table/tbody/tr[5]/td/table/tbody/tr/td/table/thead/tr"],
-     &["t2","No.:",      "/html/body/div[4]/table/tbody/tr[4]/td/div/table/tbody/tr[5]/td/table/tbody/tr/td/table/tbody/tr"],
-      ];
+     //No.,FieldName,xpath
+     &["t1","colum_name","/html/body/div[3]/div[3]/div[1]/div[8]/div[1]/table/thead/tr"],
+     &["t2","No.:",      "/html/body/div[3]/div[3]/div[1]/div[8]/div[1]/table/tbody/tr"],
+    ];
 
     let mut field = 0;
 
@@ -310,7 +318,7 @@ async fn save_result_table(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn
         } //finish for loop => tbody_row
     } //finish for loop => thead_row
 
-    let mut file = File::create("result.csv")?;
+    let mut file = File::create(OUTPUT_FILE_NAME)?;
     file.write_all(&wtr.into_inner()?)?;
 
     Ok(())
@@ -341,6 +349,7 @@ async fn search_location(_driver: &WebDriver, _place: &str) -> Result<(), WebDri
     // sudo dbus-daemon --system &> /dev/null
     // https://github.com/cypress-io/cypress/issues/4925
 }
+
 
 /*
 rustfmt  ./examples/tokio_finviz_method_five.rs
