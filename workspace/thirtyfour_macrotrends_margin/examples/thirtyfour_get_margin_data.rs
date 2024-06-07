@@ -39,6 +39,8 @@ const WEB_XPATH: &[&[&str]] = &[
     &["1",ACTION_FORM_FILL_FIELD_WITH_SELECT,"TREX","/html/body/div[1]/div[2]/div[2]/div[2]/div/form/div[1]/div[1]/span[1]/input"],
     &["2",ACTION_CLICK,"revenue","/html/body/div[1]/div[2]/div[2]/div[2]/div/form/div[1]/div[2]/ul/li[1]/a/span"],
     &["3",ACTION_CLICK,"revenue","/html/body/div[8]/div[1]/div[1]/div/button"],
+    &["4",ACTION_CLICK,"click","/html/body/div[9]/div[1]/div[1]/div/button"],
+    
     
 
     // &[
@@ -150,7 +152,8 @@ async fn screenshot_web_element (
     // println!("Screenshot of browser windows => {:?} ",screenshot);
     Ok(())
 }
-
+// https://github.com/stevepryde/thirtyfour/issues/4?ref=https://githubhelp.com
+// 
 async fn wait_seconds_of_browser(
     _driver: WebDriver,
     waiting_period: u64,
@@ -173,8 +176,10 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
         println!("Action => {}", WEB_XPATH[field][1]);
         println!("Field => {}", WEB_XPATH[field][2]);
 
+        // https://stackoverflow.com/questions/45183797/element-not-interactable-exception-in-selenium-web-automation
         if ACTION_CLICK == WEB_XPATH[field][1] {
             println!("Action =>  ACTION_CLICK ({})", WEB_XPATH[field][1]);
+            wait_seconds_of_browser(_driver.clone(), 5).await?;
 
             let elem_form: WebElement = _driver.find(By::XPath(WEB_XPATH[field][3])).await?;
             elem_form.click().await?;
