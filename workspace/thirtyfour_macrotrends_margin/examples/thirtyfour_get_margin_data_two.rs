@@ -23,6 +23,7 @@ use thirtyfour::{
 
 
 const WEB_PAGE: &str = "https://www.macrotrends.net";
+const STOCK_SYMBOL: &str = "TREX";
 
 const ACTION_CLICK_INTERACTABLE: &str ="action_click_interactable";
 const ACTION_CLICK: &str = "action_click";
@@ -34,7 +35,11 @@ const ACTION_SCREENSHOT_WEB_ELEMENT: &str = "screenshot_web_element";
 
 const WEB_XPATH: &[&[&str]] = &[
     //No.,Action,FieldName,xpath
-    &["1",ACTION_FORM_FILL_FIELD_WITH_SELECT,"TREX","/html/body/div[1]/div[2]/div[2]/div[2]/div/form/div[1]/div[1]/span[1]/input"],
+    // static stock symbol
+    //&["1",ACTION_FORM_FILL_FIELD_WITH_SELECT,"TREX","/html/body/div[1]/div[2]/div[2]/div[2]/div/form/div[1]/div[1]/span[1]/input"],
+    // const stock symbol
+    &["1",ACTION_FORM_FILL_FIELD_WITH_SELECT,STOCK_SYMBOL,"/html/body/div[1]/div[2]/div[2]/div[2]/div/form/div[1]/div[1]/span[1]/input"],
+    
     &["2",ACTION_CLICK,"revenue","/html/body/div[1]/div[2]/div[2]/div[2]/div/form/div[1]/div[2]/ul/li[1]/a/span"],
     &["3",ACTION_CLICK_INTERACTABLE,"click","/html/body/div[9]/div[1]/div[1]/div/button"],
     ];
@@ -64,7 +69,7 @@ async fn run() -> color_eyre::Result<(), Box<dyn Error>> {
 
     path_to(_driver.clone()).await?;
     save_table_to_file(_driver.clone()).await?;
-    close_browser(_driver.clone()).await?;
+    // close_browser(_driver.clone()).await?;
 
     Ok(())
 }
@@ -227,24 +232,53 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
 // 2.nd table
 // /html/body/div[3]/div[3]/div[1]/div[8]/div[2]/table
 
-async fn save_table_to_file(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
+async fn save_table_to_file_first(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
 
-// 1st table left side
-const OUTPUT_FILE_NAME:&str = "output_second.csv";
+    // 1st table left side
+    const OUTPUT_FILE_NAME_ONE:&str = "output_first.csv";
+    
+    const TABLE_XPATH_ONE:&[&[&str]] = &[
+         //No.,FieldName,xpath
+         &["t1","colum_name","/html/body/div[3]/div[3]/div[1]/div[8]/div[1]/table/thead/tr"],
+         &["t2","No.:",      "/html/body/div[3]/div[3]/div[1]/div[8]/div[1]/table/tbody/tr"],
+        ];
+        
+        let _ = save_table_to_file_worker(_driver.clone(),OUTPUT_FILE_NAME_ONE,TABLE_XPATH_ONE).await;
 
-const TABLE_XPATH:&[&[&str]] = &[
+// 2nd table right side
+const OUTPUT_FILE_NAME_TWO:&str = "output_second.csv";
+
+const TABLE_XPATH_TWO:&[&[&str]] = &[
      //No.,FieldName,xpath
-     &["t1","colum_name","/html/body/div[3]/div[3]/div[1]/div[8]/div[1]/table/thead/tr"],
-     &["t2","No.:",      "/html/body/div[3]/div[3]/div[1]/div[8]/div[1]/table/tbody/tr"],
+     &["t1","colum_name","/html/body/div[3]/div[3]/div[1]/div[8]/div[2]/table/thead/tr"],
+     &["t2","No.:",      "/html/body/div[3]/div[3]/div[1]/div[8]/div[2]/table/tbody/tr"],
     ];
     
-    let _ = save_table_to_file_worker(_driver,OUTPUT_FILE_NAME,TABLE_XPATH).await;
-
-
-//2nd table right side
-//save_table_to_file_worker(_driver: WebDriver,output_file_name:&str,table_xpath:&[&[&str]])
+    let _ = save_table_to_file_worker(_driver.clone(),OUTPUT_FILE_NAME_TWO,TABLE_XPATH_TWO).await;
 
 Ok(())
+}
+
+// 25 year
+// https://www.macrotrends.net/stocks/charts/TREX/trex/stock-price-history
+// sec data
+// https://www.sec.gov/cgi-bin/viewer?action=view&cik=1069878&accession_number=0001193125-23-266276&xbrl_type=v#
+
+const TABS_OF_DATA:&[&[&str]] = &[
+     //No.,FieldName,site xpath,table xpath
+     &["t1","prices","/html/body/div[3]/div[3]/div[1]/div[1]/ul[1]/li[1]/a","/html/body/div[3]/div[3]/div[1]/div[9]/table"],
+     &["t2","financial",""],
+     &["t3","revenue","/html/body/div[3]/div[3]/div[1]/div[8]/div[1]/table"],
+     
+
+    ];
+
+
+async fn save_table_to_file(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
+
+// switch to tab
+Ok(())
+
 }
 
 //save_TABLE_XPATH
