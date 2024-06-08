@@ -2,7 +2,9 @@
     "cSpell.words": [
         "dbus",
         "headful",
+        "INTERACTABLE",
         "ollah",
+        "RUSTFLAGS",
         "rustfmt",
         "spantrace",
         "tbody",
@@ -11,6 +13,7 @@
         "trapapa",
         "vncviewer",
         "Waitable",
+        "Wunused",
         "xclip"
     ]
 }
