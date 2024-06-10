@@ -39,12 +39,14 @@ const WEB_XPATH: &[&[&str]] = &[
     //&["1",ACTION_FORM_FILL_FIELD_WITH_SELECT,"TREX","/html/body/div[1]/div[2]/div[2]/div[2]/div/form/div[1]/div[1]/span[1]/input"],
     // const stock symbol
     &["1",ACTION_FORM_FILL_FIELD_WITH_SELECT,STOCK_SYMBOL,"/html/body/div[1]/div[2]/div[2]/div[2]/div/form/div[1]/div[1]/span[1]/input"],
-    
     &["2",ACTION_CLICK,"revenue","/html/body/div[1]/div[2]/div[2]/div[2]/div/form/div[1]/div[2]/ul/li[1]/a/span"],
     &["3",ACTION_CLICK_INTERACTABLE,"click","/html/body/div[9]/div[1]/div[1]/div/button"],
     &["4",ACTION_CLICK,"click","/html/body/div[3]/div[3]/div[1]/div[1]/ul[1]/li[1]/a"],
-    &["5",ACTION_CLICK,"click","/html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/a"],
+    &["5",ACTION_CLICK,"click","/html/body/div/div/div[1]/div[4]"],
+    &["6",ACTION_CLICK,"click","/html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]"],
     ];
+
+    // /html/body/div/div/div[1]/div[4]
 
 fn main() -> color_eyre::Result<(), Box<dyn Error>> {
     
@@ -68,7 +70,7 @@ async fn run() -> color_eyre::Result<(), Box<dyn Error>> {
     thread::sleep(Duration::from_secs(2));
 
     path_to(_driver.clone()).await?;
-    save_table_to_file(_driver.clone()).await?;
+    save_table_to_file_first(_driver.clone()).await?;
     // close_browser(_driver.clone()).await?;
 
     Ok(())
@@ -255,30 +257,33 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
 
 async fn save_table_to_file_first(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
 
+    println!("START save_table_to_file_first");
     // 1st table left side
-    const OUTPUT_FILE_NAME_ONE:&str = "output_first.csv";
+    const OUTPUT_FILE_NAME_ONE:&str = "output_TREX.csv";
     
     const TABLE_XPATH_ONE:&[&[&str]] = &[
          //No.,FieldName,xpath
-         &["t1","colum_name","/html/body/div[3]/div[3]/div[1]/div[8]/div[1]/table/thead/tr"],
-         &["t2","No.:",      "/html/body/div[3]/div[3]/div[1]/div[8]/div[1]/table/tbody/tr"],
+         &["t1","colum_name","/html/body/div[3]/div[3]/div[1]/div[9]/table/thead[2]/tr"],
+         // /html/body/div[3]/div[3]/div[1]/div[9]/table/thead[2]/tr/th[1]
+         &["t2","No.:",      "/html/body/div[3]/div[3]/div[1]/div[9]/table/tbody/tr"],
+         // /html/body/div[3]/div[3]/div[1]/div[9]/table/tbody
         ];
         
         let _ = save_table_to_file_worker(_driver.clone(),OUTPUT_FILE_NAME_ONE,TABLE_XPATH_ONE).await;
 
-// 2nd table right side
-const OUTPUT_FILE_NAME_TWO:&str = "output_second.csv";
+// // 2nd table right side
+// const OUTPUT_FILE_NAME_TWO:&str = "output_second.csv";
 
-const TABLE_XPATH_TWO:&[&[&str]] = &[
-     //No.,FieldName,xpath
-     &["t1","colum_name","/html/body/div[3]/div[3]/div[1]/div[8]/div[2]/table/thead/tr"],
-     &["t2","No.:",      "/html/body/div[3]/div[3]/div[1]/div[8]/div[2]/table/tbody/tr"],
-    ];
+// const TABLE_XPATH_TWO:&[&[&str]] = &[
+//      //No.,FieldName,xpath
+//      &["t1","colum_name","/html/body/div[3]/div[3]/div[1]/div[8]/div[2]/table/thead/tr"],
+//      &["t2","No.:",      "/html/body/div[3]/div[3]/div[1]/div[8]/div[2]/table/tbody/tr"],
+//     ];
     
-    let _ = save_table_to_file_worker(_driver.clone(),OUTPUT_FILE_NAME_TWO,TABLE_XPATH_TWO).await;
+//     let _ = save_table_to_file_worker(_driver.clone(),OUTPUT_FILE_NAME_TWO,TABLE_XPATH_TWO).await;
 
-Ok(())
-}
+ Ok(())
+ }
 
 // 25 year
 // https://www.macrotrends.net/stocks/charts/TREX/trex/stock-price-history
