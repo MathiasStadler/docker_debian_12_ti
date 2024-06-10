@@ -1,0 +1,1 @@
+<iframe title="Advertisement" id="ad_iframe" name="ad_iframe" scrolling="no" src="about:blank" frameborder="0" width="742px" height="296px" style="border: 0px; vertical-align: bottom; width: 742px; height: 296px;"></iframe>
