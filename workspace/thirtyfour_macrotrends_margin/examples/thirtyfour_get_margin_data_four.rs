@@ -3,6 +3,10 @@
 
 // RUSTFLAGS=-Wunused-crate-dependencies cargo 
 
+// env_logger
+// RUST_LOG=info ./main
+use log::info;
+
 use csv::WriterBuilder;
 use std::error::Error;
 use std::fs::File;
@@ -52,11 +56,16 @@ fn main() -> color_eyre::Result<(), Box<dyn Error>> {
     
     color_eyre::install()?;
 
+    env_logger::init();
+
+    info!("env_logger: starting up");
+
     let rt: tokio::runtime::Runtime = tokio::runtime::Builder::new_current_thread()
         .enable_all()
         .build()?;
         let _ = rt.block_on(run());
-
+    
+    info!("env_logger: ended");
     process::exit(0);
 }
 
