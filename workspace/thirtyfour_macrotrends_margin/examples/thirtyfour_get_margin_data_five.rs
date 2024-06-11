@@ -36,7 +36,9 @@ use thirtyfour::{
 
 
 const WEB_PAGE: &str = "https://www.macrotrends.net";
-const STOCK_SYMBOL: &str = "TREX";
+//const STOCK_SYMBOL: &str = "TREX";
+const STOCK_SYMBOL: &str = "CROX";
+
 
 const ACTION_CLICK_INTERACTABLE: &str ="action_click_interactable";
 const ACTION_CLICK: &str = "action_click";
@@ -56,9 +58,9 @@ const WEB_XPATH: &[&[&str]] = &[
     &["2",ACTION_CLICK,"revenue","/html/body/div[1]/div[2]/div[2]/div[2]/div/form/div[1]/div[2]/ul/li[1]/a/span"],
     &["3",ACTION_CLICK_INTERACTABLE,"click","/html/body/div[9]/div[1]/div[1]/div/button"],
     &["4",ACTION_CLICK,"click","/html/body/div[3]/div[3]/div[1]/div[1]/ul[1]/li[1]/a"],
-    &["5",ACTION_CLICK,"click","/html/body/div/div/div[1]/div[4]"],
+    // &["5",ACTION_CLICK,"click","/html/body/div/div/div[1]/div[4]"],
     // &["6",ACTION_CLICK,"click","/html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]"],
-    &["7",ACTION_ENTER_FRAME,"enter_frame","should empty"],
+    &["5",ACTION_ENTER_FRAME,"enter_frame","should empty"],
     ];
 
     // /html/body/div/div/div[1]/div[4]
@@ -262,23 +264,51 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
         info!("ACTION_ENTER_FRAME");
         debug!("START: ACTION_ENTER_FRAME");
 
-        // https://docs.rs/thirtyfour/latest/thirtyfour/struct.WebElement.html#find_all
-        let iframes = _driver.find_all(By::XPath("//iframe")).await?;
-        for iframe in iframes {
-            println!("{:?}",iframe);
-        }
+
+        // /html/ins/div/iframe
+
+        // iframe = _driver.find_element(By::XPath, "/html/ins/div/iframe");
+        // /html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]
+        // /html/ins/div/iframe
+        let _elem_iframe: WebElement = _driver.find(By::XPath("/html/ins/div/iframe")).await?;
+        _elem_iframe.enter_frame().await?;
+        // We can now search for elements within the iframe.
+        // let elem = _driver.find(By::Id("dismiss-button")).await?;
+        let elem = _driver.find(By::XPath("/html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]")).await?;
+        elem.click().await?;
+
+        // // https://docs.rs/thirtyfour/latest/thirtyfour/struct.WebElement.html
+        // let elem_iframe = driver.find(By::Id("iframeid1")).await?;
+        // elem_iframe.enter_frame().await?;
+        // // We can now search for elements within the iframe.
+        // let elem = driver.find(By::Id("button1")).await?;
+        // elem.click().await?;
+
+
+
+        // let _button =  _driver.find(By::Id("dismiss-button")).await?;
+        // _button.click().await?;
+        // println!("click button");
+        // println!("{:?}",_button);
+           
+
+        // // https://docs.rs/thirtyfour/latest/thirtyfour/struct.WebElement.html#find_all
+        // let iframes = _driver.find_all(By::XPath("//iframe")).await?;
+        // for iframe in iframes {
+        //     println!("{:?}",iframe);
+        // }
         // https://githubhelp.com/stevepryde/thirtyfour/issues/183
-        //let _web_element: WebElement = _driver.find(By::XPath(WEB_XPATH[field][3])).await?;
-        match _driver.enter_frame(0).await {
-            Ok(()) => {
-            let iframe_source = _driver.source().await?;
-            //complete_body.push(iframe_source)
-            println!("{:}",iframe_source);
-            }
-            Err(_e) => {
-                // println!("{}",_e);
-            }
-            }
+        // let _web_element: WebElement = _driver.find(By::XPath(WEB_XPATH[field][3])).await?;
+        // match _driver.enter_frame(0).await {
+        //     Ok(()) => {
+        //     let iframe_source = _driver.source().await?;
+        //     //complete_body.push(iframe_source)
+        //     println!("{:}",iframe_source);
+        //     }
+        //     Err(_e) => {
+        //         // println!("{}",_e);
+        //     }
+        //     }
 
         debug!("FINISHED: ACTION_ENTER_FRAME");
         }
