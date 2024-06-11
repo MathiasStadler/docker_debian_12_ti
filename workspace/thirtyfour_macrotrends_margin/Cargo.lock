@@ -1103,6 +1103,7 @@ dependencies = [
  "color-eyre",
  "csv",
  "env_logger",
+ "log",
  "thirtyfour",
  "tokio",
  "url",
