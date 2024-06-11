@@ -158,7 +158,7 @@ async fn wait_seconds_of_browser(
     thread::sleep(Duration::from_secs(waiting_period));
     Ok(())
 }
-
+#[allow(dead_code)]
 async fn check_of_ad_iframe(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>>{
 
     // https://github.com/stevepryde/thirtyfour/blob/main/thirtyfour/examples/query/wikipedia.rs
@@ -261,6 +261,12 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
         } else if ACTION_ENTER_FRAME == WEB_XPATH[field][1] {
         info!("ACTION_ENTER_FRAME");
         debug!("START: ACTION_ENTER_FRAME");
+
+        // https://docs.rs/thirtyfour/latest/thirtyfour/struct.WebElement.html#find_all
+        let iframes = _driver.find_all(By::XPath("//iframe")).await?;
+        for iframe in iframes {
+            println!("{:?}",iframe);
+        }
         // https://githubhelp.com/stevepryde/thirtyfour/issues/183
         //let _web_element: WebElement = _driver.find(By::XPath(WEB_XPATH[field][3])).await?;
         match _driver.enter_frame(0).await {
@@ -270,7 +276,7 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
             println!("{:}",iframe_source);
             }
             Err(_e) => {
-                println!("{}",_e;)
+                // println!("{}",_e);
             }
             }
 
@@ -331,6 +337,7 @@ async fn save_table_to_file_first(_driver: WebDriver) -> color_eyre::Result<(), 
 // sec data
 // https://www.sec.gov/cgi-bin/viewer?action=view&cik=1069878&accession_number=0001193125-23-266276&xbrl_type=v#
 
+#[allow(dead_code)]
 const TABS_OF_DATA:&[&[&str]] = &[
      //No.,FieldName,site xpath,table xpath
      &["t1","prices","/html/body/div[3]/div[3]/div[1]/div[1]/ul[1]/li[1]/a","/html/body/div[3]/div[3]/div[1]/div[9]/table"],
@@ -340,7 +347,7 @@ const TABS_OF_DATA:&[&[&str]] = &[
 
     ];
 
-
+#[allow(dead_code)]
 async fn save_table_to_file(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
 
 // switch to tab
