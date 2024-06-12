@@ -213,7 +213,7 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
 
     for field in 0..WEB_XPATH.len() {
 
-        debug!("Next Field => ");
+        debug!("Next Field  => ");
        // println!("No.   => {}", WEB_XPATH[field][0]);
         debug!("Field No.: => {}",WEB_XPATH[field][0]);
     
@@ -327,12 +327,12 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
         // FROM HERE
         // https://docs.rs/thirtyfour/latest/src/thirtyfour/webelement.rs.html#514-521
         let _elem_iframe_result = _driver.find(By::XPath("/html/ins/div/iframe"));
-
+        debug!("start - let _elem_iframe = match");
         let _elem_iframe = match _elem_iframe_result.await{
             Ok(..) => true,
             Err(e) => panic!("Problem Not found the element: {:?}", e),
         };
-
+        debug!("_elem_iframe => {}",_elem_iframe);
        
         // let present = match _elem_iframe.tag_name() {
         //     Ok(..) => true,
@@ -345,10 +345,34 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
 
         // _elem_iframe.enter_frame().await?;
         // We are now inside the iframe with a new DOM
+        //
+        //
+        // HERE
+        // https://docs.rs/thirtyfour/latest/thirtyfour/struct.WebElement.html
         // Now we can now search for elements within the iframe.
-        // let elem = _driver.find(By::Id("dismiss-button")).await?;
-        // let elem = _driver.find(By::XPath("/html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]")).await?;
-        // let elem = _driver.find(By::XPath("//*[@id=\"dismiss-button\"]")).await?;
+        let _elem_iframe_button_result:WebElement = _driver.find(By::Id("dismiss-button")).await?;
+        _elem_iframe_button_result.is_present().await;
+        // let _elem_iframe = match _elem_iframe_button_result{
+        //     Ok(_) => true,
+        //     _ => panic!("Problem Not found the element: "),
+        // };
+        // debug!("_elem_iframe 1 => {}",_elem_iframe);
+
+        // _elem_iframe_button_result = _driver.find(By::XPath("/html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]")).await?;
+        // _elem_iframe = match _elem_iframe_button_result{
+        //     Ok(..) => true,
+        //     Err(e) => panic!("Problem Not found the element: {:?}", e),
+        // };
+        // debug!("_elem_iframe 2 => {}",_elem_iframe);
+        // _elem_iframe = match _elem_iframe_button_result{
+        //     Ok(..) => true,
+        //     Err(e) => panic!("Problem Not found the element: {:?}", e),
+        // };
+        // debug!("_elem_iframe 3 => {}",_elem_iframe);
+        
+        // _elem_iframe_button_result = _driver.find(By::XPath("//*[@id=\"dismiss-button\"]")).await?;
+
+
         // elem.click().await?;
 
         // //*[@id="dismiss-button"]
@@ -431,7 +455,7 @@ Ok(())
 }
 
 //save_TABLE_XPATH
-#[allow(dead_code)]
+//#[allow(dead_code)]
 async fn save_table_to_file_worker(_driver: WebDriver,output_file_name:&str,table_xpath:&[&[&str]]) -> color_eyre::Result<(), Box<dyn Error>> {
     let mut field = 0;
 
@@ -441,41 +465,41 @@ async fn save_table_to_file_worker(_driver: WebDriver,output_file_name:&str,tabl
     .from_writer(vec![]);
 
     // debug
-    println!("No.   => {}", table_xpath[field][0]);
-    println!("Field => {}", table_xpath[field][1]);
-    println!("XPath => {}", table_xpath[field][2]);
+    debug!("table No.   => {}", table_xpath[field][0]);
+    debug!("table Field => {}", table_xpath[field][1]);
+    debug!("table XPath => {}", table_xpath[field][2]);
 
     let thead_rows_vec: Vec<WebElement> = _driver.find_all(By::XPath(table_xpath[0][2])).await?;
 
-    println!("DEBUG: thead_rows_vec len => {:?}", thead_rows_vec.len());
+    debug!("table thead_rows_vec len => {:?}", thead_rows_vec.len());
 
     let mut row = 0;
 
     for thead_row in thead_rows_vec {
         let thead_cell_vec: Vec<WebElement> = thead_row.find_all(By::XPath("th")).await?;
 
-        println!("DEBUG: thead_cell_vec len => {:?}", thead_cell_vec.len());
+        debug!("table thead_cell_vec len => {:?}", thead_cell_vec.len());
 
         let mut column = 0;
         for thead_cell in thead_cell_vec {
             column = column + 1;
             let cell_text = thead_cell.text().await?;
-            println!(
-                "DEBUG: write_field row/column {}/{} => {}",
+            debug!(
+                "write_field row/column {}/{} => {}",
                 row, column, cell_text
             );
             wtr.write_field(cell_text)?;
         } //finish inner for loop => thead_cell
 
-        println!("DEBUG: write_record");
+        debug!("DEBUG: write_record");
         let _ = &wtr.write_record(None::<&[u8]>)?;
 
         field = 1;
 
         // debug
-        println!("No.   => {}", table_xpath[field][0]);
-        println!("Field => {}", table_xpath[field][1]);
-        println!("XPath => {}", table_xpath[field][2]);
+        debug!("No.   => {}", table_xpath[field][0]);
+        debug!("Field => {}", table_xpath[field][1]);
+        debug!("XPath => {}", table_xpath[field][2]);
 
         let tbody_row_vec: Vec<WebElement> =
             _driver.find_all(By::XPath(table_xpath[field][2])).await?;
@@ -489,21 +513,21 @@ async fn save_table_to_file_worker(_driver: WebDriver,output_file_name:&str,tabl
             for tbody_cell in tbody_cell_vec {
                 column = column + 1;
                 let cell_text = tbody_cell.text().await?;
-                println!(
+                debug!(
                     "DEBUG: write_field row/column {}/{} => {}",
                     row, column, cell_text
                 );
                 wtr.write_field(cell_text)?;
             } //finish inner for loop => tbody_cell
 
-            println!("DEBUG: write_record");
+            debug!("tbody: write_record");
 
             // don't use result
             let _ = &wtr.write_record(None::<&[u8]>)?;
         } //finish for loop => tbody_row
     } //finish for loop => thead_row
 
-    println!("output_file_name => {}",output_file_name);
+    info!("csv file name => {}",output_file_name);
     let mut file = File::create(output_file_name)?;
     file.write_all(&wtr.into_inner()?)?;
 
@@ -513,7 +537,7 @@ async fn save_table_to_file_worker(_driver: WebDriver,output_file_name:&str,tabl
 // FOUND HERE
 // https://itehax.com/blog/web-scraping-using-rust
 async fn initialize_driver() -> Result<WebDriver, WebDriverError> {
-    info!(initialize_driver - start);
+    info!("initialize_driver - start");
     
     let _caps = DesiredCapabilities::chrome();
 
@@ -524,7 +548,7 @@ async fn initialize_driver() -> Result<WebDriver, WebDriverError> {
 
     let driver = WebDriver::new("http://localhost:9515", _caps).await?;
     driver.maximize_window().await?;
-    info!(initialize_driver - end);
+    info!("initialize_driver - end");
     Ok(driver)
 }
 
