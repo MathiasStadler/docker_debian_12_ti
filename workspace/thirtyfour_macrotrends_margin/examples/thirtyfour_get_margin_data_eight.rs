@@ -319,8 +319,10 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
          debug!("_elem_iframe => is available => ");
          // debug!("iframe source {}",_driver.source().await?);
 
+// /html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]/div/span
+
          // inside frame search for close button
-         let _elem_button_close = _driver.find(By::XPath("/html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]"));
+         let _elem_button_close = _driver.find(By::XPath("/html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]/div/span"));
          debug!("start - check close button 1: is available and if click to close iframe");
          let _elem_iframe = match _elem_button_close.await{
               Ok(iframe) =>iframe.click().await?,
@@ -339,15 +341,45 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
               Err(e) => debug!("Error => Element NOT found: {:?}", e),
            };
 
+           // FROM HERE
+           // https://stackoverflow.com/questions/12323403/how-do-i-find-an-element-that-contains-specific-text-in-selenium-webdriver-pyth
            // /html/body/div/div/div[1]/div[4]
-           let _elem_button_close_third = _driver.find(By::XPath("/html/body/div/div/div[1]/div[4]"));
-          debug!("start - check close button 3: is available and if click to close iframe");
-          let _elem_iframe_third = match _elem_button_close_third.await{
+           // let _elem_button_close = _driver.find(By::XPath("//div[text()='Close']"));
+           // "//div[contains(text(),'Add User')]"
+           //let _elem_button_close = _driver.find(By::XPath("//div[contains(text(),'Close')]"));
+           // "//span[text()='Settings']"
+           let _elem_button_close = _driver.find(By::XPath("//span[text()='Close']"));
+          debug!("start - FOUND CLOSE check close button 3: is available and if click to close iframe");
+          
+          let _elem_iframe = match _elem_button_close.await{
                Ok(iframe) =>iframe.click().await?,
                // Err(e) => panic!("Problem Not found the element: {:?}", e),
               // no panic!
               Err(e) => debug!("Error => Element NOT found: {:?}", e),
            };
+
+           // /html/body/div/div/div[1]/div[4]
+           let _elem_button_close = _driver.find(By::XPath("//html/body/div/div/div[1]/div[4]"));
+          debug!("start -  button 4: is available and if click to close iframe");
+          
+          let _elem_iframe = match _elem_button_close.await{
+               Ok(iframe) =>iframe.click().await?,
+               // Err(e) => panic!("Problem Not found the element: {:?}", e),
+              // no panic!
+              Err(e) => debug!("Error => Element NOT found: {:?}", e),
+           };
+
+           let _elem_button_close = _driver.find(By::Id("dismiss-button"));
+          debug!("start -  button 5: is available and if click to close iframe");
+          
+          let _elem_iframe = match _elem_button_close.await{
+               Ok(iframe) =>iframe.click().await?,
+               // Err(e) => panic!("Problem Not found the element: {:?}", e),
+              // no panic!
+              Err(e) => debug!("Error => Element NOT found: {:?}", e),
+           };
+
+           // /html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]
 
           debug!("_elem_button_close => click");
 
@@ -404,6 +436,7 @@ async fn save_table_to_file_first(_driver: WebDriver) -> color_eyre::Result<(), 
     const TABLE_XPATH_ONE:&[&[&str]] = &[
          //No.,FieldName,xpath
          &["t1","colum_name","/html/body/div[3]/div[3]/div[1]/div[9]/table/thead[2]/tr"],
+         // /html/body/div[3]/div[3]/div[1]/div[9]/table/thead[2]/tr/th[1]
          // /html/body/div[3]/div[3]/div[1]/div[9]/table/thead[2]/tr/th[1]
          &["t2","No.:",      "/html/body/div[3]/div[3]/div[1]/div[9]/table/tbody/tr"],
          // /html/body/div[3]/div[3]/div[1]/div[9]/table/tbody
