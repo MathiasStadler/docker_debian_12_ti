@@ -316,6 +316,9 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
              Ok(iframe) =>iframe.enter_frame().await?,
              Err(e) => panic!("Problem Not found the element: {:?}", e),
          };
+         // wait for _driver 
+         wait_seconds_of_browser(_driver.clone(), 1).await?;
+
          debug!("_elem_iframe => is available => ");
          // debug!("iframe source {}",_driver.source().await?);
 
@@ -378,6 +381,20 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
               // no panic!
               Err(e) => debug!("Error => Element NOT found: {:?}", e),
            };
+
+           // XPATH tip
+           // https://stackoverflow.com/questions/72922763/xpath-error-containstext-something-is-not-a-valid-xpath-expression
+// "//span[contains(@class, 'test-button__text') and text()='Test Text']")
+        let _elem_button_close = _driver.find(By::XPath("//span[contains(.,'Close']"));
+          debug!("start -  button 6: is available and if click to close iframe");
+          
+          let _elem_iframe = match _elem_button_close.await{
+               Ok(iframe) =>iframe.click().await?,
+               // Err(e) => panic!("Problem Not found the element: {:?}", e),
+              // no panic!
+              Err(e) => debug!("Error => Element NOT found: {:?}", e),
+           };
+
 
            // /html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]
 
