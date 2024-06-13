@@ -313,112 +313,33 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
         let _elem_iframe_result = _driver.find(By::XPath("/html/ins/div/iframe"));
         debug!("start - check iframe element is available");
         let _elem_iframe = match _elem_iframe_result.await{
-             Ok(iframe) =>iframe.enter_frame().await?,
-             Err(e) => panic!("Problem Not found the element: {:?}", e),
-         };
+            Ok(iframe) =>iframe.enter_frame().await?,
+            Err(e) => panic!("Problem Not found the element: {:?}", e),
+        };
          // wait for _driver 
-         wait_seconds_of_browser(_driver.clone(), 1).await?;
+        wait_seconds_of_browser(_driver.clone(), 1).await?;
 
-         debug!("_elem_iframe => is available => ");
-         // debug!("iframe source {}",_driver.source().await?);
-
-// /html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]/div/span
-
-         // inside frame search for close button
-         let _elem_button_close = _driver.find(By::XPath("/html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]/div/span"));
-         debug!("start - check close button 1: is available and if click to close iframe");
-         let _elem_iframe = match _elem_button_close.await{
-              Ok(iframe) =>iframe.click().await?,
-              // Err(e) => panic!("Problem Not found the element: {:?}", e),
-              // no panic!
-              Err(e) => debug!("Error => Element NOT found: {:?}", e),
-          };
-
-          // /html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/a
-          let _elem_button_close = _driver.find(By::XPath("/html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/a"));
-          debug!("start - check close button 2: is available and if click to close iframe");
-          let _elem_iframe = match _elem_button_close.await{
-               Ok(iframe) =>iframe.click().await?,
-               // Err(e) => panic!("Problem Not found the element: {:?}", e),
-              // no panic!
-              Err(e) => debug!("Error => Element NOT found: {:?}", e),
-           };
-
-           // FROM HERE
-           // https://stackoverflow.com/questions/12323403/how-do-i-find-an-element-that-contains-specific-text-in-selenium-webdriver-pyth
-           // /html/body/div/div/div[1]/div[4]
-           // let _elem_button_close = _driver.find(By::XPath("//div[text()='Close']"));
-           // "//div[contains(text(),'Add User')]"
-           //let _elem_button_close = _driver.find(By::XPath("//div[contains(text(),'Close')]"));
-           // "//span[text()='Settings']"
-           let _elem_button_close = _driver.find(By::XPath("//span[text()='Close']"));
-          debug!("start - FOUND CLOSE check close button 3: is available and if click to close iframe");
-          
-          let _elem_iframe = match _elem_button_close.await{
-               Ok(iframe) =>iframe.click().await?,
-               // Err(e) => panic!("Problem Not found the element: {:?}", e),
-              // no panic!
-              Err(e) => debug!("Error => Element NOT found: {:?}", e),
-           };
-
-           // /html/body/div/div/div[1]/div[4]
-           let _elem_button_close = _driver.find(By::XPath("//html/body/div/div/div[1]/div[4]"));
-          debug!("start -  button 4: is available and if click to close iframe");
-          
-          let _elem_iframe = match _elem_button_close.await{
-               Ok(iframe) =>iframe.click().await?,
-               // Err(e) => panic!("Problem Not found the element: {:?}", e),
-              // no panic!
-              Err(e) => debug!("Error => Element NOT found: {:?}", e),
-           };
-
-           let _elem_button_close = _driver.find(By::Id("dismiss-button"));
-          debug!("start -  button 5: is available and if click to close iframe");
-          
-          let _elem_iframe = match _elem_button_close.await{
-               Ok(iframe) =>iframe.click().await?,
-               // Err(e) => panic!("Problem Not found the element: {:?}", e),
-              // no panic!
-              Err(e) => debug!("Error => Element NOT found: {:?}", e),
-           };
-
-           // XPATH tip
-           // https://stackoverflow.com/questions/72922763/xpath-error-containstext-something-is-not-a-valid-xpath-expression
-// "//span[contains(@class, 'test-button__text') and text()='Test Text']")
+        debug!("_elem_iframe => is available => ");
+        // debug!("iframe source {}",_driver.source().await?);
+    
         let _elem_button_close = _driver.find(By::XPath("//span[contains(.,'Close']"));
-          debug!("start -  button 6: is available and if click to close iframe");
-          
-          let _elem_iframe = match _elem_button_close.await{
-               Ok(iframe) =>iframe.click().await?,
-               // Err(e) => panic!("Problem Not found the element: {:?}", e),
-              // no panic!
-              Err(e) => debug!("Error => Element NOT found: {:?}", e),
-           };
-
-
-           // /html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]
-
-          debug!("_elem_button_close => click");
-
-          debug!("leave the iframe - switch to frame(0)");
-          // _driver.switch_to().frame(0);
-
-         // /html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]
-            
-
-        // _elem_iframe_result.enter_frame().await?;
-
-        // https://docs.rs/thirtyfour/latest/thirtyfour/struct.WebElement.html#method.enter_frame
-    //     if _elem_iframe {
+        debug!("start -  button 6: is available and if click to close iframe");
         
-    //     debug!("enter to iframe");
-        
-    //     _elem_iframe.enter_frame().await?;
-        
-    //     debug!("inside to iframe");
+        let _elem_button_close = match _elem_button_close.await{
+            Ok(iframe) =>iframe.click().await?,
+            // Err(e) => panic!("Problem Not found the element: {:?}", e),
+            // no panic!
+            Err(e) => debug!("Error => Element NOT found: {:?}", e),
+        };
+
+        debug!("_elem_button_close => click");
+
+        debug!("leave the iframe - switch to frame(0)");
+      //   _driver.switch_to().frame(0);
+
                 
 
-    // }
+    
                 
 
         debug!("FINISHED: ACTION_ENTER_FRAME");
