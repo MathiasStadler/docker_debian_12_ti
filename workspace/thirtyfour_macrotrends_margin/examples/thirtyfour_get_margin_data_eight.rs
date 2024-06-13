@@ -282,7 +282,7 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
             elem_form.send_keys(WEB_XPATH[field][2]).await?;
             debug!("select field");
             // elem_form.send_keys(Key::Enter).await?;
-            debug!("DEBUG => press enter");
+            debug!("press enter");
             
             
             wait_seconds_of_browser(_driver.clone(), 5).await?;
@@ -306,111 +306,77 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
         
         debug!("START: ACTION_ENTER_FRAME");
         
-
-        //old version
-        // The above Rust code snippet is attempting to find a web element (iframe) using a specific
-        // XPath locator within a WebDriver instance. It then checks if the element is present by
-        // trying to get its tag name. If the tag name retrieval is successful, it sets the `present`
-        // variable to true. If the element reference is stale, it sets `present` to false. If any
-        // other error occurs during the process, it panics with a message indicating the problem
-        // encountered.
-        // let _elem_iframe: WebElement = _driver.find(By::XPath("/html/ins/div/iframe")).await?;
-        // // FROM HERE
-        // // https://docs.rs/thirtyfour/latest/src/thirtyfour/webelement.rs.html#514-521
-        // let _elem_iframe:WebElement = _driver.find(By::XPath("/html/ins/div/iframe")).await;
-        // let present = match _elem_iframe.tag_name().await {
-        //     Ok(..) => true,
-        //     Err(WebDriverError::StaleElementReference(..)) => false,
-        //     // Err(e) => return Err(e),
-        //     Err(e) => panic!("Problem find element: {:?}", e),
-        // };
-        // 
-
         // let _elem_iframe: WebElement = _driver.find(By::XPath("/html/ins/div/iframe")).await?;
         // FROM HERE
         // https://docs.rs/thirtyfour/latest/src/thirtyfour/webelement.rs.html#514-521
         // this works
         let _elem_iframe_result = _driver.find(By::XPath("/html/ins/div/iframe"));
-        debug!("start - let _elem_iframe = match");
+        debug!("start - check iframe element is available");
         let _elem_iframe = match _elem_iframe_result.await{
-            Ok(..) => true,
-            Err(e) => panic!("Problem Not found the element: {:?}", e),
-        };
-        debug!("_elem_iframe => {}",_elem_iframe);
-       
-        // let present = match _elem_iframe.tag_name() {
-        //     Ok(..) => true,
-        //     Err(WebDriverError::StaleElementReference(..)) => false,
-        //     // Err(e) => return Err(e),
-        //     Err(e) => panic!("Problem Not found the element: {:?}", e),
-        // };
+             Ok(iframe) =>iframe.enter_frame().await?,
+             Err(e) => panic!("Problem Not found the element: {:?}", e),
+         };
+         debug!("_elem_iframe => is available => ");
+         // debug!("iframe source {}",_driver.source().await?);
 
-        // println!("{:}",present);
+         // inside frame search for close button
+         let _elem_button_close = _driver.find(By::XPath("/html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]"));
+         debug!("start - check close button 1: is available and if click to close iframe");
+         let _elem_iframe = match _elem_button_close.await{
+              Ok(iframe) =>iframe.click().await?,
+              // Err(e) => panic!("Problem Not found the element: {:?}", e),
+              // no panic!
+              Err(e) => debug!("Error => Element NOT found: {:?}", e),
+          };
+
+          // /html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/a
+          let _elem_button_close = _driver.find(By::XPath("/html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/a"));
+          debug!("start - check close button 2: is available and if click to close iframe");
+          let _elem_iframe = match _elem_button_close.await{
+               Ok(iframe) =>iframe.click().await?,
+               // Err(e) => panic!("Problem Not found the element: {:?}", e),
+              // no panic!
+              Err(e) => debug!("Error => Element NOT found: {:?}", e),
+           };
+
+           // /html/body/div/div/div[1]/div[4]
+           let _elem_button_close_third = _driver.find(By::XPath("/html/body/div/div/div[1]/div[4]"));
+          debug!("start - check close button 3: is available and if click to close iframe");
+          let _elem_iframe_third = match _elem_button_close_third.await{
+               Ok(iframe) =>iframe.click().await?,
+               // Err(e) => panic!("Problem Not found the element: {:?}", e),
+              // no panic!
+              Err(e) => debug!("Error => Element NOT found: {:?}", e),
+           };
+
+          debug!("_elem_button_close => click");
+
+          debug!("leave the iframe - switch to frame(0)");
+          // _driver.switch_to().frame(0);
+
+         // /html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]
+            
+
+        // _elem_iframe_result.enter_frame().await?;
 
         // https://docs.rs/thirtyfour/latest/thirtyfour/struct.WebElement.html#method.enter_frame
-        if _elem_iframe {
+    //     if _elem_iframe {
         
-        debug!("enter to iframe");
+    //     debug!("enter to iframe");
         
-        _elem_iframe.enter_frame().await?;
+    //     _elem_iframe.enter_frame().await?;
         
-        debug!("inside to iframe");
-        
-        // Now we are now inside the iframe with a new DOM
-        //
-        //
-        // FROM HERE
-        // https://docs.rs/thirtyfour/latest/thirtyfour/struct.WebElement.html
-        // Now we can now search for elements within the iframe.
-        debug!("inside iframe: search for button");
-        let _elem_iframe_button_result:WebElement = _driver.find(By::Id("dismiss-button")).await?;
-        
-       // _elem_iframe_button_result.is_present().await;
+    //     debug!("inside to iframe");
+                
 
-        //from here
-        //https://stackoverflow.com/questions/53368303/why-am-i-getting-unused-result-which-must-be-used-result-may-be-an-err-vari
-        
-        let _elem_iframe_button = match _elem_iframe_button_result {
-            Ok(..) => true,
-            Err(e) => panic!("WebElement Not found the element: {:?}", e),
-        };
-        debug!("_elem_iframe => {}",_elem_iframe_button);
-
-    }
-        
-
-
-        // let _elem_iframe = match _elem_iframe_button_result{
-        //     Ok(_) => true,
-        //     _ => panic!("Problem Not found the element: "),
-        // };
-        // debug!("_elem_iframe 1 => {}",_elem_iframe);
-
-        // _elem_iframe_button_result = _driver.find(By::XPath("/html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]")).await?;
-        // _elem_iframe = match _elem_iframe_button_result{
-        //     Ok(..) => true,
-        //     Err(e) => panic!("Problem Not found the element: {:?}", e),
-        // };
-        // debug!("_elem_iframe 2 => {}",_elem_iframe);
-        // _elem_iframe = match _elem_iframe_button_result{
-        //     Ok(..) => true,
-        //     Err(e) => panic!("Problem Not found the element: {:?}", e),
-        // };
-        // debug!("_elem_iframe 3 => {}",_elem_iframe);
-        
-        // _elem_iframe_button_result = _driver.find(By::XPath("//*[@id=\"dismiss-button\"]")).await?;
-
-
-        // elem.click().await?;
-
-        // //*[@id="dismiss-button"]
-        // /html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]
+    // }
+                
 
         debug!("FINISHED: ACTION_ENTER_FRAME");
 
     }
         else {
-            debug!("ACTION NOT FOUND");
+            error!("ERROR: ACTION NOT FOUND");
             process::exit(1);
             // error not found
         }
