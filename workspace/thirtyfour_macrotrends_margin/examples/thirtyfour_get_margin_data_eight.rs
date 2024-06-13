@@ -329,6 +329,7 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
         // let _elem_iframe: WebElement = _driver.find(By::XPath("/html/ins/div/iframe")).await?;
         // FROM HERE
         // https://docs.rs/thirtyfour/latest/src/thirtyfour/webelement.rs.html#514-521
+        // this works
         let _elem_iframe_result = _driver.find(By::XPath("/html/ins/div/iframe"));
         debug!("start - let _elem_iframe = match");
         let _elem_iframe = match _elem_iframe_result.await{
@@ -346,23 +347,36 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
 
         // println!("{:}",present);
 
-        // _elem_iframe.enter_frame().await?;
-        // We are now inside the iframe with a new DOM
+        // https://docs.rs/thirtyfour/latest/thirtyfour/struct.WebElement.html#method.enter_frame
+        if _elem_iframe {
+        
+        debug!("enter to iframe");
+        
+        _elem_iframe.enter_frame().await?;
+        
+        debug!("inside to iframe");
+        
+        // Now we are now inside the iframe with a new DOM
         //
         //
-        // HERE
+        // FROM HERE
         // https://docs.rs/thirtyfour/latest/thirtyfour/struct.WebElement.html
         // Now we can now search for elements within the iframe.
+        debug!("inside iframe: search for button");
         let _elem_iframe_button_result:WebElement = _driver.find(By::Id("dismiss-button")).await?;
-       
+        
        // _elem_iframe_button_result.is_present().await;
 
         //from here
         //https://stackoverflow.com/questions/53368303/why-am-i-getting-unused-result-which-must-be-used-result-may-be-an-err-vari
-        match _elem_iframe_button_result.is_present().await {
-            Err(e) => println!("ELement not found {:?}", e),
-            _ => ()
-        }
+        
+        let _elem_iframe_button = match _elem_iframe_button_result {
+            Ok(..) => true,
+            Err(e) => panic!("WebElement Not found the element: {:?}", e),
+        };
+        debug!("_elem_iframe => {}",_elem_iframe_button);
+
+    }
         
 
 
