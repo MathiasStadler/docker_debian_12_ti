@@ -351,6 +351,16 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                             // let parent = child_elem.parent().await?;
                             // debug!("Tag parent (inside iframe)=> {:?} ",parent);
 
+                            // Tag id (inside iframe)=> Some("dismiss-button")
+
+                            let tag_id_dismiss_button="dismiss-button";
+
+                            if String::from(tag_id) == tag_id_dismiss_button {
+
+                                debug!("Found Id => {}", tag_id_dismiss_button);
+                            }
+                            
+                            
                             if tag_name == "div" {
                                 debug!("div match tag name <= {}",tag_name);
                                 debug!("div text => {}",child_elem.text().await?);
