@@ -343,17 +343,30 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
 
                             let tag_class_name = child_elem.class_name().await?;
                             debug!("Tag class name (inside iframe)=> {:?} ",tag_class_name);
+
+                            // let tag_text = child_elem.text().await?;
+                            // debug!("Tag text (inside iframe)=> {:?} ",tag_text);
+
                             
                             // let parent = child_elem.parent().await?;
                             // debug!("Tag parent (inside iframe)=> {:?} ",parent);
 
-                            if tag_name == "span" {
-                                debug!("match tag name <= {}",tag_name);
-                                debug!("text => {}",child_elem.text().await?);
+                            if tag_name == "div" {
+                                debug!("div match tag name <= {}",tag_name);
+                                debug!("div text => {}",child_elem.text().await?);
 
-                                let outer_html = child_elem.outer_html().await?;
-                                debug!("Tag outer_html (only span)=> {:?} ",outer_html);
+                                // let outer_html = child_elem.outer_html().await?;
+                                // debug!("Tag outer_html (only span)=> {:?} ",outer_html);
                             }
+
+                            if tag_name == "span" {
+                                debug!("span match tag name <= {}",tag_name);
+                                debug!("span text => {}",child_elem.text().await?);
+
+                                // let outer_html = child_elem.outer_html().await?;
+                                // debug!("Tag outer_html (only span)=> {:?} ",outer_html);
+                            }
+           
                             
                             debug!("END tag_name {}",tag_name);
                             // debug!("");
