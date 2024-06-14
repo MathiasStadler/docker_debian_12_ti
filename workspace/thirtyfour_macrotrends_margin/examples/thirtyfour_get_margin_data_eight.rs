@@ -219,6 +219,8 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
         debug!("Next Field  => ");
        // println!("No.   => {}", WEB_XPATH[field][0]);
         debug!("Field No.: => {}",WEB_XPATH[field][0]);
+
+        
     
        // println!("Action => {}", WEB_XPATH[field][1]);
         debug!("Action => {}",WEB_XPATH[field][1]);
@@ -306,44 +308,60 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
         
         debug!("START: ACTION_ENTER_FRAME");
         
+        
+
+
         // let _elem_iframe: WebElement = _driver.find(By::XPath("/html/ins/div/iframe")).await?;
         // FROM HERE
         // https://docs.rs/thirtyfour/latest/src/thirtyfour/webelement.rs.html#514-521
         // this works
+        // iframe
         let _elem_iframe_result = _driver.find(By::XPath("/html/ins/div/iframe"));
+
         debug!("start - check iframe element is available");
+        
         let _elem_iframe = match _elem_iframe_result.await{
-            Ok(iframe) =>iframe.enter_frame().await?,
+            Ok(iframe) => { 
+                let enter_frame = match iframe.enter_frame().await{
+                    Ok(elem_iframe) => {
+                        debug!("I'm here why im by here");
+                    },
+                    Err(e) => {
+                        panic!("Problem Not found the element: {:?}", e)
+                    },
+            },
+            
+            }
             Err(e) => panic!("Problem Not found the element: {:?}", e),
-        };
+
          // wait for _driver 
         wait_seconds_of_browser(_driver.clone(), 1).await?;
 
         debug!("_elem_iframe => is available => ");
         // debug!("iframe source {}",_driver.source().await?);
     
-        let _elem_button_close = _driver.find(By::XPath("//span[contains(.,'Close']"));
-        debug!("start -  button 6: is available and if click to close iframe");
+        // FROM HERE
+        // https://webscraping.ai/faq/xpath/how-to-use-xpath-to-handle-popups-in-web-scraping
+        let _elem_button_close = _driver.find(By::XPath("//*[@id='dismiss-button']"));
+    
+        debug!("start -  check button is available and if click to close iframe");
+
+        // insert-new-line-after-every-semi-colon
+        // sed "s/;/;\n/g" output1.txt >break_line.txt
         
         let _elem_button_close = match _elem_button_close.await{
             Ok(iframe) =>iframe.click().await?,
-            // Err(e) => panic!("Problem Not found the element: {:?}", e),
-            // no panic!
-            Err(e) => debug!("Error => Element NOT found: {:?}", e),
+            
+            Err(e) => {
+                debug!("Error => Element NOT found: {:?}", e);
+                },
         };
 
-        debug!("_elem_button_close => click");
-
+        debug!("end  -  check button is available and if click to close iframe");
+        
         debug!("leave the iframe - switch to frame(0)");
-      //   _driver.switch_to().frame(0);
-
-                
-
     
-                
-
         debug!("FINISHED: ACTION_ENTER_FRAME");
-
     }
         else {
             error!("ERROR: ACTION NOT FOUND");
@@ -356,6 +374,8 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
 
     Ok(())
 }
+
+
 
 // https://stackoverflow.com/questions/73103205/how-to-load-a-irregular-csv-file-using-rust
 // .flexible(true)
@@ -393,8 +413,8 @@ async fn save_table_to_file_first(_driver: WebDriver) -> color_eyre::Result<(), 
     
 //     let _ = save_table_to_file_worker(_driver.clone(),OUTPUT_FILE_NAME_TWO,TABLE_XPATH_TWO).await;
 
- Ok(())
- }
+Ok(())
+}
 
 // 25 year
 // https://www.macrotrends.net/stocks/charts/TREX/trex/stock-price-history
