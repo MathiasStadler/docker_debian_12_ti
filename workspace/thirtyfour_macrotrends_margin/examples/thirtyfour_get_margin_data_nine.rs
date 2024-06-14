@@ -313,24 +313,77 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
         let _elem_iframe_result = _driver.find(By::XPath("/html/ins/div/iframe"));
         debug!("start - check iframe element is available");
         let _elem_iframe = match _elem_iframe_result.await{
-            Ok(iframe) =>iframe.enter_frame().await?,
+            Ok(iframe) => {
+                let _inside_frame = match iframe.enter_frame().await{
+                    Ok(_inside_frame) => {
+                        debug!("show all tag name inside frame");
+                        // _driver.find(By::XPath("//child::*").await?;
+                        // /* got one/first element=> DEBUG - Tag => html
+                        // let child_elems = _driver.find_all(By::XPath("/*")).await?;
+                        // //* got all elements
+                        // let child_elems = _driver.find_all(By::XPath("//*")).await?;
+                        // use only 2nd layer /*/node()
+                        // let child_elems = _driver.find_all(By::XPath("/*/node()")).await?;
+                        
+                        // let child_elems = _driver.find_all(By::XPath("//*[@*]")).await?;
+                        // let child_elems = _driver.find_all(By::XPath("//*[//*]")).await?;
+                        let child_elems = _driver.find_all(By::XPath("//*[//*]")).await?;
+                        for child_elem in child_elems {
+                            
+                            // assert_eq!(child_elem.tag_name().await?, "button");
+                            let tag_name = child_elem.tag_name().await?;
+                            
+                            debug!("");
+                            debug!("START tag_name {}",tag_name);
+
+                            debug!("Tag name  (inside iframe)=> {}",tag_name);
+
+                            let tag_id = child_elem.id().await?;
+                            debug!("Tag id (inside iframe)=> {:?}",tag_id);
+
+                            let tag_class_name = child_elem.class_name().await?;
+                            debug!("Tag class name (inside iframe)=> {:?} ",tag_class_name);
+                            
+                            let parent = child_elem.parent().await?;
+                            debug!("Tag parent (inside iframe)=> {:?} ",parent);
+
+                            if tag_name == "span" {
+                                debug!("match tag name <= {}",tag_name);
+                                debug!("text => {}",child_elem.text().await?);
+
+                                let outer_html = child_elem.outer_html().await?;
+                                debug!("Tag outer_html (only span)=> {:?} ",outer_html);
+                            }
+                            
+                            debug!("END tag_name {}",tag_name);
+                            // debug!("");
+                        }
+
+                    },
+                    Err(e) => {
+                        debug!("Problem Not found the element: {:?}", e);
+                },
+
+                }; 
+            },
             Err(e) => panic!("Problem Not found the element: {:?}", e),
         };
-         // wait for _driver 
-        wait_seconds_of_browser(_driver.clone(), 1).await?;
-
-        debug!("_elem_iframe => is available => ");
-        // debug!("iframe source {}",_driver.source().await?);
-    
-        let _elem_button_close = _driver.find(By::XPath("//span[contains(.,'Close']"));
-        debug!("start -  button 6: is available and if click to close iframe");
         
-        let _elem_button_close = match _elem_button_close.await{
-            Ok(iframe) =>iframe.click().await?,
-            // Err(e) => panic!("Problem Not found the element: {:?}", e),
-            // no panic!
-            Err(e) => debug!("Error => Element NOT found: {:?}", e),
-        };
+        // // wait for _driver 
+        // wait_seconds_of_browser(_driver.clone(), 1).await?;
+
+        // debug!("_elem_iframe => is available => ");
+        // // debug!("iframe source {}",_driver.source().await?);
+    
+        // let _elem_button_close = _driver.find(By::XPath("//span[contains(.,'Close']"));
+        // debug!("start -  button 6: is available and if click to close iframe");
+        
+        // let _elem_button_close = match _elem_button_close.await{
+        //     Ok(iframe) =>iframe.click().await?,
+        //     // Err(e) => panic!("Problem Not found the element: {:?}", e),
+        //     // no panic!
+        //     Err(e) => debug!("Error => Element NOT found: {:?}", e),
+        // };
 
         debug!("_elem_button_close => click");
 
@@ -419,11 +472,11 @@ Ok(())
 
 }
 
-//save_TABLE_XPATH
-//#[allow(dead_code)]
 async fn save_table_to_file_worker(_driver: WebDriver,output_file_name:&str,table_xpath:&[&[&str]]) -> color_eyre::Result<(), Box<dyn Error>> {
     let mut field = 0;
 
+
+    debug!("start - save_table_to_file_worker");
     let mut wtr = WriterBuilder::new()
     .flexible(true)
     .has_headers(false)
@@ -443,7 +496,7 @@ async fn save_table_to_file_worker(_driver: WebDriver,output_file_name:&str,tabl
     for thead_row in thead_rows_vec {
         let thead_cell_vec: Vec<WebElement> = thead_row.find_all(By::XPath("th")).await?;
 
-        debug!("table thead_cell_vec len => {:?}", thead_cell_vec.len());
+        debug!("table THEAD thead_cell_vec len => {:?}", thead_cell_vec.len());
 
         let mut column = 0;
         for thead_cell in thead_cell_vec {
@@ -469,6 +522,9 @@ async fn save_table_to_file_worker(_driver: WebDriver,output_file_name:&str,tabl
         let tbody_row_vec: Vec<WebElement> =
             _driver.find_all(By::XPath(table_xpath[field][2])).await?;
 
+        
+        debug!("table TBODY tbody_cell_vec len => {:?}", tbody_row_vec.len());
+        
         row = 0;
         for tbody_row in tbody_row_vec {
             row = row + 1;
