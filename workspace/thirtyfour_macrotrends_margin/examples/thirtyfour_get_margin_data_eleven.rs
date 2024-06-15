@@ -9,13 +9,6 @@
 // thirtyfour 2024
 // https://www.zenrows.com/blog/rust-selenium#install-selenium
 
-// use log::info;
-// #[allow(unused_imports)]
-// use log::{debug, error, log_enabled, info, Level,LevelFilter};
-// #[allow(unused_imports)]
-// use env_logger::Builder;
-// use log::LevelFilter;
-
 #[allow(unused_imports)]
 use log::{debug, error, log_enabled, info, Level};
 
@@ -45,7 +38,8 @@ const STOCK_SYMBOL: &str = "CROX";
 
 const ACTION_CLICK_INTERACTABLE: &str ="action_click_interactable";
 const ACTION_CLICK: &str = "action_click";
-const ACTION_FORM_CLICK_SELECTION_FIELD: &str ="action_form_click_selection_field";
+
+// const ACTION_FORM_CLICK_SELECTION_FIELD: &str ="action_form_click_selection_field";
 const ACTION_FORM_FILL_FIELD_WITH_SELECT: &str ="action_form_fill_field_with_select";
 const ACTION_FORM_FILL_FIELD: &str = "action_form_fill_field";
 const ACTION_SCREENSHOT_WEB_ELEMENT: &str = "screenshot_web_element";
@@ -54,9 +48,6 @@ const ACTION_ENTER_FRAME: &str = "action_enter_frame";
 
 const WEB_XPATH: &[&[&str]] = &[
     //No.,Action,FieldName,xpath
-    // static stock symbol
-    //&["1",ACTION_FORM_FILL_FIELD_WITH_SELECT,"TREX","/html/body/div[1]/div[2]/div[2]/div[2]/div/form/div[1]/div[1]/span[1]/input"],
-    // const stock symbol
     &["1",ACTION_FORM_FILL_FIELD_WITH_SELECT,STOCK_SYMBOL,"/html/body/div[1]/div[2]/div[2]/div[2]/div/form/div[1]/div[1]/span[1]/input"],
     &["2",ACTION_CLICK,"revenue","/html/body/div[1]/div[2]/div[2]/div[2]/div/form/div[1]/div[2]/ul/li[1]/a/span"],
     &["3",ACTION_CLICK_INTERACTABLE,"click","/html/body/div[9]/div[1]/div[1]/div/button"],
@@ -66,17 +57,9 @@ const WEB_XPATH: &[&[&str]] = &[
     &["5",ACTION_ENTER_FRAME,"enter_frame","should empty"],
     ];
 
-    // /html/body/div/div/div[1]/div[4]
-
-// run with Log
-// RUST_LOG=debug cargo run --example thirtyfour_get_margin_data_six
-
-// #[cfg(not(all(feature = "color", feature = "humantime")))]
-fn main() -> color_eyre::Result<(), Box<dyn Error>> {
+    fn main() -> color_eyre::Result<(), Box<dyn Error>> {
     
     color_eyre::install()?;
-
-    // env_logger::init();
 
     env_logger::builder()
     .format(|buf, record| {
@@ -98,13 +81,7 @@ fn main() -> color_eyre::Result<(), Box<dyn Error>> {
             )
     })
     .init();
-
-    
-    //test env_logger
-    info!("env_logger: starting up");
-    debug!("this is a debug {}", "message");
-    error!("this is printed by default");
-    
+   
     error!("RUST_LOG maybe NOT enable => RUST_LOG=info < prg >");
 
     let rt: tokio::runtime::Runtime = tokio::runtime::Builder::new_current_thread()
@@ -164,14 +141,10 @@ async fn screenshot_web_element (
     // https://stackoverflow.com/questions/60999624/trying-to-take-and-save-a-screenshot-of-a-specific-element-selenium-python-ch
     
     let _screenshot = web_element.screenshot_as_png().await?;
-
-    // FROM HERE  write to file
-    // https://doc.rust-lang.org/std/fs/struct.File.html
-
     let mut _file = File::create(screenshot_name)?;
     _file.write_all(&_screenshot)?;
 
-    // println!("Screenshot of browser windows => {:?} ",screenshot);
+    info!("Screenshot of browser windows => {:?} ",_file);
     Ok(())
 }
 // https://github.com/stevepryde/thirtyfour/issues/4?ref=https://githubhelp.com
@@ -182,89 +155,68 @@ async fn wait_seconds_of_browser(
 ) -> color_eyre::Result<(), Box<dyn Error>> {
     // wait for page already load
     debug!("Status driver => {:?}",  _driver.status().await?);
-    //old
-    // println!("Status driver => {:?}", _driver.status().await?);
-    
-    // show line number
-    // let current_line = line!();
-    // println!("defined on line: {current_line}");
-    
+    debug!("Thread sleep for {} seconds",waiting_period);
     thread::sleep(Duration::from_secs(waiting_period));
     Ok(())
 }
-#[allow(dead_code)]
-async fn check_of_ad_iframe(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>>{
 
-    // https://github.com/stevepryde/thirtyfour/blob/main/thirtyfour/examples/query/wikipedia.rs
-    // / Find element from element using multiple selectors.
+// PLEASE REMOVE
+// #[allow(dead_code)]
+// async fn check_of_ad_iframe(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>>{
 
-//c.find(By::Css("#iframe_page_id")).await?.click().await?;
+//     // https://github.com/stevepryde/thirtyfour/blob/main/thirtyfour/examples/query/wikipedia.rs
+//     // / Find element from element using multiple selectors.
 
-_driver.find(By::Css("#ad_iframe")).await?.click().await?;
+// //c.find(By::Css("#iframe_page_id")).await?.click().await?;
 
-// c.find(By::Id("iframe_button")).await.expect_err("should not find the button in the iframe");
-// c.find(By::Id("root_button")).await?; // Can find the button in the root context though.
+// _driver.find(By::Css("#ad_iframe")).await?.click().await?;
 
-Ok(())
-}
+// // c.find(By::Id("iframe_button")).await.expect_err("should not find the button in the iframe");
+// // c.find(By::Id("root_button")).await?; // Can find the button in the root context though.
+
+// Ok(())
+// }
 
 async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
     info!("method start => path_to");
-    // wait browser already load
-    // ElementWaitable
+    
     wait_seconds_of_browser(_driver.clone(), 10).await?;
 
-// println!("{}",WEB_XPATH.len());
+    debug!("XPATH => Browser steps {}",WEB_XPATH.len());
 
     for field in 0..WEB_XPATH.len() {
 
-        debug!("Next Field  => ");
-       // println!("No.   => {}", WEB_XPATH[field][0]);
-        debug!("Field No.: => {}",WEB_XPATH[field][0]);
-    
-       // println!("Action => {}", WEB_XPATH[field][1]);
+        // PLEASE REMOVE
+        // debug!("Next Field  => ");
+        debug!("Next field No.: => {}",WEB_XPATH[field][0]);
         debug!("Action => {}",WEB_XPATH[field][1]);
-        
-    
-        // println!("Field => {}", WEB_XPATH[field][2]);
         debug!("Field => {}",WEB_XPATH[field][2]);
-
-        // Hint Format to long for console
-        // debug!("Field No.: => {}, Action => {}, Field => {}",WEB_XPATH[field][0],WEB_XPATH[field][1],WEB_XPATH[field][2]);
-
+        
 
         // https://stackoverflow.com/questions/45183797/element-not-interactable-exception-in-selenium-web-automation
         if ACTION_CLICK_INTERACTABLE == WEB_XPATH[field][1] {
-
-            wait_seconds_of_browser(_driver.clone(), 20).await?;
-
-            // println!("Action =>  ACTION_CLICK_INTERACTABLE ({})", WEB_XPATH[field][1]);
-            debug!("Action =>  ACTION_CLICK_INTERACTABLE ({})", WEB_XPATH[field][1]);
-            // let current_line = line!();
-            // println!("defined on line: {current_line}");
-                        
+            debug!("Action START =>  ACTION_CLICK_INTERACTABLE ({})", WEB_XPATH[field][1]);
+            wait_seconds_of_browser(_driver.clone(), 10).await?;
             let elem_form: WebElement = _driver.find(By::XPath(WEB_XPATH[field][3])).await?;
             elem_form.click().await?;
-            wait_seconds_of_browser(_driver.clone(), 20).await?;
+            wait_seconds_of_browser(_driver.clone(), 10).await?;
+            debug!("Action FINISH =>  ACTION_CLICK_INTERACTABLE ({})", WEB_XPATH[field][1]);
         }
         else if ACTION_CLICK == WEB_XPATH[field][1] {
-            // println!("Action =>  ACTION_CLICK ({})", WEB_XPATH[field][1]);
-            debug!("Action =>  ACTION_CLICK ({})", WEB_XPATH[field][1]);
-                    
-            
+            debug!("Action START =>  ACTION_CLICK ({})", WEB_XPATH[field][1]);
             wait_seconds_of_browser(_driver.clone(), 5).await?;
-
             let elem_form: WebElement = _driver.find(By::XPath(WEB_XPATH[field][3])).await?;
-            
+            let tag_name = elem_form.tag_name().await?;
+            debug!("\t ACTION CLICK the element => tag_name {}",tag_name);
+            // PLEASE REMOVE
+            // debug!("\t ACTION CLICK the element");
             elem_form.click().await?;
-            
-            wait_seconds_of_browser(_driver.clone(), 5).await?;
-        
+            // PLEASE REMOVE to much wait time
+            // wait_seconds_of_browser(_driver.clone(), 5).await?;
+            debug!("Action FINISH =>  ACTION_CLICK ({})", WEB_XPATH[field][1]);
         } else if ACTION_FORM_FILL_FIELD == WEB_XPATH[field][1] {
-            debug!(
-                "Action =>  ACTION_FORM_FILL_FIELD ({})",
-                WEB_XPATH[field][1]
-            );
+            debug!("Action START =>  ACTION_FORM_FILL_FIELD ({})", WEB_XPATH[field][1]);
+            
             // let current_line = line!();
             // println!("defined on line: {current_line}");
             let elem_form: WebElement = _driver.find(By::XPath(WEB_XPATH[field][3])).await?;
@@ -273,45 +225,32 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
             debug!("DEBUG => press enter");
             elem_form.send_keys(Key::Enter).await?;
             wait_seconds_of_browser(_driver.clone(), 5).await?;
+            debug!("Action FINISH =>  ACTION_FORM_FILL_FIELD ({})", WEB_XPATH[field][1]);
         } else if ACTION_FORM_FILL_FIELD_WITH_SELECT == WEB_XPATH[field][1] {
-            debug!(
-                "Action =>  ACTION_FORM_FILL_FIELD_WITH_SELECT ({})",
-                WEB_XPATH[field][1]
-            );
-            
+            debug!("Action START =>  ACTION_FORM_FILL_FIELD ({})", WEB_XPATH[field][1]);
             let elem_form: WebElement = _driver.find(By::XPath(WEB_XPATH[field][3])).await?;
-            debug!("send_keys {}",WEB_XPATH[field][2]);
+            debug!("\t send_keys {}",WEB_XPATH[field][2]);
             elem_form.send_keys(WEB_XPATH[field][2]).await?;
-            debug!("select field");
+            debug!("\t select field");
             // elem_form.send_keys(Key::Enter).await?;
-            debug!("press enter");
+            debug!("\t press enter");
             
             
             wait_seconds_of_browser(_driver.clone(), 5).await?;
-        } else if ACTION_FORM_CLICK_SELECTION_FIELD == WEB_XPATH[field][1] {
+            debug!("Action FINISH =>  ACTION_FORM_FILL_FIELD ({})", WEB_XPATH[field][1]);
+        } else if ACTION_FORM_FILL_FIELD_WITH_SELECT == WEB_XPATH[field][1] {
             // maybe double action click
 
         } else if ACTION_SCREENSHOT_WEB_ELEMENT == WEB_XPATH[field][1] {
-            debug!(
-                "Action =>  ACTION_FORM_FILL_FIELD ({})",
-                WEB_XPATH[field][1]
-            );
-            
+            debug!("Action START =>  ACTION_SCREENSHOT_WEB_ELEMENT ({})", WEB_XPATH[field][1]);
             wait_seconds_of_browser(_driver.clone(), 5).await?;
             let _web_element: WebElement = _driver.find(By::XPath(WEB_XPATH[field][3])).await?;
             let _screenshot_name: &str = WEB_XPATH[field][2];
-
             screenshot_web_element(_web_element, _screenshot_name).await?;
+            debug!("Finish START =>  ACTION_SCREENSHOT_WEB_ELEMENT ({})", WEB_XPATH[field][1]);
         } else if ACTION_ENTER_FRAME == WEB_XPATH[field][1] {
+            debug!("Action START =>  ACTION_ENTER_FRAME ({})", WEB_XPATH[field][1]);
         
-        info!("ACTION_ENTER_FRAME {}","insert");
-        
-        debug!("START: ACTION_ENTER_FRAME");
-        
-        // let _elem_iframe: WebElement = _driver.find(By::XPath("/html/ins/div/iframe")).await?;
-        // FROM HERE
-        // https://docs.rs/thirtyfour/latest/src/thirtyfour/webelement.rs.html#514-521
-        // this works
         let _elem_iframe_result = _driver.find(By::XPath("/html/ins/div/iframe"));
         debug!("start - check iframe element is available");
         let _elem_iframe = match _elem_iframe_result.await{
@@ -319,18 +258,10 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                 let _inside_frame = match iframe.enter_frame().await{
                     Ok(_inside_frame) => {
                         debug!("show all tag name inside frame");
-                        // _driver.find(By::XPath("//child::*").await?;
-                        // /* got one/first element=> DEBUG - Tag => html
-                        // let child_elems = _driver.find_all(By::XPath("/*")).await?;
-                        // //* got all elements
-                        // let child_elems = _driver.find_all(By::XPath("//*")).await?;
-                        // use only 2nd layer /*/node()
-                        // let child_elems = _driver.find_all(By::XPath("/*/node()")).await?;
                         
-                        // let child_elems = _driver.find_all(By::XPath("//*[@*]")).await?;
+                        // Use / to select a node's immediate children.
                         // let child_elems = _driver.find_all(By::XPath("//*[//*]")).await?;
-                        // let child_elems = _driver.find_all(By::XPath("//*[//*]")).await?;
-                        let child_elems = _driver.find_all(By::XPath("/")).await?;
+                        let child_elems = _driver.find_all(By::XPath("/*")).await?;
                         for child_elem in child_elems {
 
 
@@ -338,16 +269,20 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                             let tag_name = child_elem.tag_name().await?;
                             
                             debug!("");
-                            debug!("START tag_name {}",tag_name);
+                            debug!("explore tag_name {}",tag_name);
 
-
-                            let elements_child_elem =child_elem.find_all(By::XPath("/")).await?;
-                            for element_child_elem in elements_child_elem{
-
-                                let el_tag_name = element_child_elem.tag_name().await?;
+                            // Use // to select a node, its children, its grandchildren, and so on recursively.
+                            let elements_child_elem =child_elem.find_all(By::XPath("//*")).await?;
                             
-                            debug!("");
-                            debug!("START el_tag_name  {}",el_tag_name);
+                            let mut step = 0;
+                            for element_child_elem in elements_child_elem{
+                                step = step +1 ;
+
+                                let _child_tag_name = element_child_elem.tag_name().await?;
+                                
+
+                                debug!("Step Nr: {}",step);
+                                debug!("_child_tag_name {}",_child_tag_name);
                             }
                             
                             
@@ -370,7 +305,7 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                             // Tag id (inside iframe)=> Some("dismiss-button")
 
                             let tag_id_dismiss_button=Some("dismiss-button");
-                                                                 
+
                             if tag_id == Some(tag_id_dismiss_button.expect("REASON").to_string()) {
 
                                 debug!("Found Id => {:?}", tag_id_dismiss_button);
@@ -380,9 +315,6 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                             if tag_name == "div" {
                                 debug!("div match tag name <= {}",tag_name);
                                 debug!("div text => {}",child_elem.text().await?);
-
-                                // let outer_html = child_elem.outer_html().await?;
-                                // debug!("Tag outer_html (only span)=> {:?} ",outer_html);
                             }
 
                             if tag_name == "span" {
@@ -395,48 +327,25 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
            
                             
                             debug!("END tag_name {}",tag_name);
-                            // debug!("");
-                        }
+                            }
 
                     },
                     Err(e) => {
-                        debug!("Problem Not found the element: {:?}", e);
+                        error!("web Element not Found => {:?}", e);
                 },
 
                 }; 
             },
-            Err(e) => panic!("Problem Not found the element: {:?}", e),
+            Err(e) => panic!("web Element not Found => {:?}", e),
         };
-        
-        // // wait for _driver 
-        // wait_seconds_of_browser(_driver.clone(), 1).await?;
-
-        // debug!("_elem_iframe => is available => ");
-        // // debug!("iframe source {}",_driver.source().await?);
-    
-        // let _elem_button_close = _driver.find(By::XPath("//span[contains(.,'Close']"));
-        // debug!("start -  button 6: is available and if click to close iframe");
-        
-        // let _elem_button_close = match _elem_button_close.await{
-        //     Ok(iframe) =>iframe.click().await?,
-        //     // Err(e) => panic!("Problem Not found the element: {:?}", e),
-        //     // no panic!
-        //     Err(e) => debug!("Error => Element NOT found: {:?}", e),
-        // };
-
+                
         debug!("_elem_button_close => click");
 
         debug!("leave the iframe - switch to frame(0)");
       //   _driver.switch_to().frame(0);
 
-                
-
-    
-                
-
         debug!("FINISHED: ACTION_ENTER_FRAME");
-
-    }
+        }
         else {
             error!("ERROR: ACTION NOT FOUND");
             process::exit(1);
@@ -444,7 +353,7 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
         }
     }
 
-    wait_seconds_of_browser(_driver.clone(), 20).await?;
+    wait_seconds_of_browser(_driver.clone(), 10).await?;
 
     Ok(())
 }
