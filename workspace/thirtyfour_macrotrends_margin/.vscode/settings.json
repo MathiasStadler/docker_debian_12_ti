@@ -1,7 +1,14 @@
 {
     "cSpell.words": [
         "CROX",
+        "elems",
+        "iframe",
         "INTERACTABLE",
-        "thirtyfour"
+        "RUSTFLAGS",
+        "rustfmt",
+        "tbody",
+        "thead",
+        "thirtyfour",
+        "Wunused"
     ]
 }

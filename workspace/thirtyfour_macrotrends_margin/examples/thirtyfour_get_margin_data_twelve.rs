@@ -255,80 +255,24 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
         // get the source code of element
         // debug!("iframe source {}",_elem_iframe_result.outer_html().await?);
 
-        debug!("start - check iframe element is available");
-        let _elem_iframe = match _elem_iframe_result.await{
+        debug!("Start - check iframe element is available");
+        let _elem_iframe: WebElement = match _elem_iframe_result.await{
             Ok(iframe) => {
                 let _inside_frame = match iframe.clone().enter_frame().await{
                     Ok(_inside_frame) => {
                         debug!("\tshow all tag name inside frame");
-                        // debug!("iframe source {}",iframe.outer_html().await?);
-                        
-                        // Use / to select a node's immediate children.
                         // let child_elems = _driver.find_all(By::XPath("//*[//*]")).await?;
-                        let child_elems = iframe.find_all(By::XPath("/*")).await?;
-                        for child_elem in child_elems {
-
-
-                            // assert_eq!(child_elem.tag_name().await?, "button");
-                            let tag_name = child_elem.tag_name().await?;
+                        let child_elems = _inside_frame.find_all(By::XPath("//*[//*]")).await?;
+                        
+                        // for child_elem in child_elems {
                             
-                            debug!("");
-                            debug!("explore tag_name {}",tag_name);
-
-                            // Use // to select a node, its children, its grandchildren, and so on recursively.
-                            let elements_child_elem =child_elem.find_all(By::XPath("//*")).await?;
-                            
-                            let mut step = 0;
-                            for element_child_elem in elements_child_elem{
-                                step = step +1 ;
-
-                                let _child_tag_name = element_child_elem.tag_name().await?;
-                                
-
-                                debug!("Step Nr: {}",step);
-                                debug!("_child_tag_name {}",_child_tag_name);
-                            }
-                            
-                            debug!("Tag name  (inside iframe)=> {}",tag_name);
-
-                            let tag_id = child_elem.id().await?;
-                            debug!("Tag id (inside iframe)=> {:?}",tag_id);
-
-                            let tag_class_name = child_elem.class_name().await?;
-                            debug!("Tag class name (inside iframe)=> {:?} ",tag_class_name);
-
-                            // let tag_text = child_elem.text().await?;
-                            // debug!("Tag text (inside iframe)=> {:?} ",tag_text);
-
-                            
-                            // let parent = child_elem.parent().await?;
-                            // debug!("Tag parent (inside iframe)=> {:?} ",parent);
-
-                            // Tag id (inside iframe)=> Some("dismiss-button")
-
-                            let tag_id_dismiss_button=Some("dismiss-button");
-
-                            if tag_id == Some(tag_id_dismiss_button.expect("REASON").to_string()) {
-
-                                debug!("Found Id => {:?}", tag_id_dismiss_button);
-                            }
+                        //     // assert_eq!(child_elem.tag_name().await?, "button");
+                        //     let tag_name = child_elem.tag_name().await?;
                             
                             
-                            if tag_name == "div" {
-                                debug!("div match tag name <= {}",tag_name);
-                                debug!("div text => {}",child_elem.text().await?);
-                            }
-
-                            if tag_name == "span" {
-                                debug!("span match tag name <= {}",tag_name);
-                                debug!("span text => {}",child_elem.text().await?);
-
-                                // let outer_html = child_elem.outer_html().await?;
-                                // debug!("Tag outer_html (only span)=> {:?} ",outer_html);
-                            }
-                            
-                            debug!("END tag_name {}",tag_name);
-                            }
+                        //     debug!("inside iframe => tag_name =>  {}",tag_name);
+                        // }
+                        _inside_frame   
 
                     },
                     Err(e) => {
@@ -339,11 +283,13 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
             },
             Err(e) => panic!("web Element not Found => {:?}", e),
         };
-                
-        debug!("_elem_button_close => click");
 
-        debug!("leave the iframe - switch to frame(0)");
-      //   _driver.switch_to().frame(0);
+        // debug!("End - check iframe element is available");
+                
+        
+
+        // debug!("leave the iframe - switch to frame(0)");
+        //_driver.switch_to().frame(0);
 
         debug!("FINISHED: ACTION_ENTER_FRAME");
         }
@@ -524,11 +470,28 @@ async fn initialize_driver() -> Result<WebDriver, WebDriverError> {
 
 // FROM HERE
 // https://users.rust-lang.org/t/how-to-print-the-type-of-a-variable/101947/2
+#[allow(dead_code)]
 fn print_type<T>(_: &T) { 
     println!("{:?}", std::any::type_name::<T>());
 }
 
+async fn list_iframe_tag(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
 
+    let child_elems = _driver.find_all(By::XPath("//*[//*]")).await?;
+                        
+    for child_elem in child_elems {
+        
+        // assert_eq!(child_elem.tag_name().await?, "button");
+        let tag_name = child_elem.tag_name().await?;
+        
+        
+        debug!("inside iframe => tag_name =>  {}",tag_name);
+       
+
+    };
+    Ok(())
+
+}
 
 /*
 rustfmt  ./examples/tokio_finviz_method_five.rs
