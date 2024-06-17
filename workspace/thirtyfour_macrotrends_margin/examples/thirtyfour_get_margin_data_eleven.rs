@@ -252,16 +252,20 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
             debug!("Action START =>  ACTION_ENTER_FRAME ({})", WEB_XPATH[field][1]);
         
         let _elem_iframe_result = _driver.find(By::XPath("/html/ins/div/iframe"));
+        // get the source code of element
+        // debug!("iframe source {}",_elem_iframe_result.outer_html().await?);
+
         debug!("start - check iframe element is available");
         let _elem_iframe = match _elem_iframe_result.await{
             Ok(iframe) => {
-                let _inside_frame = match iframe.enter_frame().await{
+                let _inside_frame = match iframe.clone().enter_frame().await{
                     Ok(_inside_frame) => {
                         debug!("show all tag name inside frame");
+                        debug!("iframe source {}",iframe.outer_html().await?);
                         
                         // Use / to select a node's immediate children.
                         // let child_elems = _driver.find_all(By::XPath("//*[//*]")).await?;
-                        let child_elems = _driver.find_all(By::XPath("/*")).await?;
+                        let child_elems = iframe.find_all(By::XPath("/*")).await?;
                         for child_elem in child_elems {
 
 
@@ -285,8 +289,6 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                                 debug!("_child_tag_name {}",_child_tag_name);
                             }
                             
-                            
-
                             debug!("Tag name  (inside iframe)=> {}",tag_name);
 
                             let tag_id = child_elem.id().await?;
@@ -521,6 +523,11 @@ async fn initialize_driver() -> Result<WebDriver, WebDriverError> {
     Ok(driver)
 }
 
+// FROM HERE
+// https://users.rust-lang.org/t/how-to-print-the-type-of-a-variable/101947/2
+fn print_type<T>(_: &T) { 
+    println!("{:?}", std::any::type_name::<T>());
+}
 
 
 
