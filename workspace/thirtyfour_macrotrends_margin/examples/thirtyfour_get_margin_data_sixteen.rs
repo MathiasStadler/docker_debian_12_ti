@@ -52,9 +52,11 @@ const WEB_XPATH: &[&[&str]] = &[
     &["2",ACTION_CLICK,"revenue","/html/body/div[1]/div[2]/div[2]/div[2]/div/form/div[1]/div[2]/ul/li[1]/a/span"],
     &["3",ACTION_CLICK_INTERACTABLE,"click","/html/body/div[9]/div[1]/div[1]/div/button"],
     &["4",ACTION_CLICK,"click","/html/body/div[3]/div[3]/div[1]/div[1]/ul[1]/li[1]/a"],
+    &["5",ACTION_CLICK,"click and remove so  iframe","//*[@id=\"dismiss-button\"]/div[1]/span"],
+    // &["5",ACTION_CLICK,"click","/html/body/div[3]/div[3]/div[1]/div[1]/ul[1]/li[1]/a"],
     // &["5",ACTION_CLICK,"click","/html/body/div/div/div[1]/div[4]"],
     // &["6",ACTION_CLICK,"click","/html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]"],
-    &["5",ACTION_ENTER_FRAME,"enter_frame","should empty"],
+    // &["5",ACTION_ENTER_FRAME,"enter_frame","should empty"],
     ];
 
     fn main() -> color_eyre::Result<(), Box<dyn Error>> {
@@ -205,7 +207,19 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
         else if ACTION_CLICK == WEB_XPATH[field][1] {
             debug!("Action START =>  ACTION_CLICK ({})", WEB_XPATH[field][1]);
             wait_seconds_of_browser(_driver.clone(), 5).await?;
-            let elem_form: WebElement = _driver.find(By::XPath(WEB_XPATH[field][3])).await?;
+            //let elem_form: WebElement = _driver.find(By::XPath(WEB_XPATH[field][3])).await?;
+            let elem_form_result: Result<WebElement, WebDriverError> = _driver.find(By::XPath(WEB_XPATH[field][3])).await;
+            let elem_form = match elem_form_result{
+                Ok(_web_element) => {
+                    debug!(r#"web_element found"#);
+                    _web_element
+                },
+                Err(e) => { debug!("FAILED webElement NOT FOUND ");
+                panic!("webElement NOT FOUND!!! {} ",e)
+                },
+            };
+
+
             let tag_name = elem_form.tag_name().await?;
             debug!("\t ACTION CLICK the element => tag_name {}",tag_name);
             // PLEASE REMOVE
@@ -251,60 +265,60 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
         } else if ACTION_ENTER_FRAME == WEB_XPATH[field][1] {
             debug!("Action START =>  ACTION_ENTER_FRAME ({})", WEB_XPATH[field][1]);
         
-        // let _elem_iframe_result = _driver.find(By::XPath("/html/ins/div/iframe"));
+        let _elem_iframe_result = _driver.find(By::XPath("/html/ins/div/iframe"));
         // get the source code of element
         // debug!("iframe source {}",_elem_iframe_result.outer_html().await?);
 
-        // debug!("Start - check iframe element is available");
-        // let _elem_iframe: WebElement = match _elem_iframe_result.await{
-        //     Ok(iframe) => {
-        //         let child_elems = _driver.find_all(By::XPath("//*[//*]")).await?;
-        //         for child_elem in child_elems {
-        //             let tag_name = child_elem.tag_name().await?;
-        //             debug!("//*[//*] => tag_name =>  {}",tag_name);
+        debug!("Start - check iframe element is available");
+        let _elem_iframe: WebElement = match _elem_iframe_result.await{
+            Ok(iframe) => {
+                let child_elems = _driver.find_all(By::XPath("//*[//*]")).await?;
+                for child_elem in child_elems {
+                    let tag_name = child_elem.tag_name().await?;
+                    debug!("//*[//*] => tag_name =>  {}",tag_name);
 
-        //             let cell_text = child_elem.text().await?;
-        //             debug!("child_elem.text {} ", cell_text);
-        //         }
+                    let cell_text = child_elem.text().await?;
+                    debug!("child_elem.text {} ", cell_text);
+                }
 
-        //         let _inside_frame = match iframe.clone().enter_frame().await{
-        //             Ok(_embedded_iframe) => {
-        //                 debug!("\tshow all tag name inside frame");
-        //                 debug!("_embedded Get type");
-        //                 print_type(&_embedded_iframe);
+                let _inside_frame = match iframe.clone().enter_frame().await{
+                    Ok(_embedded_iframe) => {
+                        debug!("\tshow all tag name inside frame");
+                        debug!("_embedded Get type");
+                        print_type(&_embedded_iframe);
 
-        //                 let child_elems = _driver.find_all(By::XPath("//*[//*]")).await?;
-        //                 for child_elem in child_elems {
-        //                     let tag_name = child_elem.tag_name().await?;
-        //                     debug!("inside iframe => tag_name =>  {}",tag_name);
+                        let child_elems = _driver.find_all(By::XPath("//*[//*]")).await?;
+                        for child_elem in child_elems {
+                            let tag_name = child_elem.tag_name().await?;
+                            debug!("inside iframe => tag_name =>  {}",tag_name);
 
-        //                     let outer_html = child_elem.outer_html().await?;
-        //                     debug!("child_element => {:?} ",outer_html);
-        //                 }
-        //                 // let child_elems = _driver.find_all(By::XPath("//*[//*]")).await?;
-        //                 // let child_elems = _inside_frame.find_all(By::XPath("//*[//*]")).await?;
+                            let outer_html = child_elem.outer_html().await?;
+                            debug!("child_element => {:?} ",outer_html);
+                        }
+                        // let child_elems = _driver.find_all(By::XPath("//*[//*]")).await?;
+                        // let child_elems = _inside_frame.find_all(By::XPath("//*[//*]")).await?;
                         
-        //                 // for child_elem in child_elems {
+                        // for child_elem in child_elems {
                             
-        //                 //     // assert_eq!(child_elem.tag_name().await?, "button");
-        //                 //     let tag_name = child_elem.tag_name().await?;
+                        //     // assert_eq!(child_elem.tag_name().await?, "button");
+                        //     let tag_name = child_elem.tag_name().await?;
                             
                             
-        //                 //     debug!("inside iframe => tag_name =>  {}",tag_name);
-        //                 // }
-        //                 //_inside_frame
-        //                 _embedded_iframe   
+                        //     debug!("inside iframe => tag_name =>  {}",tag_name);
+                        // }
+                        //_inside_frame
+                        _embedded_iframe   
 
-        //             },
-        //             Err(e) => {
-        //                 error!("web Element not Found => {:?}", e);
-        //         },
+                    },
+                    Err(e) => {
+                        error!("web Element not Found => {:?}", e);
+                },
 
-        //         };
-        //         iframe 
-        //     },
-        //     Err(e) => panic!("web Element not Found => {:?}", e),
-        // };
+                };
+                iframe 
+            },
+            Err(e) => panic!("web Element not Found => {:?}", e),
+        };
 
         // debug!("End - check iframe element is available");
                 
@@ -313,7 +327,7 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
         // debug!("leave the iframe - switch to frame(0)");
         //_driver.switch_to().frame(0);
 
-        // debug!("FINISHED: ACTION_ENTER_FRAME");
+        debug!("FINISHED: ACTION_ENTER_FRAME");
         }
         else {
             error!("ERROR: ACTION NOT FOUND");
@@ -499,7 +513,7 @@ fn print_type<T>(_: &T) {
     debug!("Type is => {}", std::any::type_name::<T>());
 }
 
-#[warn(dead_code)]
+#[allow(dead_code)]
 async fn list_iframe_tag(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
 
     let child_elems = _driver.find_all(By::XPath("//*[//*]")).await?;
