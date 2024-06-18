@@ -258,11 +258,25 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
         debug!("Start - check iframe element is available");
         let _elem_iframe: WebElement = match _elem_iframe_result.await{
             Ok(iframe) => {
+                let child_elems = _driver.find_all(By::XPath("//*[//*]")).await?;
+                for child_elem in child_elems {
+                         let tag_name = child_elem.tag_name().await?;
+                         debug!("//*[//*] => tag_name =>  {}",tag_name);
+                         }
+
                 let _inside_frame = match iframe.clone().enter_frame().await{
-                    Ok(_inside_frame) => {
+                    Ok(_embedded_iframe) => {
                         debug!("\tshow all tag name inside frame");
+                        debug!("_embedded Get type");
+                        print_type(&_embedded_iframe);
+
+                        let child_elems = _driver.find_all(By::XPath("//*[//*]")).await?;
+                        for child_elem in child_elems {
+                         let tag_name = child_elem.tag_name().await?;
+                         debug!("inside iframe => tag_name =>  {}",tag_name);
+                         }
                         // let child_elems = _driver.find_all(By::XPath("//*[//*]")).await?;
-                        let child_elems = _inside_frame.find_all(By::XPath("//*[//*]")).await?;
+                        // let child_elems = _inside_frame.find_all(By::XPath("//*[//*]")).await?;
                         
                         // for child_elem in child_elems {
                             
@@ -272,14 +286,16 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                             
                         //     debug!("inside iframe => tag_name =>  {}",tag_name);
                         // }
-                        _inside_frame   
+                        //_inside_frame
+                        _embedded_iframe   
 
                     },
                     Err(e) => {
                         error!("web Element not Found => {:?}", e);
                 },
 
-                }; 
+                };
+                iframe 
             },
             Err(e) => panic!("web Element not Found => {:?}", e),
         };
@@ -472,9 +488,12 @@ async fn initialize_driver() -> Result<WebDriver, WebDriverError> {
 // https://users.rust-lang.org/t/how-to-print-the-type-of-a-variable/101947/2
 #[allow(dead_code)]
 fn print_type<T>(_: &T) { 
-    println!("{:?}", std::any::type_name::<T>());
+    // println!("{:?}", std::any::type_name::<T>());
+    // debug!("Type of {}",my_type);
+    debug!("Type is => {}", std::any::type_name::<T>());
 }
 
+#[warn(dead_code)]
 async fn list_iframe_tag(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
 
     let child_elems = _driver.find_all(By::XPath("//*[//*]")).await?;
@@ -486,7 +505,6 @@ async fn list_iframe_tag(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn E
         
         
         debug!("inside iframe => tag_name =>  {}",tag_name);
-       
 
     };
     Ok(())
