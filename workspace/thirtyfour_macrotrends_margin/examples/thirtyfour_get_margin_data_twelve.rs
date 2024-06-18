@@ -260,9 +260,12 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
             Ok(iframe) => {
                 let child_elems = _driver.find_all(By::XPath("//*[//*]")).await?;
                 for child_elem in child_elems {
-                         let tag_name = child_elem.tag_name().await?;
-                         debug!("//*[//*] => tag_name =>  {}",tag_name);
-                         }
+                    let tag_name = child_elem.tag_name().await?;
+                    debug!("//*[//*] => tag_name =>  {}",tag_name);
+
+                    let cell_text = child_elem.text().await?;
+                    debug!("child_elem.text {} ", cell_text);
+                }
 
                 let _inside_frame = match iframe.clone().enter_frame().await{
                     Ok(_embedded_iframe) => {
@@ -272,9 +275,12 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
 
                         let child_elems = _driver.find_all(By::XPath("//*[//*]")).await?;
                         for child_elem in child_elems {
-                         let tag_name = child_elem.tag_name().await?;
-                         debug!("inside iframe => tag_name =>  {}",tag_name);
-                         }
+                            let tag_name = child_elem.tag_name().await?;
+                            debug!("inside iframe => tag_name =>  {}",tag_name);
+
+                            let outer_html = child_elem.outer_html().await?;
+                            debug!("child_element => {:?} ",outer_html);
+                        }
                         // let child_elems = _driver.find_all(By::XPath("//*[//*]")).await?;
                         // let child_elems = _inside_frame.find_all(By::XPath("//*[//*]")).await?;
                         
