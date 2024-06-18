@@ -52,7 +52,8 @@ const WEB_XPATH: &[&[&str]] = &[
     &["2",ACTION_CLICK,"revenue","/html/body/div[1]/div[2]/div[2]/div[2]/div/form/div[1]/div[2]/ul/li[1]/a/span"],
     &["3",ACTION_CLICK_INTERACTABLE,"click","/html/body/div[9]/div[1]/div[1]/div/button"],
     &["4",ACTION_CLICK,"click","/html/body/div[3]/div[3]/div[1]/div[1]/ul[1]/li[1]/a"],
-    &["5",ACTION_CLICK,"click and remove so  iframe","//*[@id=\"dismiss-button\"]/div[1]/span"],
+    // &["5",ACTION_CLICK,"click","/html/body/div[3]/div[3]/div[1]/div[1]/ul[1]/li[1]/a"],
+    // &["5",ACTION_CLICK,"click and remove so  iframe","//*[@id=\"dismiss-button\"]/div[1]/span"],
     // &["5",ACTION_CLICK,"click","/html/body/div[3]/div[3]/div[1]/div[1]/ul[1]/li[1]/a"],
     // &["5",ACTION_CLICK,"click","/html/body/div/div/div[1]/div[4]"],
     // &["6",ACTION_CLICK,"click","/html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]"],
@@ -207,27 +208,31 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
         else if ACTION_CLICK == WEB_XPATH[field][1] {
             debug!("Action START =>  ACTION_CLICK ({})", WEB_XPATH[field][1]);
             wait_seconds_of_browser(_driver.clone(), 5).await?;
-            //let elem_form: WebElement = _driver.find(By::XPath(WEB_XPATH[field][3])).await?;
+            
             let elem_form_result: Result<WebElement, WebDriverError> = _driver.find(By::XPath(WEB_XPATH[field][3])).await;
             let elem_form = match elem_form_result{
                 Ok(_web_element) => {
                     debug!(r#"web_element found"#);
                     _web_element
                 },
-                Err(e) => { debug!("FAILED webElement NOT FOUND ");
-                panic!("webElement NOT FOUND!!! {} ",e)
-                },
-            };
+               Err(e) => eprintln("Error {}",e) , 
+            // { 
+            //     debug!("FAILED webElement NOT FOUND ");
+            //     // NOT panic try the next one
+            //     // panic!("webElement NOT FOUND!!! {} ",e)
+            //     // debug!("webElement NOT FOUND => {}",WEB_XPATH[field][3])
+            //     },
+             };
 
 
+            // get tag name
             let tag_name = elem_form.tag_name().await?;
             debug!("\t ACTION CLICK the element => tag_name {}",tag_name);
-            // PLEASE REMOVE
-            // debug!("\t ACTION CLICK the element");
+
+            //click web element
             elem_form.click().await?;
-            // PLEASE REMOVE to much wait time
-            // wait_seconds_of_browser(_driver.clone(), 5).await?;
             debug!("Action FINISH =>  ACTION_CLICK ({})", WEB_XPATH[field][1]);
+        
         } else if ACTION_FORM_FILL_FIELD == WEB_XPATH[field][1] {
             debug!("Action START =>  ACTION_FORM_FILL_FIELD ({})", WEB_XPATH[field][1]);
             
