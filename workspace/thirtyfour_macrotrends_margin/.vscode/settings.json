@@ -3,6 +3,7 @@
         "CROX",
         "elems",
         "iframe",
+        "iframes",
         "INTERACTABLE",
         "RUSTFLAGS",
         "rustfmt",
