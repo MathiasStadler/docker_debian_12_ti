@@ -1,3 +1,6 @@
+// RUN PRG /W full log output
+// RUST_LOG=debug cargo run --example thirtyfour_get_margin_data_seventeen
+
 #![warn(unused_extern_crates)]
 #[warn(dead_code)]
 
@@ -215,7 +218,10 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                     debug!(r#"web_element found"#);
                     _web_element
                 },
-               Err(e) => eprintln("Error {}",e) , 
+                Err(e) => { 
+                    eprintln!("Error {}",e);
+                    continue
+                }, 
             // { 
             //     debug!("FAILED webElement NOT FOUND ");
             //     // NOT panic try the next one
