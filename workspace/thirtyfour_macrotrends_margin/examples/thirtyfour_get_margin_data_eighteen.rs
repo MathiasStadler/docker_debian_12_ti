@@ -312,10 +312,21 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
             
                 Ok(_iframe) => {
                     _iframe.enter_frame().await?;
-                    debug!("iframe _driver.close().await?");
-                    _driver.close().await?;
-                    _iframe
-                }             
+                    // debug!("iframe _driver.close().await?");
+                    // _driver.close().await?;
+                    // _iframe
+                    let child_elems = _driver.find_all(By::XPath("./child::*")).await?;
+                
+                    for child_elem in child_elems {
+                                    let tag_name = child_elem.tag_name().await?;
+                                    debug!("\tSTART inside iframe => tag_name =>  {}", tag_name);
+    
+                                    debug!("\tback from frame frame => ");
+    
+                                }
+
+                }   
+   
 
                     // let _inside_frame = match iframe.clone().enter_frame().await {
                     //     Ok(_embedded_iframe) => {
