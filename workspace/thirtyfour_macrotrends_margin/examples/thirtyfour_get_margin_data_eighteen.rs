@@ -1,5 +1,5 @@
 // RUN PRG /W full log output
-// RUST_LOG=debug cargo run --example thirtyfour_get_margin_data_seventeen
+// RUST_LOG=debug cargo run --example thirtyfour_get_margin_data_seventeen 2>&1 > tee output1.txt
 
 #![warn(unused_extern_crates)]
 #[warn(dead_code)]
@@ -309,37 +309,43 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
 
             debug!("Start - check iframe element is available");
             let _elem_iframe: WebElement = match _elem_iframe_result.await {
-                Ok(iframe) => {
-                                     
+            
+                Ok(_iframe) => {
+                    _iframe.enter_frame().await?;
+                    debug!("iframe _driver.close().await?");
+                    _driver.close().await?;
+                }             
 
-                    let _inside_frame = match iframe.enter_frame().await {
-                        Ok(_embedded_iframe) => {
-                            debug!("show all tag name inside frame");
-                            debug!("\t_embedded Get type");
-                            print_type(&_embedded_iframe);
+                    // let _inside_frame = match iframe.clone().enter_frame().await {
+                    //     Ok(_embedded_iframe) => {
+                    //         debug!("show all tag name inside frame");
+                    //         debug!("\t_embedded Get type");
+                    //         print_type(&_embedded_iframe);
 
                             
-                            let child_elems = _driver.find_all(By::XPath("//iframe")).await?;
+                    //         let child_elems = _driver.find_all(By::XPath("//iframe")).await?;
                             
-                            for child_elem in child_elems {
-                                let tag_name = child_elem.tag_name().await?;
-                                debug!("\tSTART inside iframe => tag_name =>  {}", tag_name);
+                    //         for child_elem in child_elems {
+                    //             let tag_name = child_elem.tag_name().await?;
+                    //             debug!("\tSTART inside iframe => tag_name =>  {}", tag_name);
 
-                                child_elem.parent().await?;
+                    //             debug!("iframe _driver.close().await?");
+                    //             _driver.close().await?;
+                    //             child_elem.parent().await?;
 
-                                debug!("\tback from frame frame => ");
+                    //             debug!("\tback from frame frame => ");
 
-                            }
+                    //         }
                             
-                            _embedded_iframe
-                        }
+                    //         _embedded_iframe
+                    //     }
                         Err(e) => {
                             error!("web Element not Found => {:?}", e);
                         }
-                    };
-                    iframe
-                }
-                Err(e) => panic!("web Element not Found => {:?}", e),
+                    // };
+                    // iframe
+                // }
+                // Err(e) => panic!("web Element not Found => {:?}", e),
             };
 
             // debug!("End - check iframe element is available");
@@ -351,7 +357,8 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
         } else {
             error!("ERROR: ACTION NOT FOUND");
             process::exit(1);
-            // ACTION  not available        }
+            // ACTION  not available        
+            }
     }
 
     wait_seconds_of_browser(_driver.clone(), 10).await?;
