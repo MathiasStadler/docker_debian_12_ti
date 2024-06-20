@@ -195,8 +195,6 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
     debug!("XPATH => Browser steps {}", WEB_XPATH.len());
 
     for field in 0..WEB_XPATH.len() {
-        // PLEASE REMOVE
-        // debug!("Next Field  => ");
         debug!("Next field No.: => {}", WEB_XPATH[field][0]);
         debug!("\tAction => {}", WEB_XPATH[field][1]);
         debug!("\tField => {}", WEB_XPATH[field][2]);
@@ -252,9 +250,7 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                 WEB_XPATH[field][1]
             );
 
-            // let current_line = line!();
-            // println!("defined on line: {current_line}");
-            let elem_form: WebElement = _driver.find(By::XPath(WEB_XPATH[field][3])).await?;
+             let elem_form: WebElement = _driver.find(By::XPath(WEB_XPATH[field][3])).await?;
             debug!("\tDEBUG => send_keys {}", WEB_XPATH[field][2]);
             elem_form.send_keys(WEB_XPATH[field][2]).await?;
             debug!("\tDEBUG => press enter");
@@ -296,50 +292,11 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                 "Finish START =>  ACTION_SCREENSHOT_WEB_ELEMENT ({})",
                 WEB_XPATH[field][1]
             );
-        } else if ACTION_ENTER_FRAME == WEB_XPATH[field][1] {
+        } // ACTION_FORM_FILL_FIELD_WITH_SELECT
+
+    }
             
-            debug!(
-                "Action START =>  ACTION_ENTER_FRAME ({})",
-                WEB_XPATH[field][1]
-            );
-
-            let _elem_iframe_result = _driver.find(By::XPath("/html/ins/div/iframe"));
             
-            debug!("Start - check iframe element is available");
-            let _elem_iframe: WebElement = match _elem_iframe_result.await {
-            
-                Ok(_iframe) => {
-
-                    let result_enter_frame = _iframe.clone().enter_frame().await;
-                    let _enter_frame = match result_enter_frame {
-
-                        Ok(_iframe) => {
-
-                            debug!("enter frame");
-                
-                            
-                            // continue;
-
-                        }
-                        Err(_e)=> {
-
-                            error!("Failed enter frame!");
-                            panic!("Failed enter frame");
-                        }
-                    };
-                    
-                    
-                    debug!("iframe _driver.close().await?");
-                }  
-            
-            Err(_e) => {
-                error!("Failed enter frame!");
-                panic!("Failed enter frame");
-
-            }
-            
-        };    
-
     wait_seconds_of_browser(_driver.clone(), 10).await?;
 
     Ok(())
