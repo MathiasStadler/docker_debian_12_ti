@@ -212,7 +212,7 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                     debug!(r#"Error web_element found"#);
                     eprintln!("Error {}", e);
                     continue;
-                } 
+                }
             };
 
             // get tag name
@@ -222,7 +222,6 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
             //click web element
             elem_form.click().await?;
             debug!("Action FINISH =>  ACTION_CLICK ({})", WEB_XPATH[field][1]);
-
         } else if ACTION_FORM_FILL_FIELD == WEB_XPATH[field][1] {
             debug!(
                 "Action START =>  ACTION_FORM_FILL_FIELD ({})",
@@ -297,10 +296,12 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                                 debug!("\t  tag_name =>  {}", tag_name);
                                 debug!("call fn tag_list_all_childes");
                                 let _ = tag_list_all_childes(_driver.clone(), "xpath").await?;
-                                debug!("\t Call after tag inside iframe => tag_name =>  {}", tag_name);
+                                debug!(
+                                    "\t Call after tag inside iframe => tag_name =>  {}",
+                                    tag_name
+                                );
                             }
                             debug!("\t FINISHED show all elements inside iframe");
-                        
                         }
                         Err(_e) => {
                             error!("Failed enter frame!");
@@ -526,18 +527,30 @@ async fn tag_list_all_childes(
     debug!("xPath NOT USED=> {:?}", xpath);
     let child_elems = _driver.find_all(By::XPath(".//*")).await?;
     for child_elem in child_elems {
-        let _tag_name = child_elem.tag_name().await?;
+        // let _tag_name = child_elem.tag_name().await?;
+        
+        // extract string out of result
+        let _tag_name = match child_elem.tag_name().await {
+            Ok(x)=> x,
+            Err(_e) => continue,
+        };
         debug!("\tlist_iframe_tag => tag_name =>  {}", _tag_name);
-        // let parent_tag= into_frame_child_elem.clone().parent().await?;
+        
+
+        // let parent_tag= child_elem.clone().parent().await?;
         // debug!("parent tag name {:?}",parent_tag.tag_name().await?);
-        
 
-        let _tag_class_name = child_elem.class_name().await?;
-        // let _ = tag_list_all_childes(_driver.clone(), "xpath").await?;
-        debug!("\tlist_iframe_tag => tag_class_name => {:?}", _tag_class_name);
+        // extract string out of option
+        let _tag_class_name = match child_elem.class_name() {
+            Some(x) => x,
+            None => continue,
+        };
+
+        debug!(
+            "\tlist_iframe_tag => tag_class_name => {:?}",
+            _tag_class_name
+        );
         debug!("isClickable => {}", child_elem.is_clickable().await?);
-
-        
 
         // PLEASE REMOVE
         // let elem = driver.find(By::class_name("survey-confirmation-closing")).await?;
@@ -555,7 +568,7 @@ async fn tag_list_all_childes(
         //             debug!(r#"Error web_element found"#);
         //             // eprintln!("Error {}", e);
         //             continue;
-        //         } 
+        //         }
         //     };
     }
 
