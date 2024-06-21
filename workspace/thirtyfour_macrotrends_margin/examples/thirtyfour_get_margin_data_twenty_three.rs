@@ -17,7 +17,6 @@ use log::{debug, error, info, log_enabled, Level};
 // #[allow(unused_imports)]
 // use thirtyfour::error::WebDriverResult;
 
-
 use csv::WriterBuilder;
 use std::error::Error;
 use std::fs::File;
@@ -75,7 +74,6 @@ const WEB_XPATH: &[&[&str]] = &[
     // &["6",ACTION_CLICK,"click","/html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]"],
     // &["5",ACTION_ENTER_FRAME,"enter_frame","should empty"],
 ];
-
 
 pub type WebDriverResult<T> = Result<T, WebDriverError>;
 
@@ -213,7 +211,7 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                 _driver.find(By::XPath(WEB_XPATH[field][3])).await;
             let elem_form = match elem_form_result {
                 Ok(_web_element) => {
-                    debug!(r#"web_element found"#);
+                    debug!(r#"ACTION_CLICK => web_element found"#);
                     _web_element
                 }
                 Err(e) => {
@@ -533,17 +531,17 @@ async fn tag_list_all_childes(
     debug!("list_iframe_tag");
     debug!("Status driver => {:?}", _driver.status().await?);
     debug!("xPath NOT USED=> {:?}", xpath);
-    let child_elems = _driver.find_all(By::XPath(".//*")).await?;
+    // let child_elems = _driver.find_all(By::XPath(".//*")).await?;
+    let child_elems = _driver.find_all(By::XPath(".//child::*[//*]")).await?;
     for child_elem in child_elems {
         // let _tag_name = child_elem.tag_name().await?;
-        
+
         // extract string out of result
         let _tag_name = match child_elem.tag_name().await {
-            Ok(x)=> x,
+            Ok(x) => x,
             Err(_e) => continue,
         };
         debug!("\tlist_iframe_tag => tag_name =>  {}", _tag_name);
-        
 
         // let parent_tag= child_elem.clone().parent().await?;
         // debug!("parent tag name {:?}",parent_tag.tag_name().await?);
@@ -552,20 +550,22 @@ async fn tag_list_all_childes(
         // let _option_class_name:WebDriverResult<Result<String, WebDriverError> =  child_elem;
 
         // let _result_tag_class_name :WebDriverResult<Option<String>> = child_elem.class_name();
-        let _result_tag_class_name :WebDriverResult<Option<String>> = child_elem.class_name().await;
+        let _result_tag_class_name: WebDriverResult<Option<String>> = child_elem.class_name().await;
         let _tag_class_name = match _result_tag_class_name {
-            Ok(tag_class_name)=> tag_class_name,
+            Ok(tag_class_name) => tag_class_name,
             Err(_e) => continue,
         };
-        
-        debug!("_tag_class_name => {:?}",_tag_class_name);
-         
+        debug!("_tag_class_name => {:?}", _tag_class_name);
+
+
+        // debug!(
+        //     " child_elem list of attribute {}",
+        //     child_elem.inner_html().await?
+        // );
+
+
 
         // debug!("_option_class_name => {}",_option_class_name);
-
-
-
-
 
         // if let Some(string) = _option_class_name.get("string") {
         //     // use string
@@ -576,7 +576,6 @@ async fn tag_list_all_childes(
         //     );
         // }
 
-        
         // debug!("isClickable => {}", child_elem.is_clickable().await?);
 
         // PLEASE REMOVE
@@ -598,6 +597,66 @@ async fn tag_list_all_childes(
         //         }
         //     };
     }
+
+    // get only all div
+    // //div[@class="measure-tab" and .//span[contains(., "someText")]]
+    // ./thirtyfour_get_margin_data_eighteen.rs:318:       
+    // let child_elems = _driver.find_all(By::XPath("./child::*")).await?;
+    let mut child_elems = _driver.find_all(By::XPath(".//child::div/span")).await?;
+    //let child_elems = _driver.find_all(By::XPath(".//span[contains(., "Close")]")).await?;
+    //let child_elems = _driver.find_all(By::XPath(".//span[contains(., "Close")]")).await?;
+    for child_elem in child_elems {
+        // extract string out of result
+        let _tag_name = match child_elem.tag_name().await {
+            Ok(x) => x,
+            Err(_e) => continue,
+        };
+        child_elem.click().await?;
+        debug!("\tlist_iframe_tag => div =>  {}", _tag_name);
+        
+    }
+
+
+    debug!("close ");
+    // get only all div
+    // //div[@class="measure-tab" and .//span[contains(., "someText")]]
+    // child_elems = _driver.find_all(By::XPath(".//span")).await?;
+    // child_elems = _driver.find_all(By::XPath("//span[contains(text(), 'Close')]")).await?;
+    child_elems = _driver.find_all(By::Id("dismiss-button")).await?;
+    //let child_elems = _driver.find_all(By::XPath(".//span[contains(., "Close")]")).await?;
+    //let child_elems = _driver.find_all(By::XPath(".//span[contains(., "Close")]")).await?;
+    for child_elem in child_elems {
+        // extract string out of result
+        let _tag_name = match child_elem.tag_name().await {
+            Ok(x) => x,
+            Err(_e) => continue,
+        };
+        debug!("\tlist_iframe_tag => span=>  {}", _tag_name);
+        
+    }
+
+    // get only all div
+    // //div[@class="measure-tab" and .//span[contains(., "someText")]]
+    
+    // working
+    // child_elems = _driver.find_all(By::XPath(".//span")).await?;
+    
+    //child_elems = _driver.find_all(By::XPath(".//span[contains(., "Close")]")).await?;
+    // child_elems = _driver.find_all(By::XPath("//span[text()='Close']")).await?;
+    //div[contains(text(), 'apify')]
+    // FROM HERE
+    // https://blog.apify.com/xpath-contains/
+    // child_elems = _driver.find_all(By::XPath("//div[contains(text(), 'Close')]")).await?;
+
+    // for child_elem in child_elems {
+    //     // extract string out of result
+    //     let _tag_name = match child_elem.tag_name().await {
+    //         Ok(x) => x,
+    //         Err(_e) => continue,
+    //     };
+    //     debug!("\tlist_iframe_tag => span=> text()='Close'  {}", _tag_name);
+        
+    // }
 
     debug!("\t go back to call fn ");
     Ok(())
