@@ -13,6 +13,11 @@
 #[allow(unused_imports)]
 use log::{debug, error, info, log_enabled, Level};
 
+// check maybe double
+// #[allow(unused_imports)]
+// use thirtyfour::error::WebDriverResult;
+
+
 use csv::WriterBuilder;
 use std::error::Error;
 use std::fs::File;
@@ -70,6 +75,9 @@ const WEB_XPATH: &[&[&str]] = &[
     // &["6",ACTION_CLICK,"click","/html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]"],
     // &["5",ACTION_ENTER_FRAME,"enter_frame","should empty"],
 ];
+
+
+pub type WebDriverResult<T> = Result<T, WebDriverError>;
 
 fn main() -> color_eyre::Result<(), Box<dyn Error>> {
     color_eyre::install()?;
@@ -541,16 +549,35 @@ async fn tag_list_all_childes(
         // debug!("parent tag name {:?}",parent_tag.tag_name().await?);
 
         // extract string out of option
-        let _tag_class_name = match child_elem.class_name() {
-            Some(x) => x,
-            None => continue,
-        };
+        // let _option_class_name:WebDriverResult<Result<String, WebDriverError> =  child_elem;
 
-        debug!(
-            "\tlist_iframe_tag => tag_class_name => {:?}",
-            _tag_class_name
-        );
-        debug!("isClickable => {}", child_elem.is_clickable().await?);
+        // let _result_tag_class_name :WebDriverResult<Option<String>> = child_elem.class_name();
+        let _result_tag_class_name :WebDriverResult<Option<String>> = child_elem.class_name().await;
+        let _tag_class_name = match _result_tag_class_name {
+            Ok(tag_class_name)=> tag_class_name,
+            Err(_e) => continue,
+        };
+        
+        debug!("_tag_class_name => {:?}",_tag_class_name);
+         
+
+        // debug!("_option_class_name => {}",_option_class_name);
+
+
+
+
+
+        // if let Some(string) = _option_class_name.get("string") {
+        //     // use string
+        //     debug!("string => {}",string);
+        //     debug!(
+        //         "\tlist_iframe_tag => tag_class_name => {:}",
+        //         string
+        //     );
+        // }
+
+        
+        // debug!("isClickable => {}", child_elem.is_clickable().await?);
 
         // PLEASE REMOVE
         // let elem = driver.find(By::class_name("survey-confirmation-closing")).await?;
