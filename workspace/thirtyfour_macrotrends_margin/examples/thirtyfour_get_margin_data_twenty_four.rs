@@ -1,5 +1,5 @@
 // RUN PRG /W full log output
-// RUST_LOG=debug cargo run --example thirtyfour_get_margin_data_seventeen 2>&1 > tee output1.txt
+// RUST_LOG=debug cargo run --example thirtyfour_get_margin_data_twenty_four 2>&1 | tee output1.txt
 
 #![warn(unused_extern_crates)]
 #[warn(dead_code)]
@@ -583,6 +583,26 @@ async fn tag_list_all_childes(
     //     };
     //     debug!("\tlist_iframe_tag => span=>  {}", _tag_name);
     // }
+   
+    
+    debug!("source of iframe => {:?}",_driver.page_source().await?);
+
+//  sed 's/</\r\n</g' test.txt 
+
+// \x3d  => =
+
+// sed -i 's/\\x22/"/g' test.txt
+// //single quote
+// sed -i 's/\\x27/0x/g' test.txt
+// sed -i 's/\\x3e/</g' test.txt
+// sed -i 's/\\x3c/>/g' test.txt
+// sed -i 's/\\x3d/=/g' test.txt
+
+// sed -i  's/</\r\n\n</g' test.txt
+// sed -i 's/</\r\n</g' test.txt
+// sed -i 's/<div/\r\n<div/g'  test.txt
+
+
 
     debug!("\t go back to call fn ");
     debug!("\t go back to call fn ");
