@@ -587,7 +587,7 @@ async fn tag_list_all_childes(
     
     debug!("source of iframe => {:?}",_driver.page_source().await?);
 
-//  sed 's/</\r\n</g' test.txt 
+//  sed -i 's/>/>\r\n/g' test.txt 
 
 // \x3d  => =
 
@@ -597,6 +597,9 @@ async fn tag_list_all_childes(
 // sed -i 's/\\x3e/</g' test.txt
 // sed -i 's/\\x3c/>/g' test.txt
 // sed -i 's/\\x3d/=/g' test.txt
+// sed -i 's/\\x3db/*/g' test.txt
+// sed -i 's/\\x3db/*/g' test.txt
+
 
 // sed -i  's/</\r\n\n</g' test.txt
 // sed -i 's/</\r\n</g' test.txt
