@@ -288,6 +288,8 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
             debug!("Start - check iframe element is available");
             let _elem_iframe: WebElement = match _elem_iframe_result.await {
                 Ok(_iframe) => {
+                    // enter frame
+                    debug!("enter iframe");
                     let result_enter_frame = _iframe.clone().enter_frame().await;
                     let _enter_frame = match result_enter_frame {
                         Ok(_iframe) => {
@@ -296,17 +298,20 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                             // show all element inside frame
                             // let child_elems = _driver.find_all(By::XPath("//*[//*]")).await?;
                             let child_elems = _driver.find_all(By::XPath("//iframe")).await?;
-                            debug!("\t START show all elements inside iframe");
+                            
+                            //
+                            debug!("inside frame ");
+                            let mut _counter = 0;
                             for child_elem in child_elems {
+                                _counter = _counter + 1;
                                 let tag_name = child_elem.tag_name().await?;
+                                debug!("Nr => {}",_counter);
                                 debug!("\t  tag_name =>  {}", tag_name);
-                                debug!("call fn tag_list_all_childes");
+                                debug!("\tstart tag_list_all_childes for tag => {} <= ",tag_name);
                                 let _ = tag_list_all_childes(_driver.clone(), "xpath").await?;
-                                debug!(
-                                    "\t Call after tag inside iframe => tag_name =>  {}",
-                                    tag_name
-                                );
+                                debug!("\tfinished tag_list_all_childes => tag_name =>  {}", tag_name);
                             }
+                            
 
                             // execute script
                             // from here
@@ -321,7 +326,7 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                             //     .await
                             //     .unwrap();
                             // get generate webpage source  by javascript
-                            debug!("execute script");
+                            debug!("START execute script => get akt page source");
                             let _real_html = _driver
                                 //.execute_script(
                                 .execute(
@@ -332,6 +337,8 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                                 .unwrap();
 
                             // debug!("real html => {:?}",real_html);
+                            debug!("FINISHED execute script => get akt page source");
+
 
                             let child_elems =
                                 _driver.find_all(By::XPath(".//child::*[//*]")).await?;
@@ -342,35 +349,48 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                                     Ok(x) => x,
                                     Err(_e) => continue,
                                 };
-                                debug!("\tlist_iframe_tag => tag_name =>  {}", _tag_name);
+                                debug!("\t iframe=> tag_name =>  {}", _tag_name);
+                                
+                                
                                 //div
                                 if _tag_name == "div" {
-
-                                    let sub_child_elems = child_elem.find_all(By::XPath(".//child::*[//*]")).await?;
+                                    let sub_child_elems =
+                                        child_elem.find_all(By::XPath(".//child::*[//*]")).await?;
                                     //
                                     //for
+                                    let mut counter = 0;
                                     for sub_child_elem in sub_child_elems {
+                                        counter = counter + 1;
+                                        debug!("sub Tag => {}", counter);
                                         //
                                         // extract string out of result
                                         let _sub_tag_name = match sub_child_elem.tag_name().await {
                                             Ok(x) => x,
                                             Err(_e) => continue,
                                         };
-                                        debug!("\t_sub_tag_name =>  {:?}", _sub_tag_name);
+                                        debug!("\tsub_tag_name =>  {:?}", _sub_tag_name);
                                         //
                                         // extract id out of result
                                         let _sub_tag_id = match sub_child_elem.id().await {
                                             Ok(x) => x,
                                             Err(_e) => continue,
                                         };
-                                        debug!("\t_sub_tag_id =>  {:?}",_sub_tag_id);
+                                        debug!("\t_sub_tag_id =>  {:?}", _sub_tag_id);
                                         //
                                         // extract class name out of result
-                                        let _sub_tag_class = match sub_child_elem.class_name().await {
+                                        let _sub_tag_class = match sub_child_elem.class_name().await
+                                        {
                                             Ok(x) => x,
                                             Err(_e) => continue,
                                         };
-                                        debug!("\t_sub_class_name =>  {:?}",_sub_tag_class);
+                                        debug!("\t_sub_class_name =>  {:?}", _sub_tag_class);
+                                        //
+                                        // extract text out of result
+                                        let _sub_tag_text = match sub_child_elem.text().await {
+                                            Ok(x) => x,
+                                            Err(_e) => continue,
+                                        };
+                                        debug!("\t_sub_class_name =>  {:?}", _sub_tag_text);
                                     }
                                 }
 
@@ -381,7 +401,7 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                                 };
                                 debug!("\tlist_iframe => text =>  {}", _tag_text);
 
-                                // extract text inside span
+                                // extract id inside span
                                 let _tag_id = match child_elem.id().await {
                                     Ok(x) => x,
                                     Err(_e) => continue,
@@ -717,7 +737,7 @@ async fn tag_list_all_childes(
     // https://tpc.googlesyndication.com/simgad/13754874180434852044/14763004658117789537?w\=300\\x26h\=300\\x26tw\=1\\x26q\=75)
 
     debug!("\t go back to call fn ");
-    debug!("\t go back to call fn ");
+
     Ok(())
 }
 
