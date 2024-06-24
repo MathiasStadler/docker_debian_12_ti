@@ -311,14 +311,92 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                             // execute script
                             // from here
                             // https://github.com/ultrafunkamsterdam/undetected-chromedriver/issues/144
+
+                            // debug!("execute script");
+                            // _driver
+                            //     .execute_script(
+                            //         r#"window.open("about:blank", target="_blank");"#,
+                            //         Vec::new(),
+                            //     )
+                            //     .await
+                            //     .unwrap();
+                            // get generate webpage source  by javascript
                             debug!("execute script");
-                            _driver
-                                .execute_script(
-                                    r#"window.open("about:blank", target="_blank");"#,
+                            let _real_html = _driver
+                                //.execute_script(
+                                .execute(
+                                    r#"return document.getElementsByTagName('html')[0].innerHTML"#,
                                     Vec::new(),
                                 )
                                 .await
                                 .unwrap();
+
+                            // debug!("real html => {:?}",real_html);
+
+                            let child_elems =
+                                _driver.find_all(By::XPath(".//child::*[//*]")).await?;
+
+                            for child_elem in child_elems {
+                                // extract string out of result
+                                let _tag_name = match child_elem.tag_name().await {
+                                    Ok(x) => x,
+                                    Err(_e) => continue,
+                                };
+                                debug!("\tlist_iframe_tag => tag_name =>  {}", _tag_name);
+                                //div
+                                if _tag_name == "div" {
+
+                                    let sub_child_elems = child_elem.find_all(By::XPath(".//child::*[//*]")).await?;
+                                    //
+                                    //for
+                                    for sub_child_elem in sub_child_elems {
+                                        //
+                                        // extract string out of result
+                                        let _sub_tag_name = match sub_child_elem.tag_name().await {
+                                            Ok(x) => x,
+                                            Err(_e) => continue,
+                                        };
+                                        debug!("\t_sub_tag_name =>  {:?}", _sub_tag_name);
+                                        //
+                                        // extract id out of result
+                                        let _sub_tag_id = match sub_child_elem.id().await {
+                                            Ok(x) => x,
+                                            Err(_e) => continue,
+                                        };
+                                        debug!("\t_sub_tag_id =>  {:?}",_sub_tag_id);
+                                        //
+                                        // extract class name out of result
+                                        let _sub_tag_class = match sub_child_elem.class_name().await {
+                                            Ok(x) => x,
+                                            Err(_e) => continue,
+                                        };
+                                        debug!("\t_sub_class_name =>  {:?}",_sub_tag_class);
+                                    }
+                                }
+
+                                // extract text inside span
+                                let _tag_text = match child_elem.text().await {
+                                    Ok(x) => x,
+                                    Err(_e) => continue,
+                                };
+                                debug!("\tlist_iframe => text =>  {}", _tag_text);
+
+                                // extract text inside span
+                                let _tag_id = match child_elem.id().await {
+                                    Ok(x) => x,
+                                    Err(_e) => continue,
+                                };
+                                debug!("\tlist_iframe => id =>  {:?}", _tag_id);
+
+                                let _result_tag_class_name: WebDriverResult<Option<String>> =
+                                    child_elem.class_name().await;
+                                let _tag_class_name = match _result_tag_class_name {
+                                    Ok(tag_class_name) => tag_class_name,
+                                    Err(_e) => continue,
+                                };
+                                debug!("_tag_class_name => {:?}", _tag_class_name);
+                            }
+
                             debug!("\t FINISHED show all elements inside iframe");
                         }
                         Err(_e) => {
@@ -386,7 +464,23 @@ async fn save_table_to_file_first(_driver: WebDriver) -> color_eyre::Result<(), 
     //      //No.,FieldName,xpath
     //      &["t1","colum_name","/html/body/div[3]/div[3]/div[1]/div[8]/div[2]/table/thead/tr"],
     //      &["t2","No.:",      "/html/body/div[3]/div[3]/div[1]/div[8]/div[2]/table/tbody/tr"],
-    //     ];
+    //     ];let child_elems = _driver.find_all(By::XPath(".//child::*[//*]")).await?;
+
+    // for child_elem in child_elems {
+    //     // extract string out of result
+    //     let _tag_name = match child_elem.tag_name().await {
+    //         Ok(x) => x,
+    //         Err(_e) => continue,
+    //     };
+    //     debug!("\tlist_iframe_tag => tag_name =>  {}", _tag_name);
+
+    //     let _result_tag_class_name: WebDriverResult<Option<String>> = child_elem.class_name().await;
+    //     let _tag_class_name = match _result_tag_class_name {
+    //         Ok(tag_class_name) => tag_class_name,
+    //         Err(_e) => continue,
+    //     };
+    //     debug!("_tag_class_name => {:?}", _tag_class_name);
+    // }
 
     //     let _ = save_table_to_file_worker(_driver.clone(),OUTPUT_FILE_NAME_TWO,TABLE_XPATH_TWO).await;
 
@@ -594,8 +688,8 @@ async fn tag_list_all_childes(
     //     debug!("\tlist_iframe_tag => span=>  {}", _tag_name);
     // }
 
-    debug!("source of iframe => {:?}", _driver.page_source().await?);
-
+    // debug!("source of iframe => {:?}", _driver.page_source().await?);
+    debug!("source of iframe => {:?}", _driver.source().await?);
     // FROM HERE
     // https://www.ee.ucl.ac.uk/~mflanaga/java/HTMLandASCIItableC1.html
     //  sed -i 's/>/>\r\n/g' test.txt
