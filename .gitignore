@@ -1,3 +1,8 @@
 *.csv
 *.png
 *.txt
+*.html
+*.js
+workspace/*.html
+**/*.html
+workspace/thirtyfour_macrotrends_margin/output_html.html
