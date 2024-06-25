@@ -68,11 +68,6 @@ const WEB_XPATH: &[&[&str]] = &[
     ],
     &["5", ACTION_ENTER_FRAME, "enter_frame", "should empty"],
     // &["5",ACTION_CLICK,"click","/html/body/div[3]/div[3]/div[1]/div[1]/ul[1]/li[1]/a"],
-    // &["5",ACTION_CLICK,"click and remove so  iframe","//*[@id=\"dismiss-button\"]/div[1]/span"],
-    // &["5",ACTION_CLICK,"click","/html/body/div[3]/div[3]/div[1]/div[1]/ul[1]/li[1]/a"],
-    // &["5",ACTION_CLICK,"click","/html/body/div/div/div[1]/div[4]"],
-    // &["6",ACTION_CLICK,"click","/html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]"],
-    // &["5",ACTION_ENTER_FRAME,"enter_frame","should empty"],
 ];
 
 pub type WebDriverResult<T> = Result<T, WebDriverError>;
@@ -117,7 +112,6 @@ async fn run() -> color_eyre::Result<(), Box<dyn Error>> {
 
     _driver.goto(WEB_PAGE).await?;
     thread::sleep(Duration::from_secs(4));
-    // thread::sleep(Duration::from_secs(2));
 
     path_to(_driver.clone()).await?;
     save_table_to_file_first(_driver.clone()).await?;
@@ -223,10 +217,6 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                 }
             };
 
-            // get tag name
-            // let tag_name = elem_form.tag_name().await?;
-            // debug!("\t ACTION CLICK the element => tag_name {}", tag_name);
-
             //click web element
             elem_form.click().await?;
             debug!("Action FINISH =>  ACTION_CLICK ({})", WEB_XPATH[field][1]);
@@ -264,7 +254,7 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                 WEB_XPATH[field][1]
             );
         } else if ACTION_FORM_FILL_FIELD_WITH_SELECT == WEB_XPATH[field][1] {
-            // maybe double action click
+            // empty
         } else if ACTION_SCREENSHOT_WEB_ELEMENT == WEB_XPATH[field][1] {
             debug!(
                 "Action START =>  ACTION_SCREENSHOT_WEB_ELEMENT ({})",
@@ -279,7 +269,7 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                 WEB_XPATH[field][1]
             );
         }
-        // ACTION_SCREENSHOT_WEB_ELEMENT
+        // ACTION_ENTER_FRAME
         else if ACTION_ENTER_FRAME == WEB_XPATH[field][1] {
             debug!(
                 "Action START =>  ACTION_ENTER_FRAME ({})",
@@ -290,14 +280,14 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
             debug!("Start - check iframe element is available");
             let _elem_iframe: WebElement = match _elem_iframe_result.await {
                 Ok(_iframe) => {
-                    // enter frame
-                    debug!("ENTER FRAME => pre step ");
+                    // enter into frame
+                    debug!("Enter  into frame => pre step ");
                     let result_enter_frame = _iframe.clone().enter_frame().await;
                     //enter frame
                     // debug!("ENTER FRAME {} ",)
                     let _enter_frame = match result_enter_frame {
                         Ok(_iframe) => {
-                            debug!("ENTER FRAME => first step enter frame ");
+                            debug!("ENTER FRAME => first step after enter frame ");
 
                             // show all element inside frame
                             // let child_elems = _driver.find_all(By::XPath("//*[//*]")).await?;
@@ -324,15 +314,7 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                             // from here
                             // https://github.com/ultrafunkamsterdam/undetected-chromedriver/issues/144
 
-                            // debug!("execute script");
-                            // _driver
-                            //     .execute_script(
-                            //         r#"window.open("about:blank", target="_blank");"#,
-                            //         Vec::new(),
-                            //     )
-                            //     .await
-                            //     .unwrap();
-                            // get generate webpage source  by javascript
+                            // get generate webpage source by javascript
                             debug!("START execute script => get akt page source");
                             let _real_html = _driver
                                 //.execute_script(
@@ -353,6 +335,7 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                             for child_elem in child_elems {
                                 counter = counter + 1;
                                 debug!("sub Tag => {}", counter);
+
                                 // extract string out of result
                                 let _tag_name = match child_elem.tag_name().await {
                                     Ok(x) => x,
@@ -365,13 +348,14 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                                     let sub_child_elems =
                                         child_elem.find_all(By::XPath(".//child::*[//*]")).await?;
 
-                                        if sub_child_elems.len() > 0 {
-                                            // debug_vec(_child_elems,_sub_tag_name);
-                                            debug_vec(sub_child_elems.clone(),_tag_name.clone()).await?;  
-                                            };
-                                          
+                                    if sub_child_elems.len() > 0 {
+                                        // debug_vec(_child_elems,_sub_tag_name);
+                                        debug_vec(sub_child_elems.clone(), _tag_name.clone())
+                                            .await?;
+                                    };
+
                                     //
-                                    //reset to zero
+                                    //reset counter to zero
                                     counter = 0;
                                     for sub_child_elem in sub_child_elems {
                                         counter = counter + 1;
@@ -405,30 +389,30 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                                             Err(_e) => continue,
                                         };
                                         debug!("\t_sub_tag_text =>  {:?}", _sub_tag_text);
-                                        
+
                                         // search contain
                                         // let _child_elems = sub_child_elem.find_all(By::XPath(".//child::*[//*]")).await?;
 
-                                        let _child_elems = match  sub_child_elem.find_all(By::XPath(".//child::*[//*]")).await {                    
-                                        
+                                        let _child_elems = match sub_child_elem
+                                            .find_all(By::XPath(".//child::*[//*]"))
+                                            .await
+                                        {
                                             Ok(x) => x,
                                             Err(_e) => {
-                                                eprintln!("Err {}",_e);
-                                                continue
-                                            },
+                                                eprintln!("Err {}", _e);
+                                                continue;
+                                            }
                                         };
-
 
                                         // len - How many WebElement had we found?
-                                        debug!("n = {:?} ",_child_elems.len());
+                                        debug!("n = {:?} ", _child_elems.len());
 
                                         if _child_elems.len() > 0 {
-                                        // debug_vec(_child_elems,_sub_tag_name);
-                                        debug_vec(_child_elems.clone(),_sub_tag_name.clone()).await?;
+                                            // debug_vec(_child_elems,_sub_tag_name);
+                                            debug_vec(_child_elems.clone(), _sub_tag_name.clone())
+                                                .await?;
                                         };
-                                        
 
-                                        
                                         // for _child_elem in _child_elems {
                                         //     debug!("_parent name=>{}  child name=>{} (class_name=>{:?} id=>{:?} text=>{:?})",_sub_tag_name,
                                         //     _child_elem.tag_name().await?,
@@ -436,38 +420,45 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                                         //     _child_elem.id().await?,
                                         //     _child_elem.text().await?
                                         // );
-                                            
-                                            
+
                                         //     debug!("{}:{} ",_sub_tag_name,
                                         //     _child_elem.tag_name().await?);
-                                            
+
                                         // }
                                         //
                                         debug!("\t_sub_tag_text =>  {:?}", _sub_tag_text);
                                         // search contain
                                         // let _search_child_elems = sub_child_elem.find_all(By::XPath(".//child::*[//*]")).await?;
                                         // let _search_child_elems = sub_child_elem.find_all(By::XPath(".//child::*[//*]")).await?;
-                                        
 
                                         // let _search_child_elems = sub_child_elem.find_all(By::XPath(".//child::*[//*]")).await?;
 
                                         // const XPATH_SEARCH: &str = ".//child::*[//*]";
-                                        const XPATH_SEARCH: &str = ".//child::span[contains(text(),'Close')]";
-                                                                                
-                                        let _search_child_elems = match sub_child_elem.find_all(By::XPath(XPATH_SEARCH)).await{                    
-                                        
+                                        const XPATH_SEARCH: &str =
+                                            ".//child::span[contains(text(),'Close')]";
+
+                                        let _search_child_elems = match sub_child_elem
+                                            .find_all(By::XPath(XPATH_SEARCH))
+                                            .await
+                                        {
                                             Ok(x) => x,
                                             Err(_e) => {
-                                                eprintln!("Err {}",_e);
-                                                continue
-                                            },
+                                                eprintln!("Err {}", _e);
+                                                continue;
+                                            }
                                         };
 
-                                        
-                                        debug!("n (_search_child_elems) = {:?} ",_search_child_elems.len());
-                                        
+                                        debug!(
+                                            "n (_search_child_elems) = {:?} ",
+                                            _search_child_elems.len()
+                                        );
+
                                         for _search_child_elem in _search_child_elems {
-                                            debug!("_child_elem.tag_name {:?} => {}", _sub_tag_name, _search_child_elem.tag_name().await?);
+                                            debug!(
+                                                "_child_elem.tag_name {:?} => {}",
+                                                _sub_tag_name,
+                                                _search_child_elem.tag_name().await?
+                                            );
                                             // debug!("\tsub_tag_name =>  {:?}", _sub_tag_name);
                                         }
                                     }
@@ -487,7 +478,7 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                                 // RUST_LOG=debug cargo run --example thirtyfour_get_margin_data_twenty_five 2>&1 | tee output7.txt
 
                                 let _text = child_elem.text().await?;
-                                debug!("text => {}",_text);
+                                debug!("text => {}", _text);
 
                                 // extract text inside span
                                 let _tag_text = match child_elem.text().await {
@@ -875,33 +866,29 @@ async fn tag_list_all_childes(
     Ok(())
 }
 
-
-
-async fn debug_vec(_child_elems:Vec<WebElement>,_sub_tag_name:String) -> color_eyre::Result<(), Box<dyn Error>>{
-
-
+async fn debug_vec(
+    _child_elems: Vec<WebElement>,
+    _sub_tag_name: String,
+) -> color_eyre::Result<(), Box<dyn Error>> {
     debug!("START debug_vec");
     // len - How many WebElement had we found?
-    debug!("n = {:?} ",_child_elems.len());
-                                        
+    debug!("n = {:?} ", _child_elems.len());
+
     for _child_elem in _child_elems {
-        debug!("_parent name=>{}  child name=>{} (class_name=>{:?} id=>{:?} text=>{:?})",_sub_tag_name,
-        _child_elem.tag_name().await?,
-        _child_elem.class_name().await?,
-        _child_elem.id().await?,
-        _child_elem.text().await?
-    );
-        
-        
-        debug!("{}:{} ",_sub_tag_name,
-        _child_elem.tag_name().await?);
-        
+        debug!(
+            "_parent name=>{}  child name=>{} (class_name=>{:?} id=>{:?} text=>{:?})",
+            _sub_tag_name,
+            _child_elem.tag_name().await?,
+            _child_elem.class_name().await?,
+            _child_elem.id().await?,
+            _child_elem.text().await?
+        );
+
+        debug!("{}:{} ", _sub_tag_name, _child_elem.tag_name().await?);
     }
 
     debug!("FINISHED debug_vec");
-Ok(())
-
-
+    Ok(())
 }
 /*
 rustfmt  ./examples/tokio_finviz_method_five.rs
