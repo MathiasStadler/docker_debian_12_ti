@@ -27,6 +27,10 @@ use std::time::Duration;
 
 use thirtyfour::{prelude::WebDriverError, By, DesiredCapabilities, Key, WebDriver, WebElement};
 
+// desc here => https://crates.io/crates/async_recursion
+#[allow(unused_imports)]
+use async_recursion::async_recursion;
+
 const WEB_PAGE: &str = "https://www.macrotrends.net";
 //const STOCK_SYMBOL: &str = "TREX";
 const STOCK_SYMBOL: &str = "CROX";
@@ -667,6 +671,7 @@ fn print_type<T>(_: &T) {
 }
 
 #[allow(dead_code)]
+#[async_recursion]
 async fn tag_list_all_childes(
     _driver: WebDriver,
     xpath: &str,
@@ -695,7 +700,12 @@ async fn tag_list_all_childes(
             Err(_e) => continue,
         };
         debug!("_tag_class_name => {:?}", _tag_class_name);
-    }
+
+        //child_elem
+        tag_list_all_childes(_driver.clone(),&"empty").await?
+
+
+    }// finished for child_elem in child_elems
 
     
 
