@@ -399,13 +399,62 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                                             Err(_e) => continue,
                                         };
                                         debug!("\t_sub_tag_text =>  {:?}", _sub_tag_text);
-                                        // extract sub web element
-                                        // let elem = driver.find(By::Id("my-element-id")).await?;
-                                        let child_elems = sub_child_elem.find_all(By::XPath(".//child::*[//*]")).await?;
-                                        debug!("n = {:?} ",child_elems.len());
                                         
-                                        for child_elem in child_elems {
-                                            debug!("child_elem.tag_name {}", child_elem.tag_name().await?);
+                                        // search contain
+                                        // let _child_elems = sub_child_elem.find_all(By::XPath(".//child::*[//*]")).await?;
+
+                                        let _child_elems = match  sub_child_elem.find_all(By::XPath(".//child::*[//*]")).await {                    
+                                        
+                                            Ok(x) => x,
+                                            Err(_e) => {
+                                                eprintln!("Err {}",_e);
+                                                continue
+                                            },
+                                        };
+                                        
+                                        // len - How many WebElement had we found?
+                                        debug!("n = {:?} ",_child_elems.len());
+                                        
+                                        for _child_elem in _child_elems {
+                                            debug!("_parent name=>{}  child name=>{} (class_name=>{:?} id=>{:?} text=>{:?})",_sub_tag_name,
+                                            _child_elem.tag_name().await?,
+                                            _child_elem.class_name().await?,
+                                            _child_elem.id().await?,
+                                            _child_elem.text().await?
+                                        );
+                                            
+                                            
+                                            debug!("{}:{} ",_sub_tag_name,
+                                            _child_elem.tag_name().await?);
+                                            
+                                        }
+                                        //
+                                        debug!("\t_sub_tag_text =>  {:?}", _sub_tag_text);
+                                        // search contain
+                                        // let _search_child_elems = sub_child_elem.find_all(By::XPath(".//child::*[//*]")).await?;
+                                        // let _search_child_elems = sub_child_elem.find_all(By::XPath(".//child::*[//*]")).await?;
+                                        
+
+                                        // let _search_child_elems = sub_child_elem.find_all(By::XPath(".//child::*[//*]")).await?;
+
+                                        // const XPATH_SEARCH: &str = ".//child::*[//*]";
+                                        const XPATH_SEARCH: &str = ".//child::span[contains(text(),'Close')]";
+                                                                                
+                                        let _search_child_elems = match sub_child_elem.find_all(By::XPath(XPATH_SEARCH)).await{                    
+                                        
+                                            Ok(x) => x,
+                                            Err(_e) => {
+                                                eprintln!("Err {}",_e);
+                                                continue
+                                            },
+                                        };
+
+                                        
+                                        debug!("n (_search_child_elems) = {:?} ",_search_child_elems.len());
+                                        
+                                        for _search_child_elem in _search_child_elems {
+                                            debug!("_child_elem.tag_name {:?} => {}", _sub_tag_name, _search_child_elem.tag_name().await?);
+                                            // debug!("\tsub_tag_name =>  {:?}", _sub_tag_name);
                                         }
                                     }
                                 }
