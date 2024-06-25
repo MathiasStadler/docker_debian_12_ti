@@ -27,10 +27,6 @@ use std::time::Duration;
 
 use thirtyfour::{prelude::WebDriverError, By, DesiredCapabilities, Key, WebDriver, WebElement};
 
-// desc here => https://crates.io/crates/async_recursion
-#[allow(unused_imports)]
-use async_recursion::async_recursion;
-
 const WEB_PAGE: &str = "https://www.macrotrends.net";
 //const STOCK_SYMBOL: &str = "TREX";
 const STOCK_SYMBOL: &str = "CROX";
@@ -209,10 +205,12 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
             );
         } else if ACTION_CLICK == WEB_XPATH[field][1] {
             debug!("Action START =>  ACTION_CLICK ({})", WEB_XPATH[field][1]);
+
             wait_seconds_of_browser(_driver.clone(), 5).await?;
 
             let elem_form_result: Result<WebElement, WebDriverError> =
                 _driver.find(By::XPath(WEB_XPATH[field][3])).await;
+
             let elem_form = match elem_form_result {
                 Ok(_web_element) => {
                     debug!(r#"ACTION_CLICK => web_element found"#);
@@ -293,16 +291,19 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
             let _elem_iframe: WebElement = match _elem_iframe_result.await {
                 Ok(_iframe) => {
                     // enter frame
-                    debug!("enter iframe");
+                    debug!("ENTER FRAME => pre step ");
                     let result_enter_frame = _iframe.clone().enter_frame().await;
+                    //enter frame
+                    // debug!("ENTER FRAME {} ",)
                     let _enter_frame = match result_enter_frame {
                         Ok(_iframe) => {
-                            debug!("enter frame");
+                            debug!("ENTER FRAME => first step enter frame ");
 
                             // show all element inside frame
                             // let child_elems = _driver.find_all(By::XPath("//*[//*]")).await?;
-                            let child_elems = _driver.find_all(By::XPath("//iframe")).await?;
-
+                            // let child_elems = _driver.find_all(By::XPath("//iframe")).await?;
+                            let child_elems =
+                                _driver.find_all(By::XPath("//iframe[//*][//*]")).await?;
                             //
                             debug!("inside frame ");
                             let mut _counter = 0;
@@ -398,6 +399,14 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                                             Err(_e) => continue,
                                         };
                                         debug!("\t_sub_tag_text =>  {:?}", _sub_tag_text);
+                                        // extract sub web element
+                                        // let elem = driver.find(By::Id("my-element-id")).await?;
+                                        let child_elems = sub_child_elem.find_all(By::XPath(".//child::*[//*]")).await?;
+                                        debug!("n = {:?} ",child_elems.len());
+                                        
+                                        for child_elem in child_elems {
+                                            debug!("child_elem.tag_name {}", child_elem.tag_name().await?);
+                                        }
                                     }
                                 }
 
@@ -413,6 +422,9 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
 
                                 //HERE WEITER
                                 // RUST_LOG=debug cargo run --example thirtyfour_get_margin_data_twenty_five 2>&1 | tee output7.txt
+
+                                let _text = child_elem.text().await?;
+                                debug!("text => {}",_text);
 
                                 // extract text inside span
                                 let _tag_text = match child_elem.text().await {
@@ -560,7 +572,6 @@ async fn save_table_to_file_worker(
     output_file_name: &str,
     table_xpath: &[&[&str]],
 ) -> color_eyre::Result<(), Box<dyn Error>> {
-    
     let mut field = 0;
 
     debug!("start - save_table_to_file_worker");
@@ -672,7 +683,6 @@ fn print_type<T>(_: &T) {
 }
 
 #[allow(dead_code)]
-#[async_recursion]
 async fn tag_list_all_childes(
     _driver: WebDriver,
     xpath: &str,
@@ -686,7 +696,10 @@ async fn tag_list_all_childes(
     // let child_elems = _driver.find_all(By::XPath(".//*")).await?;
 
     // let child_elems = _driver.find_all(By::XPath(".//child::*[//*]")).await?;
-    let child_elems = _driver.find_all(By::XPath(".//child::*[//*]/*")).await?;
+    // //tr/td[normalize-space(text())="Banana"]/..
+    let child_elems = _driver
+        .find_all(By::XPath(".//span[normalize-space(text())=\"Close\"]/.."))
+        .await?;
 
     for child_elem in child_elems {
         // extract string out of result
@@ -702,14 +715,7 @@ async fn tag_list_all_childes(
             Err(_e) => continue,
         };
         debug!("_tag_class_name => {:?}", _tag_class_name);
-
-        //child_elem
-     //   tag_list_all_childes(_driver.clone(),&"empty").await?
-
-
-    }// finished for child_elem in child_elems
-
-    
+    }
 
     // ./thirtyfour_get_margin_data_eighteen.rs:318:
     // let child_elems = _driver.find_all(By::XPath("./child::*")).await?;
@@ -742,25 +748,38 @@ async fn tag_list_all_childes(
     // debug!("source of iframe => {:?}", _driver.page_source().await?);
     // debug!("source of iframe => {:?}", _driver.source().await?);
 
-                                                           //id="dismiss-button"
-    let _child_elem = match _driver.find(By::Id("dismiss-button")).await {
-        Ok(element) => {
-            debug!("FOUND div dismiss-button");
-            element
-        },
-        Err(_e) => {
-            debug!("web element id:dismiss-button not found {}", _e);
-            // error!("Failed enter frame!");
-            
-            // panic!("Failed enter frame");
-            //let _dummy_web_element:WebElement = todo!() ;
-            Err(_e)
-        },
-    };
+    // wait_seconds_of_browser(_driver.clone(), 5).await?;
 
-    // get tag name
-    let _tag_name = _child_elem.tag_name().await?;
-    debug!("\t element => tag_name {}", _tag_name);
+    //         let elem_form_result: Result<WebElement, WebDriverError> =
+    //             _driver.find(By::XPath("./child::*")).await;
+
+    //         let elem_form = match elem_form_result {
+    //             Ok(_web_element) => {
+    //                 debug!(r#"ACTION_CLICK => web_element found"#);
+    //                 _web_element
+    //             }
+    //             Err(e) => {
+    //                 debug!(r#"Error web_element found"#);
+    //                 eprintln!("Error {}", e);
+    //                 // continue;
+    //             }
+    //         };
+    //id="dismiss-button"
+    // let _child_elem = match _driver.find(By::Id("dismiss-button")).await {
+    //     Ok(element) => {
+    //         debug!("FOUND div dismiss-button");
+    //         element
+    //     },
+    //     Err(_e) => {
+    //         debug!("web element not found {}", _e);
+    //         error!("Failed enter frame!");
+    //         panic!("Failed enter frame");
+    //     },
+    // };
+
+    // // get tag name
+    // let _tag_name = _child_elem.tag_name().await?;
+    // debug!("\t element => tag_name {}", _tag_name);
 
     // FROM HERE
     // https://www.ee.ucl.ac.uk/~mflanaga/java/HTMLandASCIItableC1.html
