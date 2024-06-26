@@ -335,8 +335,16 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                             // debug!("real html => {:?}",real_html);
                             debug!("FINISHED execute script => get akt page source");
 
-                            let child_elems =
-                                _driver.find_all(By::XPath(".//child::*[//*]")).await?;
+                            // HERE 338
+                            // let child_elems = _driver.find_all(By::XPath(".//child::*[//*]//*")).await?;
+                            //let child_elems = _driver.find_all(By::XPath("/*[//*]//*")).await?;
+                            let child_elems = _driver.find_all(By::XPath(".//child::*")).await?;
+                            // let child_elems = _driver.find_all(By::XPath(".//child::*")).await?;
+                            // NOT WORK let child_elems = _driver.find_all(By::XPath(".//child::div/span[//*]//*")).await?;
+                            // let child_elems =  _driver
+                            //     .find_all(By::XPath(".//child::*[contains(text(),'Close'])"))
+                            //     .await?;
+                            debug!("found children div");
 
                             let mut counter = 0;
                             for child_elem in child_elems {
@@ -452,26 +460,19 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                                             );
                                         }
 
-                                        for _search_child_elem in _search_child_elems {
-                                            debug!(
-                                                "_child_elem.tag_name {:?} => {}",
-                                                _sub_tag_name,
-                                                _search_child_elem.tag_name().await?
-                                            );
-                                           //  search_child_elems(_search_child_elem,_sub_tag_name.clone()).await?;
-                                        }
+                                        
                                     }
                                 }
 
                                 //FROM HERE
                                 //https://stackoverflow.com/questions/25356440/need-to-dump-entire-dom-tree-with-element-id-from-selenium-server
-                                let elements = child_elem
-                                    .find_all(By::Id("//*[@id='dismiss-button']"))
-                                    .await?;
+                                // let elements = child_elem
+                                //     .find_all(By::Id("//*[@id='dismiss-button']"))
+                                //     .await?;
 
-                                for _element in elements {
-                                    debug!("dismiss button");
-                                }
+                                // for _element in elements {
+                                //     debug!("dismiss button");
+                                // }
 
                                 let _text = child_elem.text().await?;
                                 // debug!("text => {}", _text);
@@ -504,6 +505,10 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                                 // debug!("_tag_class_name => {:?}", _tag_class_name);
 
                                 debug!("inside iframe: tag => {:?} ( id=> {:?} text=>{:?} class=>{:?} )",_tag_name,_tag_id,_tag_text,_tag_class_name);
+
+                                //START
+
+                                //END
                             }
 
                             debug!("\t FINISHED show all elements inside iframe");
@@ -715,7 +720,7 @@ fn print_type<T>(_: &T) {
 async fn tag_list_all_childes(
     _driver: WebDriver,
     #[allow(unused_variables)] xpath: &str,
-) -> color_eyre::Result<(), Box<dyn Error>> {
+) -> Result<(), Box<dyn Error>> {
     // debug!("tag_list_all_childes : list_iframe_tag");
     // debug!(
     //    "tag_list_all_childes ; Status driver => {:?}",
@@ -778,7 +783,7 @@ async fn debug_vec(
 }
 
 // #[allow(dead_code)]
-// async fn search_child_elems(_element:thirtyfour::WebElement , _sub_tag_name:String) 
+// async fn search_child_elems(_element:thirtyfour::WebElement , _sub_tag_name:String)
 // -> color_eyre::Result<Vec<thirtyfour::WebElement>> {
 
 //     let _child_elems = match _element.find_all(By::XPath(".//child::*[//*]")).await {
