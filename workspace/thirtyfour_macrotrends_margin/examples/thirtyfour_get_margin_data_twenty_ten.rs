@@ -1,6 +1,8 @@
 // RUN PRG /W full log output
 // RUST_LOG=debug cargo run --example thirtyfour_get_margin_data_twenty_four 2>&1 | tee output1.txt
 
+// start cleanup
+
 #![warn(unused_extern_crates)]
 #[warn(dead_code)]
 // RUSTFLAGS=-Wunused-crate-dependencies cargo
