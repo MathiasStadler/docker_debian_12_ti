@@ -6,3 +6,5 @@
 workspace/*.html
 **/*.html
 workspace/thirtyfour_macrotrends_margin/output_html.html
+workspace/thirtyfour_macrotrends_margin/.*out
+workspace/thirtyfour_macrotrends_margin/example44.out
