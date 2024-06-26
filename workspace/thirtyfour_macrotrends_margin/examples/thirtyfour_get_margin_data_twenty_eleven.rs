@@ -338,7 +338,13 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                             // HERE 338
                             // let child_elems = _driver.find_all(By::XPath(".//child::*[//*]//*")).await?;
                             //let child_elems = _driver.find_all(By::XPath("/*[//*]//*")).await?;
-                            let child_elems = _driver.find_all(By::XPath(".//child::*")).await?;
+                            // let child_elems = _driver.find_all(By::XPath(".//child::*")).await?;
+                            // let child_elems = _driver.find_all(By::XPath(".//child::*[contains(text(),'Close']")).await?;
+                            let child_elems = _driver.find_all(By::XPath("//*[text()[contains(.,'Close')]]")).await?;
+
+
+
+
                             // let child_elems = _driver.find_all(By::XPath(".//child::*")).await?;
                             // NOT WORK let child_elems = _driver.find_all(By::XPath(".//child::div/span[//*]//*")).await?;
                             // let child_elems =  _driver
@@ -360,8 +366,10 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
 
                                 //div
                                 if _tag_name == "div" {
+                                    // let sub_child_elems =
+                                    //     child_elem.find_all(By::XPath(".//child::*[//*]")).await?;
                                     let sub_child_elems =
-                                        child_elem.find_all(By::XPath(".//child::*[//*]")).await?;
+                                        child_elem.find_all(By::XPath(".//child::*")).await?;
 
                                     debug!("START child element");
                                     //

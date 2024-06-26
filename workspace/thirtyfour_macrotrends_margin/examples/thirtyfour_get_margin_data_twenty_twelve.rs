@@ -337,13 +337,20 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
 
                             // HERE 338
                             // let child_elems = _driver.find_all(By::XPath(".//child::*[//*]//*")).await?;
-                            let child_elems = _driver.find_all(By::XPath("/*[//*]//*")).await?;
+                            //let child_elems = _driver.find_all(By::XPath("/*[//*]//*")).await?;
+                            // let child_elems = _driver.find_all(By::XPath(".//child::*")).await?;
+                            // let child_elems = _driver.find_all(By::XPath(".//child::*[contains(text(),'Close']")).await?;
+                            let child_elems = _driver.find_all(By::XPath("//*[text()[contains(.,'Close')]]")).await?;
+
+
+
+
                             // let child_elems = _driver.find_all(By::XPath(".//child::*")).await?;
                             // NOT WORK let child_elems = _driver.find_all(By::XPath(".//child::div/span[//*]//*")).await?;
                             // let child_elems =  _driver
                             //     .find_all(By::XPath(".//child::*[contains(text(),'Close'])"))
                             //     .await?;
-                            
+                            debug!("found children div");
 
                             let mut counter = 0;
                             for child_elem in child_elems {
@@ -359,8 +366,10 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
 
                                 //div
                                 if _tag_name == "div" {
+                                    // let sub_child_elems =
+                                    //     child_elem.find_all(By::XPath(".//child::*[//*]")).await?;
                                     let sub_child_elems =
-                                        child_elem.find_all(By::XPath(".//child::*[//*]")).await?;
+                                        child_elem.find_all(By::XPath(".//child::*")).await?;
 
                                     debug!("START child element");
                                     //
@@ -459,14 +468,7 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                                             );
                                         }
 
-                                        // for _search_child_elem in _search_child_elems {
-                                        //     debug!(
-                                        //         "_child_elem.tag_name {:?} => {}",
-                                        //         _sub_tag_name,
-                                        //         _search_child_elem.tag_name().await?
-                                        //     );
-                                        //    //  search_child_elems(_search_child_elem,_sub_tag_name.clone()).await?;
-                                        // }
+                                        
                                     }
                                 }
 
