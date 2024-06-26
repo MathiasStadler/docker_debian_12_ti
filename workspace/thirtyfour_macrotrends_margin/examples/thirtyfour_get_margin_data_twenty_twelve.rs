@@ -194,7 +194,7 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
             wait_seconds_of_browser(_driver.clone(), 10).await?;
             let elem_form: WebElement = _driver.find(By::XPath(WEB_XPATH[field][3])).await?;
             elem_form.click().await?;
-            wait_seconds_of_browser(_driver.clone(), 10).await?;
+            // wait_seconds_of_browser(_driver.clone(), 10).await?;
             debug!(
                 "Action FINISH =>  ACTION_CLICK_INTERACTABLE ({})",
                 WEB_XPATH[field][1]
@@ -341,8 +341,8 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                             // let child_elems = _driver.find_all(By::XPath(".//child::*")).await?;
                             // let child_elems = _driver.find_all(By::XPath(".//child::*[contains(text(),'Close']")).await?;
                             let child_elems = _driver.find_all(By::XPath("//*[text()[contains(.,'Close')]]")).await?;
-
-
+                            // weiter div span und 
+// /html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]
 
 
                             // let child_elems = _driver.find_all(By::XPath(".//child::*")).await?;
@@ -350,7 +350,24 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                             // let child_elems =  _driver
                             //     .find_all(By::XPath(".//child::*[contains(text(),'Close'])"))
                             //     .await?;
-                            debug!("found children div");
+                            
+                            
+                            //debug!("found children");
+
+                            // len - How many WebElement had we found?
+                            debug!("found children n = {:?} ", child_elems.len());
+
+
+                            // if child_elems.len() > 1 {
+
+                            //     let _main_element:WebElement = child_elems.clone().into_iter().nth(0).expect("REASON");
+                            //     debug!("tag =>{}",_main_element.tag_name().await?);
+                            //     debug!("class =>{:?}",_main_element.class_name().await?);
+                            //     debug!("text =>{}",_main_element.text().await?);
+                            //     debug!("id =>{:?}",_main_element.id().await?);
+                                
+
+                            // } 
 
                             let mut counter = 0;
                             for child_elem in child_elems {
@@ -362,7 +379,14 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                                     Ok(x) => x,
                                     Err(_e) => continue,
                                 };
-                                // debug!("\t iframe=> tag_name =>  {}", _tag_name);
+                                debug!("\t HERE iframe=> tag_name =>  {}", _tag_name);
+
+                                // extract text out of result
+                                let _tag_text = match child_elem.text().await {
+                                    Ok(x) => x,
+                                    Err(_e) => continue,
+                                };
+                                debug!("\t HERE iframe=> tag_ text =>  {}", _tag_text);
 
                                 //div
                                 if _tag_name == "div" {
