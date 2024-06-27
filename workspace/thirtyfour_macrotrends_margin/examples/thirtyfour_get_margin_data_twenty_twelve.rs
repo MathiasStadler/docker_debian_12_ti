@@ -332,7 +332,8 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                                 .await
                                 .unwrap();
 
-                            // debug!("real html => {:?}",real_html);
+                            //HERE real_html    
+                            debug!("real html => {:?}",_real_html);
                             debug!("FINISHED execute script => get akt page source");
 
                             // HERE 338
