@@ -516,7 +516,8 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
 
                                 debug!("inside iframe: tag => {:?} ( id=> {:?} text=>{:?} class=>{:?} )",_tag_name,_tag_id,_tag_text,_tag_class_name);
                             
-                                let _ = list_element(child_elem).await?;
+                                // let _ = list_element(child_elem).await?;
+                                let _ = list_element(child_elem.clone()).await?;
 
                             }
 
