@@ -305,6 +305,8 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                             for child_elem in child_elems {
                                 _counter = _counter + 1;
 
+                                let _ = list_element(child_elem.clone()).await?;
+
                                 let tag_name = child_elem.tag_name().await?;
                                 debug!("Nr => {}", _counter);
                                 debug!("\t  tag_name =>  {}", tag_name);
@@ -323,7 +325,6 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                                     Err(_e) => continue,
                                 };
                                 debug!("\t HERE iframe=> tag_ text =>  {}", _tag_text);
-
 
                                 //call fn tag_list_all_childes
                                 // let _ = tag_list_all_childes(_driver.clone(), "xpath").await?;
@@ -368,7 +369,7 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                             for child_elem in &child_elems {
                                 counter = counter + 1;
                                 // debug!("sub Tag => {}", counter);
-
+                                let _ = list_element(child_elem.clone()).await?;
                                 // extract string out of result
                                 let _tag_name = match child_elem.tag_name().await {
                                     Ok(x) => x,
@@ -382,11 +383,6 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                                     Err(_e) => continue,
                                 };
                                 debug!("\t HERE iframe=> tag_ text =>  {}", _tag_text);
-
-
-
-                                
-                                
 
                                 //div
                                 if _tag_name == "div" {
@@ -454,6 +450,7 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
 
                                         if _child_elems.len() > 0 {
                                             // debug_vec(_child_elems,_sub_tag_name);
+                                            debug!("call debug_vec ");
                                             debug_vec(_child_elems.clone(), _sub_tag_name.clone())
                                                 .await?;
                                         };
@@ -481,9 +478,8 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                                             );
                                         }
                                     }
-                                }//end div
-
-                                
+                                } //end div
+                                let _ = list_element(child_elem.clone()).await?;
 
                                 let _text = child_elem.text().await?;
                                 // debug!("text => {}", _text);
@@ -515,15 +511,12 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                                 };
 
                                 debug!("inside iframe: tag => {:?} ( id=> {:?} text=>{:?} class=>{:?} )",_tag_name,_tag_id,_tag_text,_tag_class_name);
-                            
-                                // let _ = list_element(child_elem).await?;
-                                let _ = list_element(child_elem.clone()).await?;
 
+                                // let _ = list_element(child_elem).await?;
+                                // let _ = list_element(child_elem.clone()).await?;
                             }
 
                             debug!("\t FINISHED show all elements inside iframe");
-
-                            
                         }
                         Err(_e) => {
                             error!("Failed enter frame!");
@@ -763,23 +756,23 @@ async fn debug_vec(
             _child_elem.tag_name().await?,
             _child_elem.class_name().await?,
             _child_elem.id().await?,
-            _child_elem.text().await?
+            _child_elem.text().await?,
         );
+        let _child_elems= _child_elem.find_all(By::XPath(".//*")).await?;
+        debug!("elems n=>{}",_child_elems.len());
     }
 
     debug!("FINISHED debug_vec");
     Ok(())
 }
 
-async fn list_element(child_elem:WebElement) -> color_eyre::Result<(), Box<dyn Error>> {
-
+async fn list_element(child_elem: WebElement) -> color_eyre::Result<(), Box<dyn Error>> {
     #[allow(unused_assignments)]
-    let mut counter=0;
+    let mut counter = 0;
     //div
     // if _tag_name == "div" {
     if true {
-        let sub_child_elems =
-            child_elem.find_all(By::XPath(".//child::*")).await?;
+        let sub_child_elems = child_elem.find_all(By::XPath(".//child::*")).await?;
 
         debug!("START child element");
         //
@@ -801,8 +794,7 @@ async fn list_element(child_elem:WebElement) -> color_eyre::Result<(), Box<dyn E
             };
 
             // extract class name out of result
-            let _sub_tag_class = match sub_child_elem.class_name().await
-            {
+            let _sub_tag_class = match sub_child_elem.class_name().await {
                 Ok(x) => x,
                 Err(_e) => continue,
             };
@@ -816,20 +808,13 @@ async fn list_element(child_elem:WebElement) -> color_eyre::Result<(), Box<dyn E
 
             debug!(
                 "n=>{:?} tag=>{:?} id=>{:?} text=>{:?} class=>{:?}",
-                counter,
-                _sub_tag_name,
-                _sub_tag_id,
-                _sub_tag_text,
-                _sub_tag_class
+                counter, _sub_tag_name, _sub_tag_id, _sub_tag_text, _sub_tag_class
             );
 
             // search contain
             // let _child_elems = sub_child_elem.find_all(By::XPath(".//child::*[//*]")).await?;
 
-            let _child_elems = match sub_child_elem
-                .find_all(By::XPath(".//child::*[//*]"))
-                .await
-            {
+            let _child_elems = match sub_child_elem.find_all(By::XPath(".//child::*[//*]")).await {
                 Ok(x) => x,
                 Err(_e) => {
                     eprintln!("Err {}", _e);
@@ -841,18 +826,15 @@ async fn list_element(child_elem:WebElement) -> color_eyre::Result<(), Box<dyn E
             debug!("n = {:?} ", _child_elems.len());
 
             if _child_elems.len() > 0 {
+                debug!("call debug_vec ");
                 // debug_vec(_child_elems,_sub_tag_name);
-                debug_vec(_child_elems.clone(), _sub_tag_name.clone())
-                    .await?;
+                debug_vec(_child_elems.clone(), _sub_tag_name.clone()).await?;
             };
 
             const XPATH_SEARCH: &str = ".//child::*[//*]";
 
             debug!("search children");
-            let _search_child_elems = match sub_child_elem
-                .find_all(By::XPath(XPATH_SEARCH))
-                .await
-            {
+            let _search_child_elems = match sub_child_elem.find_all(By::XPath(XPATH_SEARCH)).await {
                 Ok(x) => x,
                 Err(_e) => {
                     eprintln!("Err {}", _e);
@@ -868,6 +850,12 @@ async fn list_element(child_elem:WebElement) -> color_eyre::Result<(), Box<dyn E
                     _search_child_elems.len()
                 );
             }
+
+            debug!("call debug_vec ");
+                // debug_vec(_child_elems,_sub_tag_name);
+                debug_vec(_search_child_elems.clone(), _sub_tag_name.clone()).await?;
+
+
         }
     } //end div
     Ok(())
