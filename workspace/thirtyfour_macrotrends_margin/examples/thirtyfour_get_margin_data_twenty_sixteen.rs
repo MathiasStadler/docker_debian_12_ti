@@ -393,7 +393,7 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
 
                             // FROM HERE
                             // https://stackoverflow.com/questions/10177169/finding-a-span-with-specific-content-using-xpath
-                            let result_child_elems = _driver.find_all(By::XPath("./*"));
+                            let result_child_elems = _driver.find_all(By::XPath("child::*"));
 
                             // /html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]
                             //  //*[@id="dismiss-button"]
@@ -425,16 +425,17 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                             // let _ = web_element_child_elements(child_elems).await?;
 
                             let mut counter = 0;
-                            // for child_elem in &child_elems {
-                            //     counter = counter + 1;
-                            //     // debug!("sub Tag => {}", counter);
-                            //     let _ = list_element(child_elem.clone()).await?;
-                            //     // extract string out of result
-                            //     let _tag_name = match child_elem.tag_name().await {
-                            //         Ok(x) => x,
-                            //         Err(_e) => continue,
-                            //     };
-                            //     debug!("\t HERE iframe=> tag_name =>  {}", _tag_name);
+                            for child_elem in &child_elems {
+                                
+                                counter = counter + 1;
+                                // debug!("sub Tag => {}", counter);
+                                let _ = list_element(child_elem.clone()).await?;
+                                // extract string out of result
+                                let _tag_name = match child_elem.tag_name().await {
+                                     Ok(x) => x,
+                                     Err(_e) => continue,
+                                 };
+                                 debug!("\t HERE iframe=> tag_name =>  {}", _tag_name);
 
                             //     // extract text out of result
                             //     let _tag_text = match child_elem.text().await {
@@ -579,7 +580,7 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
 
                             //     // let _ = list_element(child_elem).await?;
                             //     // let _ = list_element(child_elem.clone()).await?;
-                            // }
+                            }
 
                             debug!("\t FINISHED show all elements inside iframe");
                         }
