@@ -26,6 +26,9 @@ sed -i 's/\\>/>/g' test.txt
 sed -i 's/;/;\r\n/g' test.txt
 sed -i 's/function/\r\nfunction/g' test.txt
 sed -i 's/){/){\r\n/g' test.txt
+sed -i 's/>\\/>/g' test.txt
+sed -i 's/}\\/>/g' test.txt
+sed -i 's/\\</</g' test.txt
 
 sed -i 's/\\n//g' test.txt
 
