@@ -82,6 +82,9 @@ pub type WebDriverResult<T> = Result<T, WebDriverError>;
 fn main() -> color_eyre::Result<(), Box<dyn Error>> {
     color_eyre::install()?;
 
+
+    let  mut _call_counter:i32;
+
     env_logger::builder()
         .format(|buf, record| {
             let warn_style = buf.default_level_style(log::Level::Warn);
@@ -171,7 +174,7 @@ async fn wait_seconds_of_browser(
     _driver: WebDriver,
     waiting_period: u64,
 ) -> color_eyre::Result<(), Box<dyn Error>> {
-    debug!("wait for page already load");
+    debug!("wait for page completed load => wait for status from chrome driver");
     debug!("driver=> {:?}", _driver.status().await?);
     debug!("Thread sleep for {} seconds", waiting_period);
     thread::sleep(Duration::from_secs(waiting_period));
@@ -516,6 +519,7 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                             //                         _child_elems.clone(),
                             //                         _sub_tag_name.clone(),
                             //                         "child_elems",
+                            //                          0,
                             //                     )
                             //                     .await?;
                             //                 }
@@ -814,12 +818,15 @@ async fn debug_vec(
     _child_elems: Vec<WebElement>,
     _sub_tag_name: String,
     _note: &str,
+    mut _call_counter:i32,
+    
 ) -> color_eyre::Result<(), Box<dyn Error>> {
-    debug!("START debug_vec");
+    debug!("START debug_vec {}",_sub_tag_name);
 
     for _child_elem in _child_elems {
         debug!(
-            "_parent/child => {} => {}/{} (class_name=>{:?} id=>{:?} text=>{:?})",
+            ">{} parent/child => {} => {}/{} (class_name=>{:?} id=>{:?} text=>{:?})",
+            _call_counter,
             _note,
             _sub_tag_name,
             _child_elem.tag_name().await?,
@@ -828,7 +835,8 @@ async fn debug_vec(
             _child_elem.text().await?,
         );
         // let _child_elems= _child_elem.find_all(By::XPath(".//*")).await?;
-        let _child_elems = _child_elem.find_all(By::XPath("./*")).await?;
+        // let _child_elems = _child_elem.find_all(By::XPath("./*")).await?;
+        let _child_elems = _child_elem.find_all(By::XPath("child::*")).await?;
 
         if _child_elems.len() > 0 {
             debug!(
@@ -837,12 +845,18 @@ async fn debug_vec(
                 _child_elems.len()
             );
 
-            //  debug_vec(_child_elems.clone(), _sub_tag_name.clone(),"sub_child_elems")
-            //  .await?;
+
+            _call_counter = _call_counter +1;
+            debug!("\tdebug_vec step down");
+            debug_vec(_child_elems.clone(), _sub_tag_name.clone(),"sub_child_elems",_call_counter).await?;
+            debug!("\tdebug_vec step up");
         };
+        
+        
     }
 
-    debug!("FINISHED debug_vec");
+    // debug!("FINISHED debug_vec");
+    debug!("FINISHED debug_vec {}",_sub_tag_name);
     Ok(())
 }
 
@@ -913,15 +927,15 @@ async fn list_element(child_elem: WebElement) -> color_eyre::Result<(), Box<dyn 
             };
 
             // len - How many WebElement had we found?
-            debug!("found n WEebElements = {:?} ", _child_elems.len());
+            debug!("found n WEebElements({}) = {:?} ",sub_child_elem.tag_name().await?, _child_elems.len());
 
             if _child_elems.len() > 0 {
-                if DEBUG_VEC {
-                    debug!("call debug_vec ");
+                // if DEBUG_VEC {
+                    // debug!("call children_elems ");
                     // debug_vec(_child_elems,_sub_tag_name);
                     // debug_vec(_child_elems.clone(), _sub_tag_name.clone()).await?;
-                    debug_vec(_child_elems.clone(), _sub_tag_name.clone(), "child_elems").await?;
-                }
+                    debug_vec(_child_elems.clone(), _sub_tag_name.clone(), "children_elems",0).await?;
+                //}
             };
 
             const XPATH_SEARCH: &str = ".//child::*[//*]";
@@ -954,6 +968,7 @@ async fn list_element(child_elem: WebElement) -> color_eyre::Result<(), Box<dyn 
                     _child_elems.clone(),
                     _sub_tag_name.clone(),
                     "call debug_vec",
+                    0,
                 )
                 .await?;
             }
