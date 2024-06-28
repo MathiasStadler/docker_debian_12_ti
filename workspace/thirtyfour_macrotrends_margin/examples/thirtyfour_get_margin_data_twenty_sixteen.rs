@@ -385,8 +385,14 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                             //     Err(_e) => return  Err(_e),
                             // };
 
+                            // let result_child_elems =
+                            //    _driver.find_all(By::XPath("//*[contains(.,'Close')]"));
+
                             let result_child_elems =
-                                _driver.find_all(By::XPath("//*[contains(.,'Close')]"));
+                                _driver.find_all(By::XPath("//*[@id=\"dismiss-button\"] "));
+
+                            // /html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]
+                            //  //*[@id="dismiss-button"]
 
                             child_elems = match result_child_elems.await {
                                 Ok(_child_elems) => {
@@ -399,7 +405,12 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                                     _child_elems
                                 }
                                 // Err(_e) => return Err(_e),
-                                Err(_e) => return Err(Box::new(_e)),
+                                Err(_e) => {
+                                    return Err(Box::new(_e));
+                                        // debug!("Error => {:?}", _e);
+                                        
+                                    
+                                }
                             };
 
                             // let child_elems = _driver
