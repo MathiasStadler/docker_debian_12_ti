@@ -291,33 +291,17 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                     let _inside_iframe = match result_enter_iframe {
                         Ok(_enter_frame) => {
                             debug!("ENTER FRAME => first step after enter frame ");
-
-                            //enter iframe find all tags
-                            //let result_iframe_all_tags = _driver.find_all(By::XPath("./*"));
-
-                            // let vec_iframe_all_tags = result_iframe_all_tags.await?;
-
-                            // debug!(" iframe found tags n=> {}", vec_iframe_all_tags.len());
-
-                            //  debug!("\t FINISHED show all elements inside iframe");
                             _enter_frame
                         } // Finished ENTER FRAME OK
                         Err(_e) => {
                             error!("Failed enter frame!");
                             panic!("Failed enter frame");
                         }
-                    };
-
-                    //_inside_iframe
-                    debug!("{:?}", _inside_iframe);
-
-                    //START
-
-                    //END
+                    };//end of match
 
                     // debug!("iframe _driver.close().await?");
                     _iframe
-                }
+                }//end of Ok(_iframe)
 
                 Err(_e) => {
                     error!("Failed enter frame!");
@@ -343,7 +327,20 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                     return Err(Box::new(_e));
                     // debug!("Error => {:?}", _e);
                 }
-            };
+            };//end of match
+
+            let mut counter = 0;
+            for child_elem in &child_elems {
+                counter = counter + 1;
+
+                let _tag_name = match child_elem.tag_name().await {
+                            Ok(x) => x,
+                            Err(_e) => continue,
+                        };
+                        debug!("\t HERE iframe=> tag_name =>  {}", _tag_name);
+                        let _ = tag_list_all_childes(_driver.clone(), "xpath").await?;
+                        
+                };
 
             // wait_seconds_of_browser(_driver.clone(), 10).await?;
         }
@@ -530,7 +527,8 @@ async fn tag_list_all_childes(
     debug!("driver => {:?}", _driver.status().await?);
 
     let child_elems = _driver
-        .find_all(By::XPath(".//span[normalize-space(text())=\"Close\"]/.."))
+        //.find_all(By::XPath("/*/*/X/node()"))
+        .find_all(By::XPath("*"))
         .await?;
 
     for child_elem in child_elems {
