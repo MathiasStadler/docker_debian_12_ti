@@ -159,8 +159,7 @@ WORKDIR /root
 # RUN mkdir -p /scripts/
 COPY scripts/bootstrap.sh \
     dbus/docker-dbus-entrypoint.sh \
-    scripts/start-chrome.sh \
-    scripts/start_chromedriver.sh \
+    scripts/start_chromiumdriver.sh \
     /scripts/
 
 RUN set -euxo \ 
@@ -269,11 +268,11 @@ ENTRYPOINT ["/scripts/docker-dbus-entrypoint.sh"]
 # cat /tmp/t.txt |sort
 
 # cd src && \
-# docker buildx build --progress=plain --no-cache -t debian_lxde_chromium_rust -f Dockerfile_lxde_chromium-driver "."
+# docker buildx build --progress=plain --no-cache -t debian_lxde_chromium_rust -f src/Dockerfile_lxde_chromium_driver_rust "."
 
 # w/o --no-cache
 # cd src
-# docker buildx build --progress=plain -t debian_lxde_chromium_rust -f Dockerfile_lxde_chromium-driver "."
+# docker buildx build --progress=plain -t debian_lxde_chromium_rust -f src/Dockerfile_lxde_chromium_driver_rust"."
 
 # docker run -ti debian_lxde_chrome bash    
 # use start script => cd ./src && sh +x  start_container_lxde_chromium_rust_third.sh
