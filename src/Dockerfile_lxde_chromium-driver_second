@@ -155,11 +155,15 @@ WORKDIR /root
 
 # old move to RUN group above 
 # RUN mkdir -p /scripts/
-COPY scripts/bootstrap.sh dbus/docker-dbus-entrypoint.sh scripts/start-chrome.sh scripts/start_chromedriver.sh /scripts/
+COPY scripts/bootstrap.sh \
+    dbus/docker-dbus-entrypoint.sh \
+    scripts/start-chrome.sh \
+    scripts/start_chromedriver.sh \
+    /scripts/
 
 RUN set -euxo \ 
     && chmod +x /scripts/bootstrap.sh \
-    &&  chmod +x /scripts/docker-dbus-entrypoint.sh
+    && chmod +x /scripts/docker-dbus-entrypoint.sh
 
 # install chrome amd chromedriver
 # FROM HERE
@@ -173,29 +177,29 @@ ENV CHROMEDRIVER_DIR /chromedriver
 #    && wget --quiet --output-document=- https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
 #    && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list 
 
-RUN set -euxo \ 
-    && wget --quiet --output-document=- https://dl-ssl.google.com/linux/linux_signing_key.pub |gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/firefox.gpg \
-    && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list 
+# RUN set -euxo \ 
+#    && wget --quiet --output-document=- https://dl-ssl.google.com/linux/linux_signing_key.pub |gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/firefox.gpg \
+#    && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list 
 
 
-RUN set -euxo \
-    && apt-get update --yes \
-    && apt-get install --no-install-recommends --no-install-suggests --yes --quiet --quiet google-chrome-stable \
-    && CHROME_VERSION=$(google-chrome --product-version | cut --delimiter='.' --fields='1-3')  \
-    && DRIVER_VERSION=$(curl -s "https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_$CHROME_VERSION") \
-    && echo "CHROMEDRIVER_DIR => ${CHROMEDRIVER_DIR}" \
-    && echo "DRIVER_VERSION => ${DRIVER_VERSION}" \
-    && mkdir -p $CHROMEDRIVER_DIR \
-    && echo "ALT => curl "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/$DRIVER_VERSION/linux64/chromedriver-linux64.zip" --output $CHROMEDRIVER_DIR/chromedriver.zip " \
-    && curl "https://storage.googleapis.com/chrome-for-testing-public/$DRIVER_VERSION/linux64/chromedriver-linux64.zip" --output $CHROMEDRIVER_DIR/chromedriver.zip \
-    && unzip $CHROMEDRIVER_DIR/chromedriver.zip -d $CHROMEDRIVER_DIR  \
-    && rm $CHROMEDRIVER_DIR/chromedriver.zip \
-    && locale-gen en_US.UTF-8 \
-    && update-locale LANG=en_US.UTF-8 LC_CTYPE=en_US.UTF-8 \
-    && apt-get --yes autoclean  \ 
-    && apt-get --yes --auto-remove autoremove   \
-    && apt-get clean --yes \
-    && rm --recursive --force /var/lib/apt/lists/* 
+# RUN set -euxo \
+#     && apt-get update --yes \
+#     && apt-get install --no-install-recommends --no-install-suggests --yes --quiet --quiet google-chrome-stable \
+#     && CHROME_VERSION=$(google-chrome --product-version | cut --delimiter='.' --fields='1-3')  \
+#     && DRIVER_VERSION=$(curl -s "https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_$CHROME_VERSION") \
+#     && echo "CHROMEDRIVER_DIR => ${CHROMEDRIVER_DIR}" \
+#     && echo "DRIVER_VERSION => ${DRIVER_VERSION}" \
+#     && mkdir -p $CHROMEDRIVER_DIR \
+#     && echo "ALT => curl "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/$DRIVER_VERSION/linux64/chromedriver-linux64.zip" --output $CHROMEDRIVER_DIR/chromedriver.zip " \
+#     && curl "https://storage.googleapis.com/chrome-for-testing-public/$DRIVER_VERSION/linux64/chromedriver-linux64.zip" --output $CHROMEDRIVER_DIR/chromedriver.zip \
+#     && unzip $CHROMEDRIVER_DIR/chromedriver.zip -d $CHROMEDRIVER_DIR  \
+#     && rm $CHROMEDRIVER_DIR/chromedriver.zip \
+#     && locale-gen en_US.UTF-8 \
+#     && update-locale LANG=en_US.UTF-8 LC_CTYPE=en_US.UTF-8 \
+#     && apt-get --yes autoclean  \ 
+#     && apt-get --yes --auto-remove autoremove   \
+#     && apt-get clean --yes \
+#     && rm --recursive --force /var/lib/apt/lists/* 
 # && rm --recursive --force /var/lib/{apt,dpkg,cache,log}
 
 # Put Chromedriver into the PATH
@@ -204,7 +208,8 @@ ENV PATH $CHROMEDRIVER_DIR:$PATH
 
 # install rust
 RUN set -euxo \ 
-    && export RUST_VERSION=1.76.0  \
+    # https://releases.rs/
+    && export RUST_VERSION=1.79.0  \
     && export TMP_RUST_DIR=/tmp/rust  \
     && mkdir -p "${TMP_RUST_DIR}" \
     && cd "${TMP_RUST_DIR}"  \
@@ -262,11 +267,11 @@ ENTRYPOINT ["/scripts/docker-dbus-entrypoint.sh"]
 # cat /tmp/t.txt |sort
 
 # cd src
-# docker buildx build --progress=plain --no-cache -t debian_lxde_chrome_rust_second -f Dockerfile_lxde_chrome_rust_second "."
+# docker buildx build --progress=plain --no-cache -t debian_lxde_chromium_rust_second -f Dockerfile_lxde_chrome_rust_second "."
 
 # w/o --no-cache
 # cd src
-# docker buildx build --progress=plain -t debian_lxde_chrome_rust_second -f Dockerfile_lxde_chrome_rust_second "."
+# docker buildx build --progress=plain -t debian_lxde_chrome_rust_second -f Dockerfile_lxde_chromium-driver_second "."
 
 # docker run -ti debian_lxde_chrome bash    
 # use start script => cd ./src && sh +x  start_container_lxde_chrome_rust_second.sh
