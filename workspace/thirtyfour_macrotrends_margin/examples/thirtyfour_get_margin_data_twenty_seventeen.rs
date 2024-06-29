@@ -889,9 +889,6 @@ async fn debug_vec(
 
             debug!("Id FOUND => {}",_string_local_tag_id);
 
-            //_child_elem
-
-
         }
         
         
@@ -971,7 +968,7 @@ async fn list_element(child_elem: WebElement) -> color_eyre::Result<(), Box<dyn 
             // len - How many WebElement had we found?
             debug!("found n WEebElements({}) = {:?} ",sub_child_elem.tag_name().await?, _child_elems.len());
 
-            if _child_elems.len() > 0 clear{
+            if _child_elems.len() > 0 {
                 // if DEBUG_VEC {
                     // debug!("call children_elems ");
                     // debug_vec(_child_elems,_sub_tag_name);
