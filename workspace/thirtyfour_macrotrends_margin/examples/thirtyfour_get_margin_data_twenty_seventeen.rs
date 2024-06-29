@@ -3,8 +3,7 @@
 
 // start cleanup
 
-#![warn(unused_extern_crates)]
-#[warn(dead_code)]
+
 // RUSTFLAGS=-Wunused-crate-dependencies cargo
 
 // env_logger
@@ -15,12 +14,8 @@
 #[allow(unused_imports)]
 use log::{debug, error, info, log_enabled, Level};
 
-#[allow(unused_imports)]
-use async_recursion::async_recursion;
 
-// check maybe double
-// #[allow(unused_imports)]
-// use thirtyfour::error::WebDriverResult;
+// use async_recursion::async_recursion;
 
 use csv::WriterBuilder;
 use std::error::Error;
@@ -33,8 +28,8 @@ use std::time::Duration;
 
 use thirtyfour::{prelude::WebDriverError, By, DesiredCapabilities, Key, WebDriver, WebElement};
 
-const DEBUG_VEC: bool = false;
-const SHOW_REAL_HTML:bool = false;
+// const DEBUG_VEC: bool = false;
+// const SHOW_REAL_HTML:bool = false;
 
 const WEB_PAGE: &str = "https://www.macrotrends.net";
 //const STOCK_SYMBOL: &str = "TREX";
@@ -301,150 +296,33 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                         Ok(_iframe) => {
                             debug!("ENTER FRAME => first step after enter frame ");
 
-                            // show all element inside frame
-                            // switch to iframe
-                            // let child_elems = _driver.find_all(By::XPath("//*[//*]")).await?;
-                            let mut child_elems = _driver.find_all(By::XPath("//iframe")).await?;
+                            // // show all element inside frame
+                            // // switch to iframe
+                            // // let child_elems = _driver.find_all(By::XPath("//*[//*]")).await?;
+                            // let mut child_elems = _driver.find_all(By::XPath("//iframe")).await?;
 
-                            // let child_elems = _driver.find_all(By::XPath("//iframe[//*][//*]")).await?;
-                            // let child_elems =
-                            //     _driver.find_all(By::XPath(".//*[//*]")).await?;
+                            // // let child_elems = _driver.find_all(By::XPath("//iframe[//*][//*]")).await?;
+                            // // let child_elems =
+                            // //     _driver.find_all(By::XPath(".//*[//*]")).await?;
 
-                            debug!("HERE inside frame ");
-                            let mut _counter = 0;
-                            for child_elem in child_elems {
-                                _counter = _counter + 1;
+                            // debug!("HERE inside frame ");
+                            // let mut _counter = 0;
+                            // for child_elem in child_elems {
+                            //     _counter = _counter + 1;
 
-                                let _ = list_element(child_elem.clone()).await?;
+                            //     let _ = list_element(child_elem.clone()).await?;
 
-                                let tag_name = child_elem.tag_name().await?;
-                                debug!("Nr => {}", _counter);
-                                debug!("\t  tag_name =>  {}", tag_name);
-                                debug!("\t tag_name => {} <= ", tag_name);
+                            //     let tag_name = child_elem.tag_name().await?;
+                            //     debug!("Nr => {}", _counter);
+                            //     debug!("\t  tag_name =>  {}", tag_name);
+                            //     debug!("\t tag_name => {} <= ", tag_name);
 
-                                // extract string out of result
-                                let _tag_name = match child_elem.tag_name().await {
-                                    Ok(x) => x,
-                                    Err(_e) => continue,
-                                };
-                                debug!("\t HERE iframe=> tag_name =>  {}", _tag_name);
-
-                                // extract text out of result
-                                let _tag_text = match child_elem.text().await {
-                                    Ok(x) => x,
-                                    Err(_e) => continue,
-                                };
-                                debug!("\t HERE iframe=> tag_ text =>  {}", _tag_text);
-
-                                //call fn tag_list_all_childes
-                                // let _ = tag_list_all_childes(_driver.clone(), "xpath").await?;
-                                // debug!(
-                                //     "\tfinished tag_list_all_childes => tag_name =>  {}",
-                                //     tag_name
-                                // );
-                            }
-
-                            // execute script
-                            // from here
-                            // https://github.com/ultrafunkamsterdam/undetected-chromedriver/issues/144
-
-                            // get generate webpage source by javascript
-
-                            if  SHOW_REAL_HTML {
-                            debug!("START execute script => get akt page source");
-
-                            let _real_html = _driver
-                                .execute(
-                                    r#"return document.getElementsByTagName('html')[0].innerHTML"#,
-                                    Vec::new(),
-                                )
-                                .await
-                                .unwrap();
-
-                            //HERE real_html
-                            debug!("real html => {:?}", _real_html);
-                            debug!("FINISHED execute script => get akt page source");
-
-                            }
-
-                            //wait
-                            wait_seconds_of_browser(_driver.clone(), 10).await?;
-                            // HERE 338
-                            // let child_elems = _driver.find_all(By::XPath(".//child::*[//*]//*")).await?;
-                            //let child_elems = _driver.find_all(By::XPath("/*[//*]//*")).await?;
-                            // let child_elems = _driver.find_all(By::XPath(".//child::*")).await?;
-                            // let child_elems = _driver.find_all(By::XPath(".//child::*[contains(text(),'Close']")).await?;
-                            //let child_elems = _driver
-                            //  .find_all(By::XPath("//*[text()[contains(.,'Close')]]"))
-                            //  .await?;
-
-                            // let child_elems = match _driver
-                            //     .find_all(By::XPath("//*[contains(.,'Close')]"))
-                            //     .await
-                            // {
-                            //     Ok(_child_elems) => {
-                            //         debug!("found children n = {:?} ", _child_elems.len());
-                            //         // enter into frame
-                            //         // debug!("Enter  into frame => pre step ");
-                            //         // let result_enter_frame = _iframe.clone().enter_frame().await;
-                            //         //enter frame
-                            //         // debug!("HERE => ENTER FRAME {} ",)
-                            //         _child_elems
-                            //     }
-                            //     Err(_e) => return  Err(_e),
-                            // };
-
-                            // let result_child_elems =
-                            //    _driver.find_all(By::XPath("//*[contains(.,'Close')]"));
-
-                            // let result_child_elems =
-                            //    _driver.find_all(By::XPath("//*[@id=\"dismiss-button\"] "));
-
-                            // FROM HERE
-                            // https://stackoverflow.com/questions/10177169/finding-a-span-with-specific-content-using-xpath
-                            let result_child_elems = _driver.find_all(By::XPath("child::*"));
-
-                            // /html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]
-                            //  //*[@id="dismiss-button"]
-
-                            child_elems = match result_child_elems.await {
-                                Ok(_child_elems) => {
-                                    debug!("found children n = {:?} ", _child_elems.len());
-                                    // enter into frame
-                                    // debug!("Enter  into frame => pre step ");
-                                    // let result_enter_frame = _iframe.clone().enter_frame().await;
-                                    // enter frame
-                                    // debug!("HERE => ENTER FRAME {} ",)
-                                    _child_elems
-                                }
-                                // Err(_e) => return Err(_e),
-                                Err(_e) => {
-                                    return Err(Box::new(_e));
-                                    // debug!("Error => {:?}", _e);
-                                }
-                            };
-
-                            // let child_elems = _driver
-                            //    .find_all(By::XPath("//*/span[text()[contains(.,'Close')]]"))
-                            //    .await?;
-
-                            // len - How many WebElement had we found?
-                            debug!("found children n = {:?} ", child_elems.len());
-
-                            // let _ = web_element_child_elements(child_elems).await?;
-
-                            let mut counter = 0;
-                            for child_elem in &child_elems {
-                                
-                                counter = counter + 1;
-                                // debug!("sub Tag => {}", counter);
-                                let _ = list_element(child_elem.clone()).await?;
-                                // extract string out of result
-                                let _tag_name = match child_elem.tag_name().await {
-                                     Ok(x) => x,
-                                     Err(_e) => continue,
-                                 };
-                                 debug!("\t HERE iframe=> tag_name =>  {}", _tag_name);
+                            //     // extract string out of result
+                            //     let _tag_name = match child_elem.tag_name().await {
+                            //         Ok(x) => x,
+                            //         Err(_e) => continue,
+                            //     };
+                            //     debug!("\t HERE iframe=> tag_name =>  {}", _tag_name);
 
                             //     // extract text out of result
                             //     let _tag_text = match child_elem.text().await {
@@ -453,147 +331,264 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                             //     };
                             //     debug!("\t HERE iframe=> tag_ text =>  {}", _tag_text);
 
-                            //     //div
-                            //     if _tag_name == "div" {
-                            //         let sub_child_elems =
-                            //             child_elem.find_all(By::XPath(".//child::*")).await?;
+                            //     //call fn tag_list_all_childes
+                            //     // let _ = tag_list_all_childes(_driver.clone(), "xpath").await?;
+                            //     // debug!(
+                            //     //     "\tfinished tag_list_all_childes => tag_name =>  {}",
+                            //     //     tag_name
+                            //     // );
+                            // }
 
-                            //         debug!("START child element");
-                            //         //
-                            //         //reset counter to zero
-                            //         counter = 0;
-                            //         for sub_child_elem in sub_child_elems {
-                            //             counter = counter + 1;
+                            // // execute script
+                            // // from here
+                            // // https://github.com/ultrafunkamsterdam/undetected-chromedriver/issues/144
 
-                            //             // extract string out of result
-                            //             let _sub_tag_name = match sub_child_elem.tag_name().await {
-                            //                 Ok(x) => x,
-                            //                 Err(_e) => continue,
-                            //             };
+                            // // get generate webpage source by javascript
 
-                            //             // extract id out of result
-                            //             let _sub_tag_id = match sub_child_elem.id().await {
-                            //                 Ok(x) => x,
-                            //                 Err(_e) => continue,
-                            //             };
+                            // if  SHOW_REAL_HTML {
+                            // debug!("START execute script => get akt page source");
 
-                            //             // extract class name out of result
-                            //             let _sub_tag_class = match sub_child_elem.class_name().await
-                            //             {
-                            //                 Ok(x) => x,
-                            //                 Err(_e) => continue,
-                            //             };
+                            // let _real_html = _driver
+                            //     .execute(
+                            //         r#"return document.getElementsByTagName('html')[0].innerHTML"#,
+                            //         Vec::new(),
+                            //     )
+                            //     .await
+                            //     .unwrap();
 
-                            //             // extract text out of result
-                            //             let _sub_tag_text = match sub_child_elem.text().await {
-                            //                 Ok(x) => x,
-                            //                 Err(_e) => continue,
-                            //             };
-                            //             // debug!("\t_sub_tag_text =>  {:?}", _sub_tag_text);
+                            // //HERE real_html
+                            // debug!("real html => {:?}", _real_html);
+                            // debug!("FINISHED execute script => get akt page source");
 
-                            //             debug!(
-                            //                 "n=>{:?} tag=>{:?} id=>{:?} text=>{:?} class=>{:?}",
-                            //                 counter,
-                            //                 _sub_tag_name,
-                            //                 _sub_tag_id,
-                            //                 _sub_tag_text,
-                            //                 _sub_tag_class
-                            //             );
+                            // }
 
-                            //             // search contain
-                            //             // let _child_elems = sub_child_elem.find_all(By::XPath(".//child::*[//*]")).await?;
+                            // //wait
+                            // wait_seconds_of_browser(_driver.clone(), 10).await?;
+                            // // HERE 338
+                            // // let child_elems = _driver.find_all(By::XPath(".//child::*[//*]//*")).await?;
+                            // //let child_elems = _driver.find_all(By::XPath("/*[//*]//*")).await?;
+                            // // let child_elems = _driver.find_all(By::XPath(".//child::*")).await?;
+                            // // let child_elems = _driver.find_all(By::XPath(".//child::*[contains(text(),'Close']")).await?;
+                            // //let child_elems = _driver
+                            // //  .find_all(By::XPath("//*[text()[contains(.,'Close')]]"))
+                            // //  .await?;
 
-                            //             let _child_elems = match sub_child_elem
-                            //                 .find_all(By::XPath(".//child::*[//*]"))
-                            //                 .await
-                            //             {
-                            //                 Ok(x) => x,
-                            //                 Err(_e) => {
-                            //                     eprintln!("Err {}", _e);
-                            //                     continue;
-                            //                 }
-                            //             };
+                            // // let child_elems = match _driver
+                            // //     .find_all(By::XPath("//*[contains(.,'Close')]"))
+                            // //     .await
+                            // // {
+                            // //     Ok(_child_elems) => {
+                            // //         debug!("found children n = {:?} ", _child_elems.len());
+                            // //         // enter into frame
+                            // //         // debug!("Enter  into frame => pre step ");
+                            // //         // let result_enter_frame = _iframe.clone().enter_frame().await;
+                            // //         //enter frame
+                            // //         // debug!("HERE => ENTER FRAME {} ",)
+                            // //         _child_elems
+                            // //     }
+                            // //     Err(_e) => return  Err(_e),
+                            // // };
 
-                            //             // len - How many WebElement had we found?
-                            //             debug!("n = {:?} ", _child_elems.len());
+                            // // let result_child_elems =
+                            // //    _driver.find_all(By::XPath("//*[contains(.,'Close')]"));
 
-                            //             if _child_elems.len() > 0 {
-                            //                 // debug_vec(_child_elems,_sub_tag_name);
-                            //                 if DEBUG_VEC {
-                            //                     debug!("call debug_vec ");
-                            //                     debug_vec(
-                            //                         _child_elems.clone(),
-                            //                         _sub_tag_name.clone(),
-                            //                         "child_elems",
-                            //                          0,
-                            //                     )
-                            //                     .await?;
-                            //                 }
-                            //             };
+                            // // let result_child_elems =
+                            // //    _driver.find_all(By::XPath("//*[@id=\"dismiss-button\"] "));
 
-                            //             const XPATH_SEARCH: &str = ".//child::*[//*]";
+                            // // FROM HERE
+                            // // https://stackoverflow.com/questions/10177169/finding-a-span-with-specific-content-using-xpath
+                            // let result_child_elems = _driver.find_all(By::XPath("child::*"));
 
-                            //             debug!("search children");
-                            //             let _search_child_elems = match sub_child_elem
-                            //                 .find_all(By::XPath(XPATH_SEARCH))
-                            //                 .await
-                            //             {
-                            //                 Ok(x) => x,
-                            //                 Err(_e) => {
-                            //                     eprintln!("Err {}", _e);
-                            //                     continue;
-                            //                 }
-                            //             };
+                            // // /html/body/div[1]/div[2]/div[2]/div/div/div[2]/div/div/div[3]
+                            // //  //*[@id="dismiss-button"]
 
-                            //             if _search_child_elems.len() == 0 {
-                            //                 debug!("NO search element FOUND");
-                            //             } else {
-                            //                 debug!(
-                            //                     "Found n=>{:?} (_search_child_elements) =  ",
-                            //                     _search_child_elems.len()
-                            //                 );
-                            //             }
-                            //         }
-                            //     } //end div
+                            // child_elems = match result_child_elems.await {
+                            //     Ok(_child_elems) => {
+                            //         debug!("found children n = {:?} ", _child_elems.len());
+                            //         // enter into frame
+                            //         // debug!("Enter  into frame => pre step ");
+                            //         // let result_enter_frame = _iframe.clone().enter_frame().await;
+                            //         // enter frame
+                            //         // debug!("HERE => ENTER FRAME {} ",)
+                            //         _child_elems
+                            //     }
+                            //     // Err(_e) => return Err(_e),
+                            //     Err(_e) => {
+                            //         return Err(Box::new(_e));
+                            //         // debug!("Error => {:?}", _e);
+                            //     }
+                            // };
+
+                            // // let child_elems = _driver
+                            // //    .find_all(By::XPath("//*/span[text()[contains(.,'Close')]]"))
+                            // //    .await?;
+
+                            // // len - How many WebElement had we found?
+                            // debug!("found children n = {:?} ", child_elems.len());
+
+                            // // let _ = web_element_child_elements(child_elems).await?;
+
+                            // let mut counter = 0;
+                            // for child_elem in &child_elems {
+                                
+                            //     counter = counter + 1;
+                            //     // debug!("sub Tag => {}", counter);
                             //     let _ = list_element(child_elem.clone()).await?;
-
-                            //     let _text = child_elem.text().await?;
-                            //     // debug!("text => {}", _text);
-
-                            //     // extract text inside span
+                            //     // extract string out of result
                             //     let _tag_name = match child_elem.tag_name().await {
-                            //         Ok(x) => x,
-                            //         Err(_e) => continue,
-                            //     };
+                            //          Ok(x) => x,
+                            //          Err(_e) => continue,
+                            //      };
+                            //      debug!("\t HERE iframe=> tag_name =>  {}", _tag_name);
 
-                            //     // extract text inside span
-                            //     let _tag_text = match child_elem.text().await {
-                            //         Ok(x) => x,
-                            //         Err(_e) => continue,
-                            //     };
+                            // //     // extract text out of result
+                            // //     let _tag_text = match child_elem.text().await {
+                            // //         Ok(x) => x,
+                            // //         Err(_e) => continue,
+                            // //     };
+                            // //     debug!("\t HERE iframe=> tag_ text =>  {}", _tag_text);
 
-                            //     // extract id inside span
-                            //     let _tag_id = match child_elem.id().await {
-                            //         Ok(x) => x,
-                            //         Err(_e) => continue,
-                            //     };
+                            // //     //div
+                            // //     if _tag_name == "div" {
+                            // //         let sub_child_elems =
+                            // //             child_elem.find_all(By::XPath(".//child::*")).await?;
 
-                            //     let _result_tag_class_name: WebDriverResult<Option<String>> =
-                            //         child_elem.class_name().await;
+                            // //         debug!("START child element");
+                            // //         //
+                            // //         //reset counter to zero
+                            // //         counter = 0;
+                            // //         for sub_child_elem in sub_child_elems {
+                            // //             counter = counter + 1;
 
-                            //     let _tag_class_name = match _result_tag_class_name {
-                            //         Ok(tag_class_name) => tag_class_name,
-                            //         Err(_e) => continue,
-                            //     };
+                            // //             // extract string out of result
+                            // //             let _sub_tag_name = match sub_child_elem.tag_name().await {
+                            // //                 Ok(x) => x,
+                            // //                 Err(_e) => continue,
+                            // //             };
 
-                            //     debug!("inside iframe: tag => {:?} ( id=> {:?} text=>{:?} class=>{:?} )",_tag_name,_tag_id,_tag_text,_tag_class_name);
+                            // //             // extract id out of result
+                            // //             let _sub_tag_id = match sub_child_elem.id().await {
+                            // //                 Ok(x) => x,
+                            // //                 Err(_e) => continue,
+                            // //             };
 
-                            //     // let _ = list_element(child_elem).await?;
-                            //     // let _ = list_element(child_elem.clone()).await?;
-                            }
+                            // //             // extract class name out of result
+                            // //             let _sub_tag_class = match sub_child_elem.class_name().await
+                            // //             {
+                            // //                 Ok(x) => x,
+                            // //                 Err(_e) => continue,
+                            // //             };
+
+                            // //             // extract text out of result
+                            // //             let _sub_tag_text = match sub_child_elem.text().await {
+                            // //                 Ok(x) => x,
+                            // //                 Err(_e) => continue,
+                            // //             };
+                            // //             // debug!("\t_sub_tag_text =>  {:?}", _sub_tag_text);
+
+                            // //             debug!(
+                            // //                 "n=>{:?} tag=>{:?} id=>{:?} text=>{:?} class=>{:?}",
+                            // //                 counter,
+                            // //                 _sub_tag_name,
+                            // //                 _sub_tag_id,
+                            // //                 _sub_tag_text,
+                            // //                 _sub_tag_class
+                            // //             );
+
+                            // //             // search contain
+                            // //             // let _child_elems = sub_child_elem.find_all(By::XPath(".//child::*[//*]")).await?;
+
+                            // //             let _child_elems = match sub_child_elem
+                            // //                 .find_all(By::XPath(".//child::*[//*]"))
+                            // //                 .await
+                            // //             {
+                            // //                 Ok(x) => x,
+                            // //                 Err(_e) => {
+                            // //                     eprintln!("Err {}", _e);
+                            // //                     continue;
+                            // //                 }
+                            // //             };
+
+                            // //             // len - How many WebElement had we found?
+                            // //             debug!("n = {:?} ", _child_elems.len());
+
+                            // //             if _child_elems.len() > 0 {
+                            // //                 // debug_vec(_child_elems,_sub_tag_name);
+                            // //                 if DEBUG_VEC {
+                            // //                     debug!("call debug_vec ");
+                            // //                     debug_vec(
+                            // //                         _child_elems.clone(),
+                            // //                         _sub_tag_name.clone(),
+                            // //                         "child_elems",
+                            // //                          0,
+                            // //                     )
+                            // //                     .await?;
+                            // //                 }
+                            // //             };
+
+                            // //             const XPATH_SEARCH: &str = ".//child::*[//*]";
+
+                            // //             debug!("search children");
+                            // //             let _search_child_elems = match sub_child_elem
+                            // //                 .find_all(By::XPath(XPATH_SEARCH))
+                            // //                 .await
+                            // //             {
+                            // //                 Ok(x) => x,
+                            // //                 Err(_e) => {
+                            // //                     eprintln!("Err {}", _e);
+                            // //                     continue;
+                            // //                 }
+                            // //             };
+
+                            // //             if _search_child_elems.len() == 0 {
+                            // //                 debug!("NO search element FOUND");
+                            // //             } else {
+                            // //                 debug!(
+                            // //                     "Found n=>{:?} (_search_child_elements) =  ",
+                            // //                     _search_child_elems.len()
+                            // //                 );
+                            // //             }
+                            // //         }
+                            // //     } //end div
+                            // //     let _ = list_element(child_elem.clone()).await?;
+
+                            // //     let _text = child_elem.text().await?;
+                            // //     // debug!("text => {}", _text);
+
+                            // //     // extract text inside span
+                            // //     let _tag_name = match child_elem.tag_name().await {
+                            // //         Ok(x) => x,
+                            // //         Err(_e) => continue,
+                            // //     };
+
+                            // //     // extract text inside span
+                            // //     let _tag_text = match child_elem.text().await {
+                            // //         Ok(x) => x,
+                            // //         Err(_e) => continue,
+                            // //     };
+
+                            // //     // extract id inside span
+                            // //     let _tag_id = match child_elem.id().await {
+                            // //         Ok(x) => x,
+                            // //         Err(_e) => continue,
+                            // //     };
+
+                            // //     let _result_tag_class_name: WebDriverResult<Option<String>> =
+                            // //         child_elem.class_name().await;
+
+                            // //     let _tag_class_name = match _result_tag_class_name {
+                            // //         Ok(tag_class_name) => tag_class_name,
+                            // //         Err(_e) => continue,
+                            // //     };
+
+                            // //     debug!("inside iframe: tag => {:?} ( id=> {:?} text=>{:?} class=>{:?} )",_tag_name,_tag_id,_tag_text,_tag_class_name);
+
+                            // //     // let _ = list_element(child_elem).await?;
+                            // //     // let _ = list_element(child_elem.clone()).await?;
+                            // }
 
                             debug!("\t FINISHED show all elements inside iframe");
-                        }
+                        } // Finished ENTER FRAME OK
                         Err(_e) => {
                             error!("Failed enter frame!");
                             panic!("Failed enter frame");
@@ -819,202 +814,202 @@ async fn tag_list_all_childes(
     Ok(())
 }
 
-#[async_recursion]
-async fn debug_vec(
-    _child_elems: Vec<WebElement>,
-    _sub_tag_name: String,
-    _note: &str,
-    mut _call_counter:i32,
+// #[async_recursion]
+// async fn debug_vec(
+//     _child_elems: Vec<WebElement>,
+//     _sub_tag_name: String,
+//     _note: &str,
+//     mut _call_counter:i32,
     
-) -> color_eyre::Result<(), Box<dyn Error>> {
-    debug!("START debug_vec {}",_sub_tag_name);
+// ) -> color_eyre::Result<(), Box<dyn Error>> {
+//     debug!("START debug_vec {}",_sub_tag_name);
 
-    for _child_elem in _child_elems {
-        debug!(
-            ">{} parent/child => {} => {}/{} (class_name=>{:?} id=>{:?} text=>{:?})",
-            _call_counter,
-            _note,
-            _sub_tag_name,
-            _child_elem.tag_name().await?,
-            _child_elem.class_name().await?,
-            _child_elem.id().await?,
-            _child_elem.text().await?,
+//     for _child_elem in _child_elems {
+//         debug!(
+//             ">{} parent/child => {} => {}/{} (class_name=>{:?} id=>{:?} text=>{:?})",
+//             _call_counter,
+//             _note,
+//             _sub_tag_name,
+//             _child_elem.tag_name().await?,
+//             _child_elem.class_name().await?,
+//             _child_elem.id().await?,
+//             _child_elem.text().await?,
             
-        );
-        // let _child_elems= _child_elem.find_all(By::XPath(".//*")).await?;
-        // let _child_elems = _child_elem.find_all(By::XPath("./*")).await?;
-        let _child_elems = _child_elem.find_all(By::XPath("child::*")).await?;
+//         );
+//         // let _child_elems= _child_elem.find_all(By::XPath(".//*")).await?;
+//         // let _child_elems = _child_elem.find_all(By::XPath("./*")).await?;
+//         let _child_elems = _child_elem.find_all(By::XPath("child::*")).await?;
 
-        if _child_elems.len() > 0 {
-            debug!(
-                "child elems tag {} n=>{}",
-                _sub_tag_name,
-                _child_elems.len()
-            );
+//         if _child_elems.len() > 0 {
+//             debug!(
+//                 "child elems tag {} n=>{}",
+//                 _sub_tag_name,
+//                 _child_elems.len()
+//             );
 
 
-            _call_counter = _call_counter +1;
-            debug!("\tdebug_vec step down");
-            debug_vec(_child_elems.clone(), _sub_tag_name.clone(),"sub_child_elems",_call_counter).await?;
-            debug!("\tdebug_vec step up");
-        }
-        else{
+//             _call_counter = _call_counter +1;
+//             debug!("\tdebug_vec step down");
+//             debug_vec(_child_elems.clone(), _sub_tag_name.clone(),"sub_child_elems",_call_counter).await?;
+//             debug!("\tdebug_vec step up");
+//         }
+//         else{
             
-            let _local_tag_name = _child_elem.tag_name().await?;
+//             let _local_tag_name = _child_elem.tag_name().await?;
             
             
-            // debug!("innerHTML => {}",_child_elem.inner_html().await?);
-            debug!("tag_name => {}",_child_elem.tag_name().await?);
+//             // debug!("innerHTML => {}",_child_elem.inner_html().await?);
+//             debug!("tag_name => {}",_child_elem.tag_name().await?);
 
-            if _local_tag_name == "span" {
+//             if _local_tag_name == "span" {
 
-                debug!("Found => {} ",_local_tag_name);
-                debug!("innerHTML => {} ", _child_elem.inner_html().await?);
+//                 debug!("Found => {} ",_local_tag_name);
+//                 debug!("innerHTML => {} ", _child_elem.inner_html().await?);
 
 
-            }
-        };
+//             }
+//         };
 
-        //_child_elem.id().await?,
-        //  parent/child => children_elems => div/iframe (class_name=>None id=>Some("ad_iframe") text=>"")
+//         //_child_elem.id().await?,
+//         //  parent/child => children_elems => div/iframe (class_name=>None id=>Some("ad_iframe") text=>"")
                 
-        // Since Rust doesn't support Nulls instead it has Optional value. Option is an Enum type which has 2 variants such as Some and None
-        // https://dev.to/ssivakumar/options-in-rust-11pm
+//         // Since Rust doesn't support Nulls instead it has Optional value. Option is an Enum type which has 2 variants such as Some and None
+//         // https://dev.to/ssivakumar/options-in-rust-11pm
         
-        let _string_local_tag_id:String = _child_elem.id().await?.unwrap_or("n/a".to_string());
+//         let _string_local_tag_id:String = _child_elem.id().await?.unwrap_or("n/a".to_string());
 
-        debug!("Id => {}",_string_local_tag_id);
+//         debug!("Id => {}",_string_local_tag_id);
         
-        if _string_local_tag_id ==  "ad_iframe".to_string() {
+//         if _string_local_tag_id ==  "ad_iframe".to_string() {
 
-            debug!("Id FOUND => {}",_string_local_tag_id);
+//             debug!("Id FOUND => {}",_string_local_tag_id);
 
-        }
+//         }
         
         
-    }
+//     }
 
-    // debug!("FINISHED debug_vec");
-    debug!("FINISHED debug_vec {}",_sub_tag_name);
-    Ok(())
-}
+//     // debug!("FINISHED debug_vec");
+//     debug!("FINISHED debug_vec {}",_sub_tag_name);
+//     Ok(())
+// }
 
-async fn list_element(child_elem: WebElement) -> color_eyre::Result<(), Box<dyn Error>> {
-    #[allow(unused_assignments)]
-    let mut counter = 0;
-    //div
-    // if _tag_name == "div" {
-    if true {
-        let sub_child_elems = child_elem.find_all(By::XPath(".//child::*")).await?;
+// async fn list_element(child_elem: WebElement) -> color_eyre::Result<(), Box<dyn Error>> {
+//     #[allow(unused_assignments)]
+//     let mut counter = 0;
+//     //div
+//     // if _tag_name == "div" {
+//     if true {
+//         let sub_child_elems = child_elem.find_all(By::XPath(".//child::*")).await?;
 
-        debug!("START child element");
-        //
-        //reset counter to zero
-        counter = 0;
-        for sub_child_elem in sub_child_elems {
-            counter = counter + 1;
+//         debug!("START child element");
+//         //
+//         //reset counter to zero
+//         counter = 0;
+//         for sub_child_elem in sub_child_elems {
+//             counter = counter + 1;
 
-            // extract string out of result
-            let _sub_tag_name = match sub_child_elem.tag_name().await {
-                Ok(x) => x,
-                Err(_e) => continue,
-            };
+//             // extract string out of result
+//             let _sub_tag_name = match sub_child_elem.tag_name().await {
+//                 Ok(x) => x,
+//                 Err(_e) => continue,
+//             };
 
-            // extract id out of result
-            let _sub_tag_id = match sub_child_elem.id().await {
-                Ok(x) => x,
-                Err(_e) => continue,
-            };
+//             // extract id out of result
+//             let _sub_tag_id = match sub_child_elem.id().await {
+//                 Ok(x) => x,
+//                 Err(_e) => continue,
+//             };
 
-            // extract class name out of result
-            let _sub_tag_class = match sub_child_elem.class_name().await {
-                Ok(x) => x,
-                Err(_e) => continue,
-            };
+//             // extract class name out of result
+//             let _sub_tag_class = match sub_child_elem.class_name().await {
+//                 Ok(x) => x,
+//                 Err(_e) => continue,
+//             };
 
-            // extract text out of result
-            let _sub_tag_text = match sub_child_elem.text().await {
-                Ok(x) => x,
-                Err(_e) => continue,
-            };
-            // debug!("\t_sub_tag_text =>  {:?}", _sub_tag_text);
+//             // extract text out of result
+//             let _sub_tag_text = match sub_child_elem.text().await {
+//                 Ok(x) => x,
+//                 Err(_e) => continue,
+//             };
+//             // debug!("\t_sub_tag_text =>  {:?}", _sub_tag_text);
 
-            debug!(
-                "n=>{:?} tag=>{:?} id=>{:?} text=>{:?} class=>{:?}",
-                counter, _sub_tag_name, _sub_tag_id, _sub_tag_text, _sub_tag_class
-            );
+//             debug!(
+//                 "n=>{:?} tag=>{:?} id=>{:?} text=>{:?} class=>{:?}",
+//                 counter, _sub_tag_name, _sub_tag_id, _sub_tag_text, _sub_tag_class
+//             );
 
-            // search contain
-            // let _child_elems = sub_child_elem.find_all(By::XPath(".//child::*[//*]")).await?;
+//             // search contain
+//             // let _child_elems = sub_child_elem.find_all(By::XPath(".//child::*[//*]")).await?;
 
-            // let _child_elems = match sub_child_elem.find_all(By::XPath(".//child::*[//*]")).await {
-            //     Ok(x) => x,
-            //     Err(_e) => {
-            //         eprintln!("Err {}", _e);
-            //         continue;
-            //     }
-            // };
+//             // let _child_elems = match sub_child_elem.find_all(By::XPath(".//child::*[//*]")).await {
+//             //     Ok(x) => x,
+//             //     Err(_e) => {
+//             //         eprintln!("Err {}", _e);
+//             //         continue;
+//             //     }
+//             // };
 
-            // FROM HERE
-            // https://stackoverflow.com/questions/5119655/xpath-to-get-all-child-nodes-elements-comments-and-text-without-parent
-            let _child_elems = match sub_child_elem.find_all(By::XPath(".//child::*")).await {
-                Ok(x) => x,
-                Err(_e) => {
-                    eprintln!("Err {}", _e);
-                    continue;
-                }
-            };
+//             // FROM HERE
+//             // https://stackoverflow.com/questions/5119655/xpath-to-get-all-child-nodes-elements-comments-and-text-without-parent
+//             let _child_elems = match sub_child_elem.find_all(By::XPath(".//child::*")).await {
+//                 Ok(x) => x,
+//                 Err(_e) => {
+//                     eprintln!("Err {}", _e);
+//                     continue;
+//                 }
+//             };
 
-            // len - How many WebElement had we found?
-            debug!("found n WEebElements({}) = {:?} ",sub_child_elem.tag_name().await?, _child_elems.len());
+//             // len - How many WebElement had we found?
+//             debug!("found n WEebElements({}) = {:?} ",sub_child_elem.tag_name().await?, _child_elems.len());
 
-            if _child_elems.len() > 0 {
-                // if DEBUG_VEC {
-                    // debug!("call children_elems ");
-                    // debug_vec(_child_elems,_sub_tag_name);
-                    // debug_vec(_child_elems.clone(), _sub_tag_name.clone()).await?;
-                    debug_vec(_child_elems.clone(), _sub_tag_name.clone(), "children_elems",0).await?;
-                //}
-            };
+//             if _child_elems.len() > 0 {
+//                 // if DEBUG_VEC {
+//                     // debug!("call children_elems ");
+//                     // debug_vec(_child_elems,_sub_tag_name);
+//                     // debug_vec(_child_elems.clone(), _sub_tag_name.clone()).await?;
+//                     debug_vec(_child_elems.clone(), _sub_tag_name.clone(), "children_elems",0).await?;
+//                 //}
+//             };
 
-            const XPATH_SEARCH: &str = ".//child::*[//*]";
+//             const XPATH_SEARCH: &str = ".//child::*[//*]";
 
-            debug!("search children");
-            let _search_child_elems = match sub_child_elem.find_all(By::XPath(XPATH_SEARCH)).await {
-                Ok(x) => x,
-                Err(_e) => {
-                    eprintln!("Err {}", _e);
-                    continue;
-                }
-            };
+//             debug!("search children");
+//             let _search_child_elems = match sub_child_elem.find_all(By::XPath(XPATH_SEARCH)).await {
+//                 Ok(x) => x,
+//                 Err(_e) => {
+//                     eprintln!("Err {}", _e);
+//                     continue;
+//                 }
+//             };
 
-            /*
-            if _search_child_elems.len() == 0 {
-                debug!("NO search element FOUND");
-            } else {
-                debug!(
-                    "Found n=>{:?} (_search_child_elements) =  ",
-                    _search_child_elems.len()
-                );-> color_eyre::Result<(), Box<dyn Error>>
-            }
-            */
+//             /*
+//             if _search_child_elems.len() == 0 {
+//                 debug!("NO search element FOUND");
+//             } else {
+//                 debug!(
+//                     "Found n=>{:?} (_search_child_elements) =  ",
+//                     _search_child_elems.len()
+//                 );-> color_eyre::Result<(), Box<dyn Error>>
+//             }
+//             */
 
-            if DEBUG_VEC {
-                debug!("call debug_vec ");
-                // debug_vec(_child_elems,_sub_tag_name);
-                // debug_vec(_search_child_elems.clone(), _sub_tag_name.clone()).await?;
-                debug_vec(
-                    _child_elems.clone(),
-                    _sub_tag_name.clone(),
-                    "call debug_vec",
-                    0,
-                )
-                .await?;
-            }
-        }
-    } //end div
-    Ok(())
-}
+//             if DEBUG_VEC {
+//                 debug!("call debug_vec ");
+//                 // debug_vec(_child_elems,_sub_tag_name);
+//                 // debug_vec(_search_child_elems.clone(), _sub_tag_name.clone()).await?;
+//                 debug_vec(
+//                     _child_elems.clone(),
+//                     _sub_tag_name.clone(),
+//                     "call debug_vec",
+//                     0,
+//                 )
+//                 .await?;
+//             }
+//         }
+//     } //end div
+//     Ok(())
+// }
 
 
 
