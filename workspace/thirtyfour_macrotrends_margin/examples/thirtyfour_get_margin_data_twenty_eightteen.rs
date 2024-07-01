@@ -297,11 +297,11 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                             error!("Failed enter frame!");
                             panic!("Failed enter frame");
                         }
-                    };//end of match
+                    }; //end of match
 
                     // debug!("iframe _driver.close().await?");
                     _iframe
-                }//end of Ok(_iframe)
+                } //end of Ok(_iframe)
 
                 Err(_e) => {
                     error!("Failed enter frame!");
@@ -327,20 +327,19 @@ async fn path_to(_driver: WebDriver) -> color_eyre::Result<(), Box<dyn Error>> {
                     return Err(Box::new(_e));
                     // debug!("Error => {:?}", _e);
                 }
-            };//end of match
+            }; //end of match
 
             let mut counter = 0;
             for child_elem in &child_elems {
                 counter = counter + 1;
 
                 let _tag_name = match child_elem.tag_name().await {
-                            Ok(x) => x,
-                            Err(_e) => continue,
-                        };
-                        debug!("\t HERE iframe=> tag_name =>  {}", _tag_name);
-                        let _ = tag_list_all_childes(_driver.clone(), "xpath").await?;
-                        
+                    Ok(x) => x,
+                    Err(_e) => continue,
                 };
+                debug!("\t HERE iframe=> tag_name =>  {}", _tag_name);
+                let _ = tag_list_all_childes(_driver.clone(), "xpath").await?;
+            }
 
             // wait_seconds_of_browser(_driver.clone(), 10).await?;
         }
@@ -506,7 +505,14 @@ async fn initialize_driver() -> Result<WebDriver, WebDriverError> {
     // caps.add_chrome_arg("--no-sandbox")?;
     //  caps.add_chrome_arg("--disable-dev-shm-usage")?;
 
-    let driver = WebDriver::new("http://localhost:9515", _caps).await?;
+    let driver_result = WebDriver::new("http://localhost:9515", _caps).await;
+
+    // let result = WebDriver::new("http://localhost:4444/wd/hub", &caps).await;
+    let driver = match driver_result {
+        Ok(value) => value,
+        Err(error) => return Err(error),
+    };
+
     driver.maximize_window().await?;
     info!("initialize_driver - end");
     Ok(driver)
