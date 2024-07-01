@@ -275,7 +275,7 @@ ENTRYPOINT ["/scripts/docker-dbus-entrypoint.sh && /bin/bash"]
 
 # w/o --no-cache
 # cd src
-# docker buildx build --progress=plain -t debian_lxde_chromium_rust -f src/Dockerfile_lxde_chromium_driver_rust "."
+# docker buildx build --progress=plain -t debian_lxde_chromium_rust -f Dockerfile_lxde_chromium_driver_rust_raspi "."
 
 # docker run -ti debian_lxde_chrome bash    
 # use start script => cd ./src && sh +x  start_container_lxde_chromium_rust_third.sh
