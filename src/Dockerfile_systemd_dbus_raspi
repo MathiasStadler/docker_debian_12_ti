@@ -1,0 +1,174 @@
+# FROM HERE
+# https://serverfault.com/questions/1053187/systemd-fails-to-run-in-a-docker-container-when-using-cgroupv2-cgroupns-priva/1054414#1054414
+
+# FROM debian:bullseye
+FROM debian:12.6
+
+# set language first
+RUN set -euxo \
+  && apt-get update --yes \
+  && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --no-install-suggests --yes --quiet --quiet  apt-utils \
+  locales \
+  apt-transport-https \
+  apt-utils 
+
+RUN set -euxo \
+  && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --no-install-suggests --yes --quiet --quiet  alsa-utils \
+  apulse \
+  at-spi2-core \
+  bash \
+  ca-certificates \
+  curl \
+  chromium \
+  chromium-driver \
+  dbus \                   
+  dbus-user-session \
+  dbus-x11 \
+  dialog \
+  dos2unix \
+  eterm \
+  fonts-liberation \
+  gnupg \
+  libasound2 \
+  libasound2-plugins \
+  libatk1.0-0 \           
+  libatk-bridge2.0-0 \
+  libatspi2.0-0 \
+  libc6-dev \     
+  libcanberra-gtk-module  \
+  libcups2 \       
+  libdrm2 \                    
+  libgbm1 \     
+  libgl1-mesa-dri \
+  libgtk-3-0 \ 
+  libnspr4 \   
+  libnss3 \            
+  libpango1.0-0 \ 
+  libpulse0 \   
+  libssl-dev \
+  libu2f-udev \
+  libv4l-0 \         
+  libvulkan1 \   
+  libwayland-client0 \
+  libxcomposite1 \
+  libxdamage-dev \
+  locales \
+  locales-all \
+  lxde-core \
+  lxde-icon-theme \
+  lxsession-default-apps \
+  lxterminal \
+  menu \
+  perl \
+  pkg-config\
+  procps \
+  pulseaudio \
+  pulseaudio-utils \
+  pulsemixer \
+  sudo \
+  unzip \
+  upower \
+  vim \
+  wget \
+  x11-utils \
+  x11vnc \
+  x11-xserver-utils \
+  xdg-utils \
+  xorgxrdp \
+  xrdp \
+  xvfb \
+  notification-daemon \
+  build-essential \
+  inetutils-ping \
+  net-tools \
+  psmisc \
+  iproute2 \
+  obconf \
+  x11-apps \
+  && rm /etc/xrdp/rsakeys.ini /etc/xrdp/cert.pem /etc/xrdp/key.pem \
+  && mv /usr/bin/lxpolkit /usr/bin/lxpolkit.disabled \
+  && apt-get --yes autoclean \ 
+  && apt-get --yes --auto-remove autoremove \
+  && apt-get clean --yes \
+  && rm --recursive --force /var/lib/apt/lists/* 
+
+
+# install rust
+RUN set -euxo \ 
+  && export RUST_VERSION=1.79.0  \
+  && export TMP_RUST_DIR=/tmp/rust  \
+  && mkdir -p "${TMP_RUST_DIR}" \
+  && cd "${TMP_RUST_DIR}"  \
+  && curl -sLf "https://static.rust-lang.org/dist/rust-${RUST_VERSION}-x86_64-unknown-linux-gnu.tar.gz" | tar xvzf - -C "${TMP_RUST_DIR}" --strip-components=1 --exclude=rust-docs  \
+  && ./install.sh --without=rust-docs  \
+  && cd /tmp && rm -rf "${TMP_RUST_DIR}"
+
+COPY scripts/bootstrap.sh \
+  dbus/docker-dbus-entrypoint.sh \
+  scripts/start_chromiumdriver.sh \
+  /scripts/
+
+RUN set -euxo \ 
+  && chmod +x /scripts/bootstrap.sh \
+  && chmod +x /scripts/docker-dbus-entrypoint.sh
+
+# new user
+ENV PUID='1000' \
+  PGID='1000' \
+  USER='user' 
+
+# useradd and suoers
+RUN set -euxo \ 
+  && groupadd --gid "$PGID" "$USER"  \
+  && useradd --home-dir /home/$USER --shell /bin/bash --uid "$PUID" --gid "$PGID" "$USER"  \
+  && mkdir /home/$USER \
+  && chown -R $USER:$USER /home/$USER  \
+  && usermod -aG sudo "$USER"  \
+  && usermod -aG adm "$USER"  \
+  && usermod -aG audio "$USER"  \
+  && cp /etc/skel/.bashrc /home/user/  \
+  && mkdir -p /etc/sudoers.d  \
+  && echo "user ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/"${USER}" \
+  && chmod 0440 /etc/sudoers.d/"$USER" \
+  && cp /etc/skel/.bashrc /home/${USER}
+
+# copy desktop and terminal settings
+COPY desktop_settings/desktop-items-0.conf  /root/.config/pcmanfm/LXDE/desktop-items-0.conf
+COPY desktop_settings/lxterminal.conf  /root/.config/lxterminal/lxterminal.conf
+
+
+VOLUME [ "/tmp", "/run", "/run/lock" ]
+
+# RUN apt-get update && \
+#   apt-get install -y systemd bash && \
+#   apt-get clean && \
+#   mkdir -p /lib/systemd && \
+#   ln -s /lib/systemd/system /usr/lib/systemd/system;
+
+# WORKDIR /
+
+# RUN rm -f /lib/systemd/system/multi-user.target.wants/* \
+#   /etc/systemd/system/*.wants/* \
+#   /lib/systemd/system/local-fs.target.wants/* \
+#   /lib/systemd/system/sockets.target.wants/*udev* \
+#   /lib/systemd/system/sockets.target.wants/*initctl* \
+#   /lib/systemd/system/sysinit.target.wants/systemd-tmpfiles-setup* \
+#   /lib/systemd/system/systemd-update-utmp*
+
+# CMD [ "/lib/systemd/systemd" ]
+
+
+# ENTRYPOINT ["/scripts/docker-dbus-entrypoint.sh && /bin/bash"]
+ENTRYPOINT ["/scripts/docker-dbus-entrypoint.sh"]
+
+
+# build
+# docker buildx build --progress=plain -t debian_systemd_dbus -f Dockerfile_systemd_dbus_raspi "."
+
+# run
+# docker run --rm -it --privileged debian_systemd_dbus
+
+# # docker run --rm -it --privileged debian_systemd_dbus bash
+
+
+

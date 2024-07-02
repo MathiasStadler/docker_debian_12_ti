@@ -1,11 +1,13 @@
 # FROM debian:stable-slim 
 
-ARG BASEOS_DIGEST
-FROM docker.io/library/debian:bookworm${BASEOS_DIGEST:-}
+# ARG BASEOS_DIGEST
+# FROM docker.io/library/debian:bookworm${BASEOS_DIGEST:-}
+FROM debian:12.6
 
 # https://github.com/arktronic/docker-ubuntu-graphical/blob/master/Dockerfile 
 
-ENV TERM xterm
+# ENV TERM xterm
+ENV TERM=xterm
 
 # FROM HERE
 # https://www.cyberciti.biz/faq/perl-warning-setting-locale-failed-in-debian-ubuntu/
@@ -172,7 +174,8 @@ RUN set -euxo \
 # install chrome amd chromedriver
 # FROM HERE
 # https://gist.github.com/varyonic/dea40abcf3dd891d204ef235c6e8dd79?permalink_comment_id=3976763
-ENV CHROMEDRIVER_DIR /chromedriver
+# ENV CHROMEDRIVER_DIR /chromedriver
+ENV CHROMEDRIVER_DIR=/chromedriver
 
 
 # maybe double
@@ -207,7 +210,8 @@ ENV CHROMEDRIVER_DIR /chromedriver
 # && rm --recursive --force /var/lib/{apt,dpkg,cache,log}
 
 # Put Chromedriver into the PATH
-ENV PATH $CHROMEDRIVER_DIR:$PATH
+# ENV PATH $CHROMEDRIVER_DIR:$PATH
+ENV PATH=$CHROMEDRIVER_DIR:$PATH
 
 
 # install rust
@@ -262,7 +266,10 @@ RUN set -euxo \
 COPY desktop_settings/desktop-items-0.conf  /root/.config/pcmanfm/LXDE/desktop-items-0.conf
 COPY desktop_settings/lxterminal.conf  /root/.config/lxterminal/lxterminal.conf
 
-ENTRYPOINT ["/scripts/docker-dbus-entrypoint.sh && /bin/bash"]
+# ENTRYPOINT ["/scripts/docker-dbus-entrypoint.sh && /bin/bash"]
+ENTRYPOINT ["/scripts/docker-dbus-entrypoint.sh"]
+
+
 
 
 # remove empty space

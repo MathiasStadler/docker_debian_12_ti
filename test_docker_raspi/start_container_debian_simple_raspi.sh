@@ -27,7 +27,7 @@ docker run -i -t \
 --init=false \
 --cgroupns host \
 -v /sys/fs/cgroup/freeipa.scope:/sys/fs/cgroup:rw \
-debian_test_cgroups 
+debian_simple 
 
 
 # systemd 252-13.el9_2 running in system mode (+PAM +AUDIT +SELINUX -APPARMOR +IMA +SMACK +SECCOMP +GCRYPT +GNUTLS +OPENSSL +ACL +BLKID +CURL +ELFUTILS -FIDO2 +IDN2 -IDN -IPTC +KMOD +LIBCRYPTSETUP +LIBFDISK +PCRE2 -PWQUALITY +P11KIT -QRENCODE +TPM2 +BZIP2 +LZ4 +XZ +ZLIB +ZSTD -BPF_FRAMEWORK +XKBCOMMON +UTMP +SYSVINIT default-hierarchy=unified)

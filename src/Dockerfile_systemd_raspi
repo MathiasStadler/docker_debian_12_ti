@@ -1,0 +1,36 @@
+# FROM HERE
+# https://serverfault.com/questions/1053187/systemd-fails-to-run-in-a-docker-container-when-using-cgroupv2-cgroupns-priva/1054414#1054414
+
+# FROM debian:bullseye
+FROM debian:12.6
+
+VOLUME [ "/tmp", "/run", "/run/lock" ]
+
+RUN apt-get update && \
+apt-get install -y systemd bash && \
+apt-get clean && \
+mkdir -p /lib/systemd && \
+ln -s /lib/systemd/system /usr/lib/systemd/system;
+
+WORKDIR /
+
+RUN rm -f /lib/systemd/system/multi-user.target.wants/* \
+  /etc/systemd/system/*.wants/* \
+  /lib/systemd/system/local-fs.target.wants/* \
+  /lib/systemd/system/sockets.target.wants/*udev* \
+  /lib/systemd/system/sockets.target.wants/*initctl* \
+  /lib/systemd/system/sysinit.target.wants/systemd-tmpfiles-setup* \
+  /lib/systemd/system/systemd-update-utmp*
+
+CMD [ "/lib/systemd/systemd" ]
+
+# build
+# docker buildx build --progress=plain -t debian_systemd -f Dockerfile_systemd_raspi "."
+
+# run
+# docker run --rm -it --privileged debian_systemd
+
+# # docker run --rm -it --privileged debian_systemd bash
+
+
+

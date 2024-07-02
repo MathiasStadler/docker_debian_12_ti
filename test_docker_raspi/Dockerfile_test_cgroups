@@ -1,8 +1,9 @@
 # FROM debian:bullseye
-FROM debian:12.5
+FROM debian:12.6
 # Using systemd in docker: https://systemd.io/CONTAINER_INTERFACE/
 # Make sure cgroupv2 is enabled. To check this: cat /sys/fs/cgroup/cgroup.controllers
 ENV container=docker
+
 STOPSIGNAL SIGRTMIN+3
 VOLUME [ "/tmp", "/run", "/run/lock" ]
 WORKDIR /
